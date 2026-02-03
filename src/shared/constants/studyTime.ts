@@ -2,7 +2,7 @@ import { Subject } from "./subjects";
 
 export const MINUTES_PER_SLOT = 10;
 export const SLOTS_PER_HOUR = 6;
-export const HOURS_PER_DAY = 24;
+export const TOTAL_HOURS = 24;
 export const TOTAL_SLOTS = 144;
 
 export const DAY_START_HOUR = 4;
