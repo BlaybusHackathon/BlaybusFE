@@ -37,6 +37,6 @@ export const MOCK_TASKS: Task[] = [
 ];
 
 export const MOCK_STUDY_TIME_SLOTS: StudyTimeSlot[] = [
-  { startTime: '09:00', endTime: '10:30', subject: 'KOREAN' },
-  { startTime: '14:00', endTime: '16:00', subject: 'MATH' },
+  { startTime: '09:00', endTime: '10:30', subject: 'KOREAN' , taskId: 'task-1'},
+  { startTime: '14:00', endTime: '16:00', subject: 'MATH' , taskId: 'task-2'},
 ];
