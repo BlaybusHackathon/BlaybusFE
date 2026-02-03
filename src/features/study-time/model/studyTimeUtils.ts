@@ -25,7 +25,7 @@ export const slotsToGridState = (slots: StudyTimeSlot[]): (Subject | null)[] => 
   return grid;
 };
 
-export const gridStateToSlots = (grid: (Subject | null)[], menteeId: string, date: string) => {
+export const gridStateToSlots = (grid: (Subject | null)[]) => {
   const slots: StudyTimeSlot[] = [];
   let currentSubject: Subject | null = null;
   let startIdx: number | null = null;
