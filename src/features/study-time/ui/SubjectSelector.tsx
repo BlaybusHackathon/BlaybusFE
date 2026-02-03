@@ -1,4 +1,4 @@
-import { HStack, Button, Text } from '@chakra-ui/react';
+import { HStack, Button } from '@chakra-ui/react';
 import { Subject, SUBJECT_LABELS } from '@/shared/constants/subjects';
 import { SUBJECT_COLORS } from '@/shared/constants/studyTime';
 

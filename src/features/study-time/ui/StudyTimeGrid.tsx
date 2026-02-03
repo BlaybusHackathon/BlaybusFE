@@ -1,5 +1,4 @@
-import { Box, SimpleGrid, Text, VStack, Flex } from '@chakra-ui/react';
-import { Subject } from '@/shared/constants/subjects';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { StudyTimeSlot } from '@/entities/study-time/types';
 import { SUBJECT_COLORS, HOURS_PER_DAY, SLOTS_PER_HOUR } from '@/shared/constants/studyTime';
 import { useStudyTime } from '../model/useStudyTime';
