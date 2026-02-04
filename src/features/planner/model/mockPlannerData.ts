@@ -1,10 +1,12 @@
 import { Task } from '@/entities/task/types';
 import { TaskLog } from '@/entities/task-log/types';
+import { DailyPlanner } from '@/entities/daily-plan/types'; 
 import { getAdjustedDate } from '@/shared/lib/date';
 import { format, subDays } from 'date-fns';
 
-const TODAY = getAdjustedDate();
-const YESTERDAY = format(subDays(new Date(TODAY), 1), 'yyyy-MM-dd');
+const TODAY_OBJ = new Date(getAdjustedDate());
+const TODAY = format(TODAY_OBJ, 'yyyy-MM-dd');
+const YESTERDAY = format(subDays(TODAY_OBJ, 1), 'yyyy-MM-dd');
 
 export const MOCK_TASKS: Task[] = [
   {
@@ -96,4 +98,25 @@ export const MOCK_TASK_LOGS: TaskLog[] = [
     duration: 5400,
     taskId: 'task-5'
   },
+];
+
+export const MOCK_DAILY_PLANNERS: DailyPlanner[] = [
+  {
+    id: 'dp-1',
+    planDate: TODAY,
+    totalStudyTime: 0,
+    dailyMemo: '오늘은 수학이 너무 어려웠다. 그래도 끝까지 포기하지 않고 풀어서 뿌듯하다!',
+    createdAt: TODAY,
+    mentorFeedback: null,
+    menteeId: 'mentee-1',
+  },
+  {
+    id: 'dp-2',
+    planDate: YESTERDAY,
+    totalStudyTime: 320,
+    dailyMemo: '영어 단어 외우는 게 지루하지만 꾹 참고 다 외웠다!',
+    createdAt: YESTERDAY,
+    mentorFeedback: '꾸준히 하는 모습이 보기 좋아요! 영어 단어는 자투리 시간을 활용해보세요.',
+    menteeId: 'mentee-1',
+  }
 ];
