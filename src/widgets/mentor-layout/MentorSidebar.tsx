@@ -30,8 +30,7 @@ export const MentorSidebar = () => {
       }}
     >
       <VStack align="stretch" spacing={1} px={2}>
-        <SidebarMenuItem label="대시보드" path="/mentor" />
-        <SidebarMenuItem label="마이페이지" path="/mentor/mypage" />
+        <SidebarMenuItem label="마이페이지" path="/mentor" />
         
         <Divider my={2} borderColor="gray.200" />
         

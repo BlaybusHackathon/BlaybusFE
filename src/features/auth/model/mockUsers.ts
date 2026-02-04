@@ -6,7 +6,7 @@ interface MockUser extends User {
 
 export const MOCK_USERS: MockUser[] = [
   { 
-    id: 'mentor-1', 
+    id: 'mentor1', 
     username: 'mentor1', 
     password: '1234', 
     name: '김멘토', 
@@ -19,7 +19,7 @@ export const MOCK_USERS: MockUser[] = [
     updatedAt: null,
   },
   { 
-    id: 'mentee-1', 
+    id: 'mentee1', 
     username: 'mentee1', 
     password: '1234', 
     name: '이멘티', 
@@ -32,7 +32,7 @@ export const MOCK_USERS: MockUser[] = [
     updatedAt: null,
   },
   { 
-    id: 'mentee-2', 
+    id: 'mentee2', 
     username: 'mentee2', 
     password: '1234', 
     name: '박멘티', 

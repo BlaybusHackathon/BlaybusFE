@@ -10,7 +10,7 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
 
   if (isAuthenticated && user) {
     if (user.role === 'MENTOR') {
-      return <Navigate to="/mentor/dashboard" replace />;
+      return <Navigate to="/mentor" replace />;
     }
     if (user.role === 'MENTEE') {
       return <Navigate to="/mentee/planner" replace />;

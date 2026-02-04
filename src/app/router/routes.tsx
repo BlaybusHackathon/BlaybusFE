@@ -18,7 +18,6 @@ const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
 
 // Mentor Pages
-const MentorDashboardPage = lazy(() => import('@/pages/mentor/dashboard'));
 const MentorMyPage = lazy(() => import('@/pages/mentor/mypage')); 
 
 // Mentor - Mentee Management Pages
@@ -43,6 +42,7 @@ export const router = createBrowserRouter([
     ),
   },
   
+  // Mentee Routes
   {
     path: '/mentee',
     element: <MenteeLayout />,
@@ -54,13 +54,12 @@ export const router = createBrowserRouter([
     ],
   },
 
+  // Mentor Routes
   {
     path: '/mentor',
     element: <MentorLayout />,
     children: [
-      { index: true, element: <MentorDashboardPage /> },
-      
-      { path: 'mypage', element: <MentorMyPage /> },
+      { index: true, element: <MentorMyPage /> },
       
       { path: 'mentee/:menteeId', element: <MentorMenteeManagePage /> },
       { path: 'mentee/:menteeId/calendar', element: <MentorMenteeCalendarPage /> },
