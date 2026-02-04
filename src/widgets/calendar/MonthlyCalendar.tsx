@@ -1,5 +1,16 @@
 import { Box, SimpleGrid, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import {
+    startOfMonth,
+    endOfMonth,
+    startOfWeek,
+    endOfWeek,
+    eachDayOfInterval,
+    addMonths,
+    subMonths,
+    isSameMonth,
+    isSameDay,
+} from 'date-fns';
 import { CalendarHeader } from './ui/CalendarHeader';
 import { CalendarDay } from './ui/CalendarDay';
 
@@ -7,13 +18,24 @@ export const MonthlyCalendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
 
-    // Placeholder handlers (Logic will be added in Step 2)
-    const handlePrevMonth = () => console.log('Prev Month');
-    const handleNextMonth = () => console.log('Next Month');
-    const handleTaskClick = (taskId: string) => console.log('Task clicked:', taskId);
+    // Month Navigation
+    const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
+    const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
 
-    // Dummy grid for Step 1 UI verification
-    const days = Array.from({ length: 35 }, (_, i) => i + 1);
+    const handleTaskClick = (taskId: string) => {
+        console.log('Task clicked:', taskId);
+    };
+
+    // Calendar Grid Logic
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
+
+    const calendarDays = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+    });
 
     return (
         <Box bg="white" borderRadius="lg" p={6} boxShadow="sm">
@@ -41,15 +63,15 @@ export const MonthlyCalendar = () => {
                     ))}
                 </SimpleGrid>
 
-                {/* Days Grid - Placeholder for UI Check */}
+                {/* Days Grid */}
                 <SimpleGrid columns={7}>
-                    {days.map((day) => (
+                    {calendarDays.map((date) => (
                         <CalendarDay
-                            key={day}
-                            day={day}
-                            date={new Date()}
-                            isCurrentMonth={true}
-                            tasks={[]}
+                            key={date.toISOString()}
+                            day={date.getDate()}
+                            date={date}
+                            isCurrentMonth={isSameMonth(date, monthStart)}
+                            tasks={[]} // Tasks will be bound in Step 4
                             onTaskClick={handleTaskClick}
                         />
                     ))}
