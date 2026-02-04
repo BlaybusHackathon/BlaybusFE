@@ -2,32 +2,18 @@ import { Box, Button, Container, Flex, Text, VStack } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ImageSlider } from './ImageSlider';
 import { TaskDetailHeader } from './TaskDetailHeader';
-
-// Mock Data - 나중에 API로 대체
-const MOCK_TASK_DATA = {
-    taskId: '1',
-    subject: '영어',
-    date: '2026.02.05',
-    isMentorChecked: true,
-    title: '영어 단어 20개',
-    description: '보완점: 단어암기',
-    submissionImages: [
-        '/Users/yangjunsig/.gemini/antigravity/brain/efa4cad9-4ea3-4ff4-a858-0de0dbc3dbbe/uploaded_image_1770189841464.png',
-        // 'https://via.placeholder.com/600x800?text=Submission+2', 
-        // 'https://via.placeholder.com/600x800?text=Submission+3',
-    ],
-    menteeComment: '틀린 단어는 체크해두었고, 다음 복습 때 예문이랑 같이 다시 외울 예정입니다.',
-};
+import { MOCK_TASK_DETAIL_DATA } from './mockTaskDetail';
 
 
 const MentorTaskDetailPage = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { menteeId, taskId } = useParams();
     const navigate = useNavigate();
 
     // In a real app, fetch data based on menteeId and taskId
     // const { data } = useQuery(...)
-    const data = MOCK_TASK_DATA;
+    console.log('Task Detail:', menteeId, taskId);
+
+    const data = MOCK_TASK_DETAIL_DATA;
 
     return (
         <Container maxW="container.lg" py={8} bg="white" minH="100vh">
