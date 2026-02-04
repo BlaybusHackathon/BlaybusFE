@@ -1,7 +1,7 @@
 import { Box, Button, Container, Flex, Text, VStack } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ImageSlider } from './ImageSlider';
-import { TaskDetailHeader } from './TaskDetailHeader';
+import { ImageSlider } from './ui/ImageSlider';
+import { TaskDetailHeader } from './ui/TaskDetailHeader';
 import { MOCK_TASK_DETAIL_DATA } from './mockTaskDetail';
 
 
