@@ -4,7 +4,7 @@ import { MentorHeader, MentorSidebar } from '@/widgets/mentor-layout';
 
 export const MentorLayout = () => {
   return (
-    <Box minH="100vh" bg="gray.50">
+    <Box minH="100vh" bg="white">
       <MentorHeader />
       <MentorSidebar />
       

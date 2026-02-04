@@ -13,7 +13,7 @@ export const MenteeProfileSection = ({ profile }: Props) => {
       bg="white"
       borderRadius="3xl"
       border="1px solid"
-      borderColor="gray.100"
+      borderColor="#53A8FE"
       p={8}
       boxShadow="sm"
     >

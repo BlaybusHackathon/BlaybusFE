@@ -40,18 +40,11 @@ export const logsToGridState = (
     const startIdx = isoToSlotIndex(log.startAt);
     let endIdx = isoToSlotIndex(log.endAt);
     
-    if (startIdx === endIdx) {
-      endIdx = startIdx + 1;
-    }
-    
-    if (endIdx < startIdx) {
-      endIdx = TOTAL_SLOTS;
-    }
+    if (startIdx === endIdx) endIdx = startIdx + 1;
+    if (endIdx < startIdx) endIdx = TOTAL_SLOTS;
     
     for (let i = startIdx; i < endIdx && i < TOTAL_SLOTS; i++) {
-      if (i >= 0) {
-        grid[i] = subject;
-      }
+      if (i >= 0) grid[i] = subject;
     }
   });
   
@@ -65,8 +58,14 @@ export const calculateTotalMinutes = (grid: (Subject | null)[]): number => {
 export const formatMinutes = (minutes: number): string => {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  if (h > 0) {
-    return `${h}시간 ${m}분`;
-  }
+  if (h > 0) return `${h}시간 ${m}분`;
   return `${m}분`;
+};
+
+export const getTaskDurationMinutes = (taskId: string, logs: TaskLog[]): number => {
+  const totalSeconds = logs
+    .filter((log) => log.taskId === taskId)
+    .reduce((acc, log) => acc + log.duration, 0);
+  
+  return Math.floor(totalSeconds / 60);
 };
