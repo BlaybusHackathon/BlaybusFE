@@ -1,4 +1,4 @@
-import { Flex, Text, IconButton, HStack, Switch, FormLabel } from '@chakra-ui/react';
+import { Flex, Text, IconButton, HStack, Switch, FormLabel, Box } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
 interface CalendarHeaderProps {
@@ -43,10 +43,19 @@ export const CalendarHeader = ({
 
             <HStack spacing={4}>
                 <HStack spacing={2}>
-                    <Text fontSize="sm">국어</Text>
-                    <Text fontSize="sm">영어</Text>
-                    <Text fontSize="sm">수학</Text>
-                    <Text fontSize="sm">보완점</Text>
+                    <Flex bg="blue.400" color="white" px={3} py={1} borderRadius="full" fontSize="sm" alignItems="center" justifyContent="center">
+                        국어
+                    </Flex>
+                    <Flex bg="green.400" color="white" px={3} py={1} borderRadius="full" fontSize="sm" alignItems="center" justifyContent="center">
+                        영어
+                    </Flex>
+                    <Flex bg="purple.400" color="white" px={3} py={1} borderRadius="full" fontSize="sm" alignItems="center" justifyContent="center">
+                        수학
+                    </Flex>
+                    <HStack spacing={1} ml={2}>
+                        <Box w="8px" h="8px" bg="pink.300" borderRadius="full" />
+                        <Text fontSize="sm" fontWeight="medium">보완점</Text>
+                    </HStack>
                 </HStack>
 
                 <Flex align="center">

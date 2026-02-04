@@ -39,7 +39,7 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
             fontSize="xs"
             px={2}
             py={1}
-            borderRadius="md"
+            borderRadius="full"
             cursor="pointer"
             onClick={(e) => {
                 e.stopPropagation();

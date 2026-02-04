@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Tag, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, useToast } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import { MonthlyCalendar } from '@/widgets/calendar/MonthlyCalendar';
 import { AddIcon } from '@chakra-ui/icons';
@@ -22,11 +22,7 @@ export const MentorMenteeCalendarPage = () => {
         <Box p={6}>
             <Flex justify="space-between" align="center" mb={6}>
                 <Box>
-                    <Heading size="lg" mb={2}>월간 계획표</Heading>
-                    <Text color="gray.600">
-                        <Tag colorScheme="blue" mr={2} size="lg">{menteeId}</Tag>
-                        학생의 학습 일정을 관리합니다.
-                    </Text>
+                    <Heading size="lg" mb={2}>{menteeId}님 월간 계획표</Heading>
                 </Box>
                 <Button
                     leftIcon={<AddIcon />}
