@@ -1,74 +1,74 @@
 import { create } from 'zustand';
-import { Task } from '@/entities/task/types';
-import { StudyTimeSlot } from '@/entities/study-time/types';
-import { MOCK_TASKS, MOCK_STUDY_TIME_SLOTS } from '@/features/planner/model/mockPlannerData';
+import { Task, TaskStatus } from '@/entities/task/types';
+import { TaskLog } from '@/entities/task-log/types';
 import { getAdjustedDate } from '@/shared/lib/date';
-
-const TODAY = getAdjustedDate();
+import { MOCK_TASKS, MOCK_TASK_LOGS } from '@/features/planner/model/mockPlannerData';
 
 interface PlannerState {
   selectedDate: string;
   tasks: Task[];
-  taskCache: Task[];
-  studyTimeSlots: StudyTimeSlot[];
-  comment: string;
+  taskLogs: TaskLog[];
+  isLoading: boolean;
   
   setSelectedDate: (date: string) => void;
-  toggleTaskComplete: (taskId: string) => void;
+  setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
+  updateTaskStatus: (taskId: string, status: TaskStatus) => void;
   deleteTask: (taskId: string) => void;
-  setStudyTimeSlots: (slots: StudyTimeSlot[]) => void;
-  addStudyTimeSlot: (slot: StudyTimeSlot) => void; 
-  setComment: (comment: string) => void;
+  
+  setTaskLogs: (logs: TaskLog[]) => void;
+  addTaskLog: (log: TaskLog) => void;
+  
+  getTaskById: (taskId: string) => Task | undefined;
+  getLogsByTaskId: (taskId: string) => TaskLog[];
+  getTotalDurationByTaskId: (taskId: string) => number;
 }
 
 export const usePlannerStore = create<PlannerState>((set, get) => ({
-  selectedDate: TODAY,
-  taskCache: MOCK_TASKS,
-  tasks: MOCK_TASKS.filter((t) => t.date === TODAY),
-  studyTimeSlots: MOCK_STUDY_TIME_SLOTS,
-  comment: '',
+  selectedDate: getAdjustedDate(),
+  // 초기 데이터 (실제로는 API 연동 시 빈 배열이어야 함)
+  tasks: MOCK_TASKS,
+  taskLogs: MOCK_TASK_LOGS,
+  isLoading: false,
 
-  setSelectedDate: (date) => {
-    const { taskCache } = get();
-    set({
-      selectedDate: date,
-      tasks: taskCache.filter((t) => t.date === date),
-    });
-  },
+  setSelectedDate: (date) => set({ 
+    selectedDate: date,
+    // 날짜 변경 시 데이터 초기화 (API 재호출 유도)
+    // 현재는 Mock 데이터 유지 위해 주석 처리하거나 필터링 로직 필요
+    // tasks: [], 
+    // taskLogs: [],
+  }),
   
-  toggleTaskComplete: (taskId) =>
-    set((state) => {
-      const newTasks = state.tasks.map((t) =>
-        t.id === taskId ? { ...t, isCompleted: !t.isCompleted } : t
-      );
-      const newTaskCache = state.taskCache.map((t) =>
-        t.id === taskId ? { ...t, isCompleted: !t.isCompleted } : t
-      );
-      return { tasks: newTasks, taskCache: newTaskCache };
-    }),
-
-  addTask: (task) =>
-    set((state) => {
-      const isSameDate = task.date === state.selectedDate;
-      return {
-        taskCache: [...state.taskCache, task],
-        tasks: isSameDate ? [...state.tasks, task] : state.tasks,
-      };
-    }),
+  setTasks: (tasks) => set({ tasks }),
   
-  deleteTask: (taskId) =>
-    set((state) => ({
-      tasks: state.tasks.filter((t) => t.id !== taskId),
-      taskCache: state.taskCache.filter((t) => t.id !== taskId),
-    })),
-
-  setStudyTimeSlots: (slots) => set({ studyTimeSlots: slots }),
-
-  addStudyTimeSlot: (slot) => 
-    set((state) => ({
-      studyTimeSlots: [...state.studyTimeSlots, slot]
-    })),
+  addTask: (task) => set((state) => ({ 
+    tasks: [...state.tasks, task] 
+  })),
   
-  setComment: (comment) => set({ comment }),
+  updateTaskStatus: (taskId, status) => set((state) => ({
+    tasks: state.tasks.map((t) => 
+      t.id === taskId ? { ...t, status } : t
+    ),
+  })),
+  
+  deleteTask: (taskId) => set((state) => ({
+    tasks: state.tasks.filter((t) => t.id !== taskId),
+    taskLogs: state.taskLogs.filter((l) => l.taskId !== taskId),
+  })),
+
+  setTaskLogs: (logs) => set({ taskLogs: logs }),
+  
+  addTaskLog: (log) => set((state) => ({ 
+    taskLogs: [...state.taskLogs, log] 
+  })),
+  
+  getTaskById: (taskId) => get().tasks.find((t) => t.id === taskId),
+  
+  getLogsByTaskId: (taskId) => 
+    get().taskLogs.filter((l) => l.taskId === taskId),
+  
+  getTotalDurationByTaskId: (taskId) => 
+    get().taskLogs
+      .filter((l) => l.taskId === taskId)
+      .reduce((sum, l) => sum + l.duration, 0),
 }));
