@@ -1,7 +1,16 @@
+// 댓글 타입 정의
+export interface Comment {
+    id: string;
+    author: string;
+    role: 'MENTOR' | 'MENTEE';
+    content: string;
+    createdAt: string;
+}
+
 export const MOCK_TASK_DETAIL_DATA = {
     taskId: '1',
     subject: '영어',
-    date: '2026.02.05',
+    date: '2026년 2월 5일',
     isMentorChecked: true,
     title: '영어 단어 20개',
     description: '보완점: 단어암기',

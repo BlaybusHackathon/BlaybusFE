@@ -14,7 +14,7 @@ export const MenteeProfileSection = ({ profile }: Props) => {
       borderRadius="3xl"
       border="1px solid"
       borderColor="#53A8FE"
-      p={8}
+      p={"30px 55px"}
       boxShadow="sm"
     >
       <Flex
