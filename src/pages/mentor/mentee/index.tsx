@@ -1,5 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
-import { MenteeProfileSection } from './ui/MenteeProfileSection';
+import { MenteeProfileSection } from './ui/MenteeProfileSection'; 
+import { MentorPlannerSection } from '@/widgets/mentor-planner';
 import { MOCK_MENTEE_PROFILE } from './model/mockData';
 
 const MentorMenteeManagePage = () => {
@@ -11,6 +12,7 @@ const MentorMenteeManagePage = () => {
       <MenteeProfileSection profile={MOCK_MENTEE_PROFILE} />
 
       <Box mt={8}>
+        <MentorPlannerSection />
       </Box>
     </Box>
   );

@@ -18,12 +18,13 @@ const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
 
 // Mentor Pages
-const MentorMyPage = lazy(() => import('@/pages/mentor/mypage')); 
+const MentorMyPage = lazy(() => import('@/pages/mentor/mypage'));
 
 // Mentor - Mentee Management Pages
-const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee')); 
+const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee'));
 const MentorMenteeCalendarPage = lazy(() => import('@/pages/mentor/mentee/calendar'));
 const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback'));
+const MentorTaskDetailPage = lazy(() => import('@/pages/mentor/task/detail'));
 
 
 export const router = createBrowserRouter([
@@ -41,7 +42,7 @@ export const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
-  
+
   // Mentee Routes
   {
     path: '/mentee',
@@ -60,10 +61,11 @@ export const router = createBrowserRouter([
     element: <MentorLayout />,
     children: [
       { index: true, element: <MentorMyPage /> },
-      
+
       { path: 'mentee/:menteeId', element: <MentorMenteeManagePage /> },
       { path: 'mentee/:menteeId/calendar', element: <MentorMenteeCalendarPage /> },
       { path: 'mentee/:menteeId/feedback', element: <MentorMenteeFeedbackPage /> },
+      { path: 'mentee/:menteeId/task/:taskId', element: <MentorTaskDetailPage /> },
     ],
   },
 
