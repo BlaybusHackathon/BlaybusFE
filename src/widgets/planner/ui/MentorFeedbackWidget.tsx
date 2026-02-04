@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Avatar } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { usePlannerStore } from '@/shared/stores/plannerStore';
 
 export const MentorFeedbackWidget = () => {
