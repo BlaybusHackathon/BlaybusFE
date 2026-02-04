@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Text, Textarea, Flex, Icon } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
+import { Box, Text, Textarea, Flex } from '@chakra-ui/react';
 import { usePlannerStore } from '@/shared/stores/plannerStore';
 import { getAdjustedDate } from '@/shared/lib/date';
 
