@@ -8,52 +8,80 @@ interface TaskDetailHeaderProps {
     title: string;
 }
 
-const subjectColorMap: Record<string, string> = {
-    국어: 'red',
-    영어: 'purple',
-    수학: 'blue',
-    과학: 'green',
-    사회: 'orange',
-    // Add more as needed
-};
+// Subject color map removed as it is now hardcoded or unused.
+// const subjectColorMap: Record<string, string> = {
+//     국어: 'red',
+//     영어: 'purple',
+//     수학: 'blue',
+//     과학: 'green',
+//     사회: 'orange',
+// };
 
 export const TaskDetailHeader = ({
     subject,
     date,
     isMentorChecked,
     title,
-}: TaskDetailHeaderProps) => {
-    const badgeColor = subjectColorMap[subject] || 'gray';
+    supplement,
+}: TaskDetailHeaderProps & { supplement?: string }) => {
+    // const badgeColor = subjectColorMap[subject] || 'gray'; 
+
+    // The previous edit left it unused. Let's remove it properly.
+
 
     return (
-        <Box mb={6}>
-            <Text fontSize="2xl" fontWeight="bold" mb={4}>
+        <Box mb={12}>
+            {/* Title */}
+            <Text fontSize="28px" fontWeight="bold" mb={6} color="#1A1A1A">
                 {title}
             </Text>
 
-            <HStack spacing={8} color="gray.600" fontSize="sm">
-                <HStack>
-                    <Text width="60px">과목</Text>
-                    <Badge colorScheme={badgeColor} borderRadius="full" px={3}>
+            {/* Sub Header / Breadcrumbs */}
+            {supplement && (
+                <HStack spacing={6} mb={8} fontSize="16px">
+                    <Text color="#666666" fontWeight="medium">보완점</Text>
+                    <Text color="#1A1A1A" fontWeight="medium">{supplement}</Text>
+                </HStack>
+            )}
+
+            {/* Meta Info Row */}
+            <HStack spacing={10} fontSize="15px" align="center">
+                {/* Subject */}
+                <HStack spacing={8}>
+                    <Text color="#8e8e8e" fontWeight="medium" minW="30px">과목</Text>
+                    <Badge
+                        bg="#4ADE80"
+                        color="white"
+                        borderRadius="full"
+                        px={4}
+                        py={1}
+                        fontSize="13px"
+                        fontWeight="bold"
+                        textTransform="none"
+                        letterSpacing="normal"
+                    >
                         {subject}
                     </Badge>
                 </HStack>
 
-                <HStack>
-                    <Text width="60px">날짜</Text>
-                    <Text fontWeight="medium">{date}</Text>
+                {/* Date */}
+                <HStack spacing={8}>
+                    <Text color="#8e8e8e" fontWeight="medium" minW="30px">날짜</Text>
+                    <Text color="#333333" fontWeight="bold">{date}</Text>
                 </HStack>
 
-                <HStack>
-                    <Text width="60px">멘토 확인</Text>
+                {/* Mentor Check */}
+                <HStack spacing={4}>
+                    <Text color="#8e8e8e" fontWeight="medium" minW="60px">멘토 확인</Text>
                     {isMentorChecked ? (
-                        <Badge colorScheme="green" variant="solid" borderRadius="full">
-                            확인 완료
-                        </Badge>
+                        <Box color="gray.300">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" fill="#D1D5DB" />
+                                <path d="M7 12L10 15L17 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </Box>
                     ) : (
-                        <Badge colorScheme="gray" variant="solid" borderRadius="full">
-                            미확인
-                        </Badge>
+                        <Text color="gray.400">미확인</Text>
                     )}
                 </HStack>
             </HStack>
