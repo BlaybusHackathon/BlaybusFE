@@ -1,7 +1,7 @@
 import { Flex, Text, Checkbox, Box, Icon } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Task } from '@/entities/task/types';
-import { Subject, SUBJECT_LABELS } from '@/shared/constants/subjects';
+import { Subject } from '@/shared/constants/subjects';
 import { SUBJECT_COLORS } from '@/shared/constants/studyTime';
 
 interface Props {
