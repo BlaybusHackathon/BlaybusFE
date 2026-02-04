@@ -1,5 +1,5 @@
 import { Box, SimpleGrid, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
     startOfMonth,
     endOfMonth,
@@ -13,6 +13,7 @@ import {
 } from 'date-fns';
 import { CalendarHeader } from './ui/CalendarHeader';
 import { CalendarDay } from './ui/CalendarDay';
+import { generateMockTasks } from './model/mockData';
 
 export const MonthlyCalendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -36,6 +37,16 @@ export const MonthlyCalendar = () => {
         start: startDate,
         end: endDate,
     });
+
+    // Data Binding (Step 4)
+    const allTasks = useMemo(() => generateMockTasks(currentDate), [currentDate]);
+
+    const getTasksForDay = (date: Date) => {
+        return allTasks.filter(task => {
+            // Note: In real app, consider timezone issues. Here assuming string match/local date match is fine for mock.
+            return isSameDay(new Date(task.date), date);
+        });
+    };
 
     return (
         <Box bg="white" borderRadius="lg" p={6} boxShadow="sm">
@@ -71,7 +82,7 @@ export const MonthlyCalendar = () => {
                             day={date.getDate()}
                             date={date}
                             isCurrentMonth={isSameMonth(date, monthStart)}
-                            tasks={[]} // Tasks will be bound in Step 4
+                            tasks={getTasksForDay(date)} // Binding Tasks
                             onTaskClick={handleTaskClick}
                         />
                     ))}
