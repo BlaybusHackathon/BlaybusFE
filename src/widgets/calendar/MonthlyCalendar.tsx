@@ -15,9 +15,10 @@ import { CalendarHeader } from './ui/CalendarHeader';
 import { CalendarDay } from './ui/CalendarDay';
 import { generateMockTasks } from './model/mockData';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const MonthlyCalendar = () => {
+    const { menteeId } = useParams();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
     const navigate = useNavigate();
@@ -27,7 +28,9 @@ export const MonthlyCalendar = () => {
     const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
 
     const handleTaskClick = (taskId: string) => {
-        navigate(`../task/${taskId}`);
+        if (menteeId) {
+            navigate(`/mentor/mentee/${menteeId}/task/${taskId}`);
+        }
     };
 
     // Calendar Grid Logic
@@ -82,7 +85,7 @@ export const MonthlyCalendar = () => {
 
                 {/* Days Grid */}
                 <SimpleGrid columns={7} spacing={0}>
-                    {calendarDays.map((date, index) => (
+                    {calendarDays.map((date) => (
                         <CalendarDay
                             key={date.toISOString()}
                             day={date.getDate()}
