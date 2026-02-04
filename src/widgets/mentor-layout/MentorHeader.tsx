@@ -1,8 +1,15 @@
-import { Flex, Text, HStack, Image } from '@chakra-ui/react';
+import { Flex, Text, HStack, Button } from '@chakra-ui/react';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { useNavigate } from 'react-router-dom';
 
 export const MentorHeader = () => {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <Flex
@@ -30,11 +37,19 @@ export const MentorHeader = () => {
         >
           SeolStudy
         </Text>
-        
         <Text fontSize="md" color="gray.700">
           어서오세요, <Text as="span" fontWeight="bold">{user?.name}</Text>멘토님!
         </Text>
       </HStack>
+
+      <Button 
+        size="sm" 
+        variant="ghost" 
+        colorScheme="red" 
+        onClick={handleLogout}
+      >
+        로그아웃
+      </Button>
     </Flex>
   );
 };
