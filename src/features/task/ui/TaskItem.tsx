@@ -2,7 +2,7 @@ import { HStack, Checkbox, Text, IconButton, Badge, Box } from '@chakra-ui/react
 import { CloseIcon } from '@chakra-ui/icons';
 import { Task } from '@/entities/task/types';
 import { SUBJECT_LABELS } from '@/shared/constants/subjects';
-import { TaskTimer } from '@/features/timer'; 
+import { TaskTimer } from '@/features/timer';
 
 interface TaskItemProps {
   task: Task;
@@ -12,10 +12,12 @@ interface TaskItemProps {
 }
 
 export const TaskItem = ({ task, onToggle, onDelete, onClick }: TaskItemProps) => {
+  const isCompleted = task.status === 'COMPLETED';
+  
   return (
     <HStack
       w="full"
-      bg={task.isFixed ? 'blue.50' : 'white'}
+      bg={task.isMandatory ? 'blue.50' : 'white'}
       p={3}
       borderRadius="lg"
       boxShadow="sm"
@@ -25,7 +27,7 @@ export const TaskItem = ({ task, onToggle, onDelete, onClick }: TaskItemProps) =
     >
       <HStack spacing={3} flex={1} overflow="hidden">
         <Checkbox
-          isChecked={task.isCompleted}
+          isChecked={isCompleted}
           onChange={(e) => {
             e.stopPropagation();
             onToggle();
@@ -35,14 +37,14 @@ export const TaskItem = ({ task, onToggle, onDelete, onClick }: TaskItemProps) =
         />
         <Box onClick={onClick} flex={1} cursor="pointer" minW={0}>
           <HStack mb={1}>
-            <Badge colorScheme={task.isFixed ? 'purple' : 'gray'} fontSize="0.6rem">
+            <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} fontSize="0.6rem">
               {SUBJECT_LABELS[task.subject]}
             </Badge>
           </HStack>
           <Text
             fontWeight="medium"
-            textDecoration={task.isCompleted ? 'line-through' : 'none'}
-            color={task.isCompleted ? 'gray.400' : 'gray.800'}
+            textDecoration={isCompleted ? 'line-through' : 'none'}
+            color={isCompleted ? 'gray.400' : 'gray.800'}
             isTruncated
           >
             {task.title}
@@ -54,10 +56,10 @@ export const TaskItem = ({ task, onToggle, onDelete, onClick }: TaskItemProps) =
         <TaskTimer 
           taskId={task.id} 
           subject={task.subject}
-          isDisabled={task.isCompleted} 
+          isDisabled={isCompleted} 
         />
         
-        {!task.isFixed && (
+        {!task.isMandatory && (
           <IconButton
             aria-label="Delete task"
             icon={<CloseIcon />}
