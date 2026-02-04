@@ -1,4 +1,4 @@
-import { VStack, Text, SimpleGrid, Box, Badge, Textarea } from '@chakra-ui/react';
+import { VStack, Text, Box, Badge, Textarea } from '@chakra-ui/react';
 
 interface SingleSubjectFeedbackProps {
     subject: string;

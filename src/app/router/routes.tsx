@@ -70,6 +70,12 @@ export const router = createBrowserRouter([
       { path: 'mentee/:menteeId/feedback/zoom', element: <MentorZoomFeedbackPage /> },
       { path: 'mentee/:menteeId/task/:taskId', element: <MentorTaskDetailPage /> },
       { path: 'mentee/:menteeId/report', element: <MentorReportPage /> },
+      
+      { path: 'mentee/:menteeId/report/new', element: <MentorReportPage /> },      
+      { path: 'mentee/:menteeId/report/:reportId', element: <MentorReportPage /> }, 
+
+      { path: 'mentee/:menteeId/zoom/new', element: <MentorZoomFeedbackPage /> },  
+      { path: 'mentee/:menteeId/zoom/:zoomId', element: <MentorZoomFeedbackPage /> }, 
     ],
   },
 

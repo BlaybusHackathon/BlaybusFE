@@ -3,7 +3,7 @@ import { Box, Heading, Button, useToast, Container, Text, Flex } from '@chakra-u
 import { FeedbackMemo } from './ui/FeedbackMemo';
 import { SubjectFeedback } from './ui/SubjectFeedback';
 import { OperationalFeedback } from './ui/OperationalFeedback';
-import { MOCK_ZOOM_FEEDBACK_DATA, ZoomFeedbackData } from './mockZoomFeedbackData';
+import { ZoomFeedbackData } from './mockZoomFeedbackData';
 
 const ZoomFeedbackPage = () => {
     const toast = useToast();

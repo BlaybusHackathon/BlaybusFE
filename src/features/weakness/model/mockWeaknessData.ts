@@ -8,7 +8,8 @@ export const MOCK_WEAKNESSES: Weakness[] = [
     contentId: 'content-1',
     subject: 'KOREAN',
     fileName: '고전시가_어휘집.pdf',
-    fileUrl: '#'
+    fileUrl: '#',
+    menteeId: 'mentee-1', 
   },
   {
     id: 'w-2',
@@ -17,7 +18,8 @@ export const MOCK_WEAKNESSES: Weakness[] = [
     contentId: 'content-2',
     subject: 'KOREAN',
     fileName: '음운변동_개념정리.hwp',
-    fileUrl: '#'
+    fileUrl: '#',
+    menteeId: 'mentee-1', 
   },
   {
     id: 'w-3',
@@ -26,7 +28,8 @@ export const MOCK_WEAKNESSES: Weakness[] = [
     contentId: 'content-3',
     subject: 'MATH',
     fileName: '수열극한_심화문제.pdf',
-    fileUrl: '#'
+    fileUrl: '#',
+    menteeId: 'mentee-1', 
   },
   {
     id: 'w-4',
@@ -34,5 +37,6 @@ export const MOCK_WEAKNESSES: Weakness[] = [
     inforId: 'info-1',
     contentId: 'content-4',
     subject: 'ENGLISH',
+    menteeId: 'mentee-1', 
   }
 ];
