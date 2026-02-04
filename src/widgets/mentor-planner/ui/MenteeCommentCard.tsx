@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Icon } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 
 interface Props {
   memo: string | null;
