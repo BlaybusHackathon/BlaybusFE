@@ -15,16 +15,19 @@ import { CalendarHeader } from './ui/CalendarHeader';
 import { CalendarDay } from './ui/CalendarDay';
 import { generateMockTasks } from './model/mockData';
 
+import { useNavigate } from 'react-router-dom';
+
 export const MonthlyCalendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
+    const navigate = useNavigate();
 
     // Month Navigation
     const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
     const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
 
     const handleTaskClick = (taskId: string) => {
-        console.log('Task clicked:', taskId);
+        navigate(`../task/${taskId}`);
     };
 
     // Calendar Grid Logic
@@ -43,8 +46,11 @@ export const MonthlyCalendar = () => {
 
     const getTasksForDay = (date: Date) => {
         return allTasks.filter(task => {
-            // Note: In real app, consider timezone issues. Here assuming string match/local date match is fine for mock.
-            return isSameDay(new Date(task.date), date);
+            const isSameDate = isSameDay(new Date(task.date), date);
+            if (!isSameDate) return false;
+            // Filter Logic (Step 5)
+            if (showIncompleteOnly && task.isCompleted) return false;
+            return true;
         });
     };
 
