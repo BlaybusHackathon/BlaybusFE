@@ -1,69 +1,62 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTimerStore } from '@/shared/stores/timerStore';
 import { usePlannerStore } from '@/shared/stores/plannerStore';
-import { formatElapsedTime } from './timerUtils';
-import { getCurrentTimeString } from '@/shared/lib/date';
+import { formatDuration } from '@/shared/lib/date';
+import { MIN_LOG_DURATION_SECONDS } from '@/shared/constants/studyTime';
 import { Subject } from '@/shared/constants/subjects';
 
 export const useTaskTimer = (taskId: string, subject: Subject) => {
-  const { 
-    activeTaskId, 
-    taskTimers, 
-    startTimer, 
-    stopTimer, 
-  } = useTimerStore();
-  
-  const { addStudyTimeSlot } = usePlannerStore();
+  const { activeTaskId, taskTimers, startTimer, stopTimer } = useTimerStore();
+  const { addTaskLog, getTotalDurationByTaskId } = usePlannerStore();
   
   const [displayTime, setDisplayTime] = useState('00:00:00');
   
   const timerData = taskTimers[taskId];
   const isRunning = activeTaskId === taskId && !!timerData?.timerStartedAt;
+  const savedDuration = getTotalDurationByTaskId(taskId);
 
-  // 타이머 UI 업데이트 (1초 간격)
   useEffect(() => {
-    if (!isRunning) {
-      const elapsed = timerData?.elapsedTime || 0;
-      setDisplayTime(formatElapsedTime(elapsed));
-      return;
-    }
-
     const updateDisplay = () => {
-      const now = Date.now();
-      const elapsed = timerData.elapsedTime + (now - timerData.timerStartedAt!);
-      setDisplayTime(formatElapsedTime(elapsed));
+      let currentSession = 0;
+      
+      if (isRunning && timerData?.timerStartedAt) {
+        currentSession = Math.floor((Date.now() - timerData.timerStartedAt) / 1000);
+        currentSession += Math.floor((timerData.elapsedTime || 0) / 1000);
+      }
+      
+      const total = savedDuration + currentSession;
+      setDisplayTime(formatDuration(total));
     };
 
     updateDisplay();
-    const intervalId = setInterval(updateDisplay, 1000);
+    
+    if (isRunning) {
+      const intervalId = setInterval(updateDisplay, 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [isRunning, timerData, savedDuration]);
 
-    return () => clearInterval(intervalId);
-  }, [isRunning, timerData]);
-
-  // 시작/정지 토글
   const toggle = useCallback(() => {
     if (isRunning) {
-      // 정지 시: 그리드에 기록 저장
-      const endTime = getCurrentTimeString();
-      const startTime = timerData.startTimeOfDay || endTime;
+      const result = stopTimer(taskId);
       
-      addStudyTimeSlot({
-        startTime,
-        endTime,
-        subject,
-        taskId
-      });
-      
-      stopTimer(taskId);
+      if (result && result.duration >= MIN_LOG_DURATION_SECONDS) {
+        addTaskLog({
+          id: `temp-${Date.now()}`,
+          taskId,
+          startAt: result.startAt,
+          endAt: result.endAt,
+          duration: result.duration,
+        });
+      }
     } else {
       startTimer(taskId);
     }
-  }, [isRunning, taskId, subject, timerData, startTimer, stopTimer, addStudyTimeSlot]);
+  }, [isRunning, taskId, startTimer, stopTimer, addTaskLog]);
 
   return {
     displayTime,
     isRunning,
     toggle,
-    elapsedTime: timerData?.elapsedTime || 0,
   };
 };

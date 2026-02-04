@@ -18,11 +18,12 @@ export const TaskTimer = ({ taskId, subject, isDisabled = false }: Props) => {
         fontSize="sm" 
         color={isRunning ? 'blue.600' : 'gray.500'}
         fontWeight={isRunning ? 'bold' : 'normal'}
+        minW="60px"
       >
         {displayTime}
       </Text>
       <IconButton
-        aria-label={isRunning ? 'Pause timer' : 'Start timer'}
+        aria-label={isRunning ? 'Pause' : 'Start'}
         size="xs"
         colorScheme={isRunning ? 'orange' : 'blue'}
         variant={isRunning ? 'solid' : 'outline'}

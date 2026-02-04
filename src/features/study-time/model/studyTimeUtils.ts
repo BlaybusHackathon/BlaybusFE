@@ -1,32 +1,57 @@
 import { Subject } from '@/shared/constants/subjects';
-import { StudyTimeSlot } from '@/entities/study-time/types';
+import { Task } from '@/entities/task/types';
+import { TaskLog } from '@/entities/task-log/types';
 import { 
+  DAY_START_HOUR, 
   SLOTS_PER_HOUR, 
   MINUTES_PER_SLOT, 
-  DAY_START_HOUR,
   TOTAL_SLOTS 
 } from '@/shared/constants/studyTime';
+import { parseISO, getHours, getMinutes } from 'date-fns';
 
-// HH:mm -> Index (04:00 기준)
-export const timeToAdjustedIndex = (time: string): number => {
-  const [hour, minute] = time.split(':').map(Number);
+export const isoToSlotIndex = (isoString: string): number => {
+  const date = parseISO(isoString);
+  let hour = getHours(date);
+  const minute = getMinutes(date);
   
-  // 04시 이전이면 24를 더해서 계산 (예: 02:00 -> 26:00)
-  const adjustedHour = hour < DAY_START_HOUR ? hour + 24 : hour;
-  const hourOffset = adjustedHour - DAY_START_HOUR;
+  if (hour < DAY_START_HOUR) {
+    hour += 24;
+  }
   
+  const hourOffset = hour - DAY_START_HOUR;
   return hourOffset * SLOTS_PER_HOUR + Math.floor(minute / MINUTES_PER_SLOT);
 };
 
-export const slotsToGridState = (slots: StudyTimeSlot[]): (Subject | null)[] => {
+export const logsToGridState = (
+  taskLogs: TaskLog[],
+  tasks: Task[]
+): (Subject | null)[] => {
   const grid: (Subject | null)[] = Array(TOTAL_SLOTS).fill(null);
   
-  slots.forEach((slot) => {
-    const startIdx = timeToAdjustedIndex(slot.startTime);
-    const endIdx = timeToAdjustedIndex(slot.endTime);
+  const taskSubjectMap = new Map<string, Subject>();
+  tasks.forEach((task) => {
+    taskSubjectMap.set(task.id, task.subject);
+  });
+  
+  taskLogs.forEach((log) => {
+    const subject = taskSubjectMap.get(log.taskId);
+    if (!subject) return;
+    
+    const startIdx = isoToSlotIndex(log.startAt);
+    let endIdx = isoToSlotIndex(log.endAt);
+    
+    if (startIdx === endIdx) {
+      endIdx = startIdx + 1;
+    }
+    
+    if (endIdx < startIdx) {
+      endIdx = TOTAL_SLOTS;
+    }
     
     for (let i = startIdx; i < endIdx && i < TOTAL_SLOTS; i++) {
-      grid[i] = slot.subject;
+      if (i >= 0) {
+        grid[i] = subject;
+      }
     }
   });
   
@@ -34,11 +59,14 @@ export const slotsToGridState = (slots: StudyTimeSlot[]): (Subject | null)[] => 
 };
 
 export const calculateTotalMinutes = (grid: (Subject | null)[]): number => {
-  return grid.filter(s => s !== null).length * MINUTES_PER_SLOT;
+  return grid.filter((s) => s !== null).length * MINUTES_PER_SLOT;
 };
 
 export const formatMinutes = (minutes: number): string => {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return h > 0 ? `${h}시간 ${m}분` : `${m}분`;
+  if (h > 0) {
+    return `${h}시간 ${m}분`;
+  }
+  return `${m}분`;
 };
