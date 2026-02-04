@@ -1,23 +1,17 @@
-import { Box } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
-import { MentorHeader, MentorSidebar } from '@/widgets/mentor-layout';
+import { Suspense } from 'react';
+import { ProtectedRoute } from './ProtectedRoute';
+import { RoleBasedRoute } from './RoleBasedRoute';
+import { Loading } from '@/shared/ui/Loading';
 
-export const MentorLayout = () => {
+export const MenteeLayout = () => {
   return (
-    <Box minH="100vh" bg="gray.50">
-      <MentorHeader />
-      <MentorSidebar />
-      
-      <Box
-        as="main"
-        ml="240px"
-        pt="60px" 
-        p={8}     
-        minH="100vh"
-        transition="margin-left 0.2s"
-      >
-        <Outlet />
-      </Box>
-    </Box>
+    <ProtectedRoute>
+      <RoleBasedRoute allowedRole="MENTEE">
+        <Suspense fallback={<Loading />}>
+          <Outlet />
+        </Suspense>
+      </RoleBasedRoute>
+    </ProtectedRoute>
   );
 };

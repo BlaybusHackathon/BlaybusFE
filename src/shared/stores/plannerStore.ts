@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Task, TaskStatus } from '@/entities/task/types';
+import { Task } from '@/entities/task/types';
+import { TaskStatus } from '@/shared/constants/enums'; 
 import { TaskLog } from '@/entities/task-log/types';
 import { getAdjustedDate } from '@/shared/lib/date';
 import { MOCK_TASKS, MOCK_TASK_LOGS } from '@/features/planner/model/mockPlannerData';

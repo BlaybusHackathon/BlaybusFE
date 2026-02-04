@@ -1,4 +1,4 @@
-import { Flex, Text, HStack, Avatar, Box } from '@chakra-ui/react';
+import { Flex, Text, HStack, Image } from '@chakra-ui/react';
 import { useAuthStore } from '@/shared/stores/authStore';
 
 export const MentorHeader = () => {
@@ -20,25 +20,20 @@ export const MentorHeader = () => {
       right={0}
       zIndex={100}
     >
-      <HStack spacing={2} cursor="pointer" onClick={() => window.location.href = '/mentor'}>
-        <Text fontSize="xl" fontWeight="black" color="blue.600">
+      <HStack spacing={4}>
+        <Text 
+          fontSize="xl" 
+          fontWeight="black" 
+          color="blue.600"
+          cursor="pointer"
+          onClick={() => window.location.href = '/mentor'}
+        >
           SeolStudy
         </Text>
-        <Text fontSize="xs" color="gray.500" fontWeight="bold" mt={1}>
-          Mentor
+        
+        <Text fontSize="md" color="gray.700">
+          어서오세요, <Text as="span" fontWeight="bold">{user?.name}</Text>멘토님!
         </Text>
-      </HStack>
-
-      <HStack spacing={3}>
-        <Box textAlign="right" display={{ base: 'none', md: 'block' }}>
-          <Text fontSize="sm" fontWeight="bold" color="gray.700">
-            {user?.name || '멘토'}님
-          </Text>
-          <Text fontSize="xs" color="gray.500">
-            멘토링 진행중
-          </Text>
-        </Box>
-        <Avatar size="sm" name={user?.name} bg="blue.500" color="white" />
       </HStack>
     </Flex>
   );
