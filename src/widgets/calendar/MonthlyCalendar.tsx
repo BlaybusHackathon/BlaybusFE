@@ -62,7 +62,7 @@ export const MonthlyCalendar = () => {
                 {/* Weekday Headers */}
                 <SimpleGrid columns={7} bg="gray.50" borderBottom="1px solid" borderColor="gray.200">
                     {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-                        <Box key={day} py={2} textAlign="center">
+                        <Box key={day} py={2} textAlign="center" borderRight={index !== 6 ? "1px solid" : "none"} borderColor="gray.200">
                             <Text
                                 fontSize="sm"
                                 fontWeight="bold"
@@ -75,14 +75,14 @@ export const MonthlyCalendar = () => {
                 </SimpleGrid>
 
                 {/* Days Grid */}
-                <SimpleGrid columns={7}>
-                    {calendarDays.map((date) => (
+                <SimpleGrid columns={7} spacing={0}>
+                    {calendarDays.map((date, index) => (
                         <CalendarDay
                             key={date.toISOString()}
                             day={date.getDate()}
                             date={date}
                             isCurrentMonth={isSameMonth(date, monthStart)}
-                            tasks={getTasksForDay(date)} // Binding Tasks
+                            tasks={getTasksForDay(date)}
                             onTaskClick={handleTaskClick}
                         />
                     ))}

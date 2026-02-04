@@ -12,13 +12,13 @@ interface CalendarDayProps {
 export const CalendarDay = ({ day, tasks, isCurrentMonth, onTaskClick }: CalendarDayProps) => {
     return (
         <Box
-            h="120px"
+            minH="120px"
+            h="auto"
             borderRight="1px solid"
             borderBottom="1px solid"
-            borderColor="gray.100"
+            borderColor="gray.200"
             bg={isCurrentMonth ? 'white' : 'gray.50'}
             p={2}
-            overflow="hidden"
         >
             <Text
                 fontSize="sm"
@@ -30,14 +30,9 @@ export const CalendarDay = ({ day, tasks, isCurrentMonth, onTaskClick }: Calenda
                 {day}
             </Text>
             <VStack align="stretch" spacing={1}>
-                {tasks.slice(0, 3).map((task) => (
+                {tasks.map((task) => (
                     <TaskItem key={task.id} task={task} onClick={onTaskClick} />
                 ))}
-                {tasks.length > 3 && (
-                    <Text fontSize="xs" color="gray.500" textAlign="center">
-                        +{tasks.length - 3} more
-                    </Text>
-                )}
             </VStack>
         </Box>
     );

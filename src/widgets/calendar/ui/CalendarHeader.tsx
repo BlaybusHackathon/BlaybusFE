@@ -1,5 +1,5 @@
-import { Flex, Text, IconButton, HStack, Switch, FormLabel, Box } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Flex, Text, IconButton, HStack, Box } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon, CheckCircleIcon } from '@chakra-ui/icons';
 
 interface CalendarHeaderProps {
     currentDate: Date;
@@ -21,27 +21,36 @@ export const CalendarHeader = ({
 
     return (
         <Flex justify="space-between" align="center" mb={6}>
-            <HStack spacing={4}>
-                <IconButton
-                    aria-label="Previous month"
-                    icon={<ChevronLeftIcon />}
-                    onClick={onPrevMonth}
-                    variant="ghost"
-                    size="sm"
-                />
-                <Text fontSize="xl" fontWeight="bold">
-                    {year}년 {month}월
-                </Text>
-                <IconButton
-                    aria-label="Next month"
-                    icon={<ChevronRightIcon />}
-                    onClick={onNextMonth}
-                    variant="ghost"
-                    size="sm"
-                />
-            </HStack>
+            {/* Left Group: Nav & Tags */}
+            <HStack spacing={8}>
+                {/* Month Navigation */}
+                <HStack spacing={4}>
+                    <IconButton
+                        aria-label="Previous month"
+                        icon={<ChevronLeftIcon w={6} h={6} color="gray.500" />}
+                        onClick={onPrevMonth}
+                        variant="unstyled"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        minW="auto"
+                    />
+                    <Text fontSize="xl" fontWeight="bold">
+                        {year}년 {month}월
+                    </Text>
+                    <IconButton
+                        aria-label="Next month"
+                        icon={<ChevronRightIcon w={6} h={6} color="gray.500" />}
+                        onClick={onNextMonth}
+                        variant="unstyled"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        minW="auto"
+                    />
+                </HStack>
 
-            <HStack spacing={4}>
+                {/* Subject Tags */}
                 <HStack spacing={2}>
                     <Flex bg="blue.400" color="white" px={3} py={1} borderRadius="full" fontSize="sm" alignItems="center" justifyContent="center">
                         국어
@@ -54,22 +63,27 @@ export const CalendarHeader = ({
                     </Flex>
                     <HStack spacing={1} ml={2}>
                         <Box w="8px" h="8px" bg="pink.300" borderRadius="full" />
-                        <Text fontSize="sm" fontWeight="medium">보완점</Text>
+                        <Text fontSize="sm" fontWeight="medium" color="gray.600">보완점</Text>
                     </HStack>
                 </HStack>
-
-                <Flex align="center">
-                    <Switch
-                        id="incomplete-only"
-                        isChecked={showIncompleteOnly}
-                        onChange={(e) => onToggleIncomplete(e.target.checked)}
-                        mr={2}
-                    />
-                    <FormLabel htmlFor="incomplete-only" mb={0} fontSize="sm" color="gray.500">
-                        과제 미완료
-                    </FormLabel>
-                </Flex>
             </HStack>
+
+            {/* Right: Filter Toggle */}
+            <Flex
+                align="center"
+                cursor="pointer"
+                onClick={() => onToggleIncomplete(!showIncompleteOnly)}
+            >
+                <CheckCircleIcon
+                    color={showIncompleteOnly ? "gray.800" : "gray.300"}
+                    mr={1.5}
+                    w={5}
+                    h={5}
+                />
+                <Text fontSize="sm" color="gray.500">
+                    과제 미완료
+                </Text>
+            </Flex>
         </Flex>
     );
 };
