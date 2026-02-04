@@ -1,30 +1,22 @@
 import { Box, Text, Flex } from '@chakra-ui/react';
-import { StudyTimeSlot } from '@/entities/study-time/types';
-import { SUBJECT_COLORS, HOURS_PER_DAY, SLOTS_PER_HOUR } from '@/shared/constants/studyTime';
-import { useStudyTime } from '../model/useStudyTime';
-import { SubjectSelector } from './SubjectSelector';
-import { formatMinutes } from '../model/studyTimeUtils';
+import { usePlannerStore } from '@/shared/stores/plannerStore';
+import { 
+  SUBJECT_COLORS, 
+  TOTAL_HOURS, 
+  SLOTS_PER_HOUR,
+  DAY_START_HOUR 
+} from '@/shared/constants/studyTime';
+import { logsToGridState, calculateTotalMinutes, formatMinutes } from '../model/studyTimeUtils';
 
-interface Props {
-  slots: StudyTimeSlot[];
-  onUpdate: (slots: StudyTimeSlot[]) => void;
-  menteeId: string;
-  date: string;
-  isEditable?: boolean;
-}
+export const StudyTimeGrid = () => {
+  const { tasks, taskLogs } = usePlannerStore();
+  
+  const gridState = logsToGridState(taskLogs, tasks);
+  const totalMinutes = calculateTotalMinutes(gridState);
 
-export const StudyTimeGrid = ({ slots, onUpdate, menteeId, date, isEditable = true }: Props) => {
-  const {
-    gridState,
-    selectedSubject,
-    setSelectedSubject,
-    startDrag,
-    onDrag,
-    endDrag,
-    totalMinutes
-  } = useStudyTime(slots, onUpdate, menteeId, date);
-
-  const hours = Array.from({ length: HOURS_PER_DAY }, (_, i) => i);
+  const hours = Array.from({ length: TOTAL_HOURS }, (_, i) => {
+    return (DAY_START_HOUR + i) % 24;
+  });
 
   return (
     <Box userSelect="none">
@@ -33,23 +25,15 @@ export const StudyTimeGrid = ({ slots, onUpdate, menteeId, date, isEditable = tr
           총 {formatMinutes(totalMinutes)}
         </Text>
       </Flex>
-      
-      {isEditable && (
-        <SubjectSelector 
-          selectedSubject={selectedSubject} 
-          onChange={setSelectedSubject} 
-        />
-      )}
 
       <Box 
         border="1px solid" 
         borderColor="gray.200" 
         borderRadius="md" 
         overflow="hidden"
-        onMouseLeave={endDrag} 
       >
-        {hours.map((hour) => (
-          <Flex key={hour} borderBottom="1px solid" borderColor="gray.100" height="40px">
+        {hours.map((hour, hourIndex) => (
+          <Flex key={hourIndex} borderBottom="1px solid" borderColor="gray.100" height="32px">
             <Flex 
               w="50px" 
               justify="center" 
@@ -65,7 +49,7 @@ export const StudyTimeGrid = ({ slots, onUpdate, menteeId, date, isEditable = tr
 
             <Flex flex={1}>
               {Array.from({ length: SLOTS_PER_HOUR }, (_, slotIdx) => {
-                const globalIndex = hour * SLOTS_PER_HOUR + slotIdx;
+                const globalIndex = hourIndex * SLOTS_PER_HOUR + slotIdx;
                 const subject = gridState[globalIndex];
                 const colors = subject ? SUBJECT_COLORS[subject] : null;
 
@@ -76,13 +60,6 @@ export const StudyTimeGrid = ({ slots, onUpdate, menteeId, date, isEditable = tr
                     borderRight={slotIdx !== 5 ? "1px dashed" : "none"}
                     borderColor="gray.100"
                     bg={colors ? colors.bg : 'white'}
-                    cursor={isEditable ? 'pointer' : 'default'}
-                    
-                    onMouseDown={() => isEditable && startDrag(globalIndex)}
-                    onMouseEnter={() => isEditable && onDrag(globalIndex)}
-                    onMouseUp={endDrag}
-                    
-                    onClick={() => isEditable && startDrag(globalIndex)} 
                   />
                 );
               })}

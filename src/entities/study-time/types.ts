@@ -4,6 +4,7 @@ export interface StudyTimeSlot {
   startTime: string; // HH:mm
   endTime: string;   // HH:mm
   subject: Subject;
+  taskId: string;
 }
 
 export interface StudyTime {

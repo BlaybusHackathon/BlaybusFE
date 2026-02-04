@@ -1,46 +1,51 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
 import { useAuthStore } from '@/shared/stores/authStore';
-import { authApi } from '../api/authApi';
+import { MOCK_USERS } from './mockUsers'; 
+import { useToast } from '@chakra-ui/react';
 
 export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const setAuth = useAuthStore((state) => state.login); 
   const toast = useToast();
-  const { login: setAuth } = useAuthStore();
 
-  const login = async (id: string, pw: string) => {
+  const login = async (loginIdInput: string, passwordInput: string) => {
     setIsLoading(true);
 
-    try {
-      const { user } = await authApi.login({ loginId: id, password: pw });
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const foundUser = MOCK_USERS.find(
+      (u) => u.username === loginIdInput && u.password === passwordInput
+    );
+
+    if (foundUser) {
+      const { password, ...userInfo } = foundUser;
       
-      setAuth(user);
+      setAuth(userInfo); 
 
-      toast({
-        title: '로그인 성공',
-        description: `${user.name}님 환영합니다.`,
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
+      toast({ 
+        title: '로그인 성공', 
+        description: `${userInfo.name}님 환영합니다.`,
+        status: 'success', 
+        duration: 2000 
       });
 
-      const targetPath = user.role === 'MENTOR' ? '/mentor/dashboard' : '/mentee/planner';
-      navigate(targetPath, { replace: true });
-
-    } catch (error) {
-      toast({
-        title: '로그인 실패',
-        description: '아이디 또는 비밀번호가 올바르지 않습니다.',
+      if (userInfo.role === 'MENTOR') {
+        navigate('/mentor'); 
+      } else {
+        navigate('/mentee/planner');
+      }
+    } else {
+      toast({ 
+        title: '로그인 실패', 
+        description: '아이디 또는 비밀번호를 확인해주세요.', 
         status: 'error',
-        duration: 3000,
-        isClosable: true,
+        duration: 3000
       });
-      console.error(error);
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return { login, isLoading };

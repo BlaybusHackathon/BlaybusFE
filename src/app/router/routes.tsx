@@ -1,12 +1,14 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { PublicRoute } from './PublicRoute';
-import { RootRedirect } from './RootRedirect.tsx';
-import { MenteeLayout } from './MenteeLayout.tsx';
-import { MentorLayout } from './MentorLayout.tsx';
+import { RootRedirect } from './RootRedirect';
+import { MenteeLayout } from './MenteeLayout';
+import { MentorLayout } from './MentorLayout';
 import { Loading } from '@/shared/ui/Loading';
 
-// Lazy Load Pages
+// --- Lazy Load Pages ---
+
+// Auth
 const LoginPage = lazy(() => import('@/pages/login'));
 
 // Mentee Pages
@@ -16,9 +18,13 @@ const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
 
 // Mentor Pages
-const MentorDashboardPage = lazy(() => import('@/pages/mentor/dashboard'));
-const MentorTaskCreatePage = lazy(() => import('@/pages/mentor/task/create'));
-const MentorFeedbackWritePage = lazy(() => import('@/pages/mentor/feedback/write/[menteeId]'));
+const MentorMyPage = lazy(() => import('@/pages/mentor/mypage')); 
+
+// Mentor - Mentee Management Pages
+const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee')); 
+const MentorMenteeCalendarPage = lazy(() => import('@/pages/mentor/mentee/calendar'));
+const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback'));
+
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +41,7 @@ export const router = createBrowserRouter([
       </PublicRoute>
     ),
   },
+  
   // Mentee Routes
   {
     path: '/mentee',
@@ -46,16 +53,21 @@ export const router = createBrowserRouter([
       { path: 'mypage', element: <MenteeMyPage /> },
     ],
   },
+
   // Mentor Routes
   {
     path: '/mentor',
     element: <MentorLayout />,
     children: [
-      { path: 'dashboard', element: <MentorDashboardPage /> },
-      { path: 'task/create', element: <MentorTaskCreatePage /> },
-      { path: 'feedback/write/:menteeId', element: <MentorFeedbackWritePage /> },
+      { index: true, element: <MentorMyPage /> },
+      
+      { path: 'mentee/:menteeId', element: <MentorMenteeManagePage /> },
+      { path: 'mentee/:menteeId/calendar', element: <MentorMenteeCalendarPage /> },
+      { path: 'mentee/:menteeId/feedback', element: <MentorMenteeFeedbackPage /> },
     ],
   },
+
+  // Fallback
   {
     path: '*',
     element: <Navigate to="/login" replace />,

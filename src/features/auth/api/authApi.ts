@@ -16,11 +16,11 @@ export const authApi = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const found = MOCK_USERS.find(
-          (u) => u.loginId === req.loginId && u.password === req.password
+          (u) => u.username === req.loginId && u.password === req.password
         );
 
         if (found) {
-          const { password, loginId, ...user } = found;
+          const { password, ...user } = found;
           resolve({ user, token: 'mock-jwt-token' });
         } else {
           reject(new Error('INVALID_CREDENTIALS'));

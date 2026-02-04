@@ -1,29 +1,35 @@
-import { HStack, Text, IconButton, Box } from '@chakra-ui/react';
-import { useDateNavigation } from '@/features/planner/model/useDateNavigation';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Flex, Text, Button } from '@chakra-ui/react';
+import { useAuthStore } from '@/shared/stores/authStore';
+import { useNavigate } from 'react-router-dom';
 
 export const PlannerHeader = () => {
-  const { formattedDate, prevDate, nextDate } = useDateNavigation();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
-    <Box py={4} px={2} bg="white" position="sticky" top={0} zIndex={10}>
-      <HStack justify="space-between" align="center">
-        <IconButton
-            aria-label="Previous day"
-            icon={<ChevronLeftIcon w={6} h={6} />}
-            onClick={prevDate}
-            variant="ghost"
-        />
-        <Text fontSize="lg" fontWeight="bold">
-            {formattedDate}
-        </Text>
-        <IconButton
-            aria-label="Next day"
-            icon={<ChevronRightIcon w={6} h={6} />}
-            onClick={nextDate}
-            variant="ghost"
-        />
-      </HStack>
-    </Box>
+    <Flex 
+      bg="white" 
+      p={4} 
+      borderBottom="1px solid" 
+      borderColor="gray.200"
+      align="center"
+      justify="space-between" 
+    >
+      <Text fontSize="lg" fontWeight="bold">일일 플래너</Text>
+      
+      <Button 
+        size="xs" 
+        variant="outline" 
+        colorScheme="gray" 
+        onClick={handleLogout}
+      >
+        로그아웃
+      </Button>
+    </Flex>
   );
 };

@@ -6,14 +6,23 @@ import { TaskAddForm } from '@/features/task/ui/TaskAddForm';
 import { useNavigate } from 'react-router-dom';
 import { Task } from '@/entities/task/types';
 import { AddIcon } from '@chakra-ui/icons';
+import { canAddTask, canUseTimer } from '@/shared/lib/date';
 
 export const TaskList = () => {
-  const { tasks, selectedDate, toggleTaskComplete, deleteTask, addTask } = usePlannerStore();
+  const { tasks, selectedDate, updateTaskStatus, deleteTask, addTask } = usePlannerStore();
   const navigate = useNavigate();
   const [isAdding, setIsAdding] = useState(false);
 
+  const isEditable = canAddTask(selectedDate);
+  const isTimerEnabled = canUseTimer(selectedDate);
+
   const handleTaskClick = (taskId: string) => {
     navigate(`/mentee/task/${taskId}`);
+  };
+
+  const handleToggle = (task: Task) => {
+    const newStatus = task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
+    updateTaskStatus(task.id, newStatus);
   };
 
   const handleAddTask = (data: { title: string; subject: any }) => {
@@ -21,11 +30,14 @@ export const TaskList = () => {
       id: `new-${Date.now()}`,
       title: data.title,
       subject: data.subject,
-      date: selectedDate, // 현재 선택된 날짜로 등록
-      isFixed: false,
-      isCompleted: false,
-      menteeId: 'mentee-1', // 임시 ID
-      createdBy: 'MENTEE',
+      taskDate: selectedDate,
+      status: 'PENDING',
+      isMandatory: false,
+      isMentorChecked: false,
+      menteeId: 'mentee-1',
+      recurringGroupId: null,
+      contentId: null,
+      weaknessId: null,
     };
     addTask(newTask);
     setIsAdding(false);
@@ -42,28 +54,32 @@ export const TaskList = () => {
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={() => toggleTaskComplete(task.id)}
+            onToggle={() => handleToggle(task)}
             onDelete={() => deleteTask(task.id)}
             onClick={() => handleTaskClick(task.id)}
+            isTimerEnabled={isTimerEnabled}
+            isEditable={isEditable}
           />
         ))
       )}
 
-      {isAdding ? (
-        <Box mt={2}>
-          <TaskAddForm onSubmit={handleAddTask} onCancel={() => setIsAdding(false)} />
-        </Box>
-      ) : (
-        <Button 
-          leftIcon={<AddIcon />} 
-          colorScheme="blue" 
-          variant="outline" 
-          w="full" 
-          onClick={() => setIsAdding(true)}
-          mt={2}
-        >
-          할 일 추가하기
-        </Button>
+      {isEditable && (
+        isAdding ? (
+          <Box mt={2}>
+            <TaskAddForm onSubmit={handleAddTask} onCancel={() => setIsAdding(false)} />
+          </Box>
+        ) : (
+          <Button 
+            leftIcon={<AddIcon />} 
+            colorScheme="blue" 
+            variant="outline" 
+            w="full" 
+            onClick={() => setIsAdding(true)}
+            mt={2}
+          >
+            할 일 추가하기
+          </Button>
+        )
       )}
     </VStack>
   );
