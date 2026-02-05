@@ -1,4 +1,5 @@
 // src/widgets/main-layout/MainLayout.tsx
+import { useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/shared/stores/authStore';
@@ -14,17 +15,25 @@ import { MobileBottomNav } from './mobile/MobileBottomNav';
 
 export const MainLayout = () => {
   const { user } = useAuthStore();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   if (!user) return null;
 
   const navItems = getNavItems(user.role);
+  const sidebarWidth = isCollapsed ? '80px' : '240px';
 
   return (
     <Box minH="100vh">
       <Box display={{ base: 'none', md: 'block' }}>
-        <DesktopHeader />
-        <DesktopSidebar />
-        <Box ml="240px" mt="60px" p={8} minH="calc(100vh - 60px)">
+        <DesktopHeader onToggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+        <DesktopSidebar isCollapsed={isCollapsed} />
+        <Box 
+          ml={sidebarWidth} 
+          mt="64px" 
+          p={8} 
+          minH="calc(100vh - 64px)"
+          transition="margin-left 0.3s ease"
+        >
            <Outlet />
         </Box>
       </Box>

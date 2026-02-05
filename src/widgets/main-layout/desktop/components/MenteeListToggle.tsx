@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+
 import { MenteeMenuItem, MenteeNavItem } from './MenteeMenuItem';
 
 interface Props {
   mentees: MenteeNavItem[];
+  isCollapsed: boolean;
 }
 
-export const MenteeListToggle = ({ mentees }: Props) => {
+export const MenteeListToggle = ({ mentees, isCollapsed }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
   const [openMenteeIds, setOpenMenteeIds] = useState<string[]>([]);
 
@@ -21,26 +23,35 @@ export const MenteeListToggle = ({ mentees }: Props) => {
     <Box>
       <Flex
         align="center"
-        px={4}
-        py={3}
+        p={3}
         cursor="pointer"
+        onClick={() => setIsOpen(!isOpen)}
+        color="blue.500"
         _hover={{ bg: 'gray.100' }}
         borderRadius="md"
-        onClick={() => setIsOpen(!isOpen)}
-        color="gray.600"
+        justify={isCollapsed ? 'center' : 'flex-start'}
       >
-        {isOpen ? <ChevronDownIcon mr={2} /> : <ChevronRightIcon mr={2} />}
-        <Text fontSize="sm" fontWeight="bold">담당 멘티</Text>
+        {isCollapsed ? (
+          <Box>{isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}</Box>
+        ) : (
+          <>
+            {isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
+            <Text ml={2} fontSize="sm" fontWeight="semibold">
+              담당 멘티
+            </Text>
+          </>
+        )}
       </Flex>
 
-      {isOpen && (
-        <Box pl={2} mt={1}>
+      {isOpen && !isCollapsed && (
+        <Box pl={2}>
           {mentees.map((mentee) => (
             <MenteeMenuItem
               key={mentee.id}
               mentee={mentee}
               isOpen={openMenteeIds.includes(mentee.id)}
               onToggle={() => toggleMentee(mentee.id)}
+              isCollapsed={isCollapsed}
             />
           ))}
         </Box>
