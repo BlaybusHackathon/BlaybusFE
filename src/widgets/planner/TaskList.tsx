@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Task } from '@/entities/task/types';
 import { AddIcon } from '@chakra-ui/icons';
 import { canAddTask, canUseTimer } from '@/shared/lib/date';
+import { isBefore, startOfDay } from 'date-fns';
 
 export const TaskList = () => {
   const { tasks, selectedDate, updateTaskStatus, deleteTask, addTask } = usePlannerStore();
@@ -16,8 +17,18 @@ export const TaskList = () => {
   const isEditable = canAddTask(selectedDate);
   const isTimerEnabled = canUseTimer(selectedDate);
 
+  // [수정됨] 날짜에 따른 페이지 이동 분기 처리
   const handleTaskClick = (taskId: string) => {
-    navigate(`/mentee/task/${taskId}`);
+    const today = startOfDay(new Date());
+    const taskDateObj = startOfDay(new Date(selectedDate));
+
+    // 과제 날짜가 오늘보다 이전이면(과거) -> 상세(피드백 조회) 페이지
+    if (isBefore(taskDateObj, today)) {
+      navigate(`/mentee/task/${taskId}`);
+    } else {
+      // 과제 날짜가 오늘이거나 미래면 -> 과제 제출 페이지
+      navigate(`/mentee/task/${taskId}/submit`);
+    }
   };
 
   const handleToggle = (task: Task) => {

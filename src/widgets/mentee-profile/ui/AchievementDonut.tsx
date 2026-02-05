@@ -1,4 +1,4 @@
-import { Box, Flex, CircularProgress, CircularProgressLabel } from '@chakra-ui/react';
+import { Box, Flex, CircularProgress, CircularProgressLabel, useBreakpointValue, chakra } from '@chakra-ui/react';
 
 interface Props {
   label: string;
@@ -15,19 +15,21 @@ const COLOR_MAP: Record<string, string> = {
 export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
   const colorCode = COLOR_MAP[colorScheme] || '#718096';
 
+  const thicknessValue = useBreakpointValue({ base: 12, md: 18 });
+
   return (
-    <Box position="relative" display="flex" flexDirection="column" alignItems="center">
+    <Box position="relative" display="flex" flexDirection="column" alignItems="center" px={4}>
       <Flex
         bg={colorCode}
         color="white"
-        w="66px"
-        h="38px"
+        w={{ base: "50px", md: "66px" }}
+        h={{ base: "30px", md: "38px" }}
         align="center"
         justify="center"
         borderRadius="md"
         mb={3} 
         position="relative"
-        fontSize="sm"
+        fontSize={{ base: "12px", md: "sm" }}
         fontWeight="bold"
         _after={{
           content: '""',
@@ -45,14 +47,22 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
 
       <CircularProgress
         value={value}
-        size="122px" 
-        thickness="8px" 
+        size={{ base: "80px", md: "122px" }} 
+        thickness={thicknessValue}
         color={colorScheme + '.500'}
         trackColor="gray.100"
         capIsRound
       >
-        <CircularProgressLabel fontSize="2xl" fontWeight="bold" color={colorCode}>
-          {value}%
+        <CircularProgressLabel 
+          fontSize={{ base: "22px", md: "4xl" }} 
+          fontWeight="bold" 
+          color={colorCode}
+          pb={1}
+        >
+          {value}
+          <chakra.span fontSize={{ base: "10px", md: "18px" }} ml={0.5}>
+            %
+          </chakra.span>
         </CircularProgressLabel>
       </CircularProgress>
     </Box>

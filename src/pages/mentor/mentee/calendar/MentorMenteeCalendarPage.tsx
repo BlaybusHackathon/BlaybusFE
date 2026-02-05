@@ -8,7 +8,6 @@ export const MentorMenteeCalendarPage = () => {
     const toast = useToast();
 
     const handleCreateSchedule = () => {
-        // Nav logic will be added later or just toast for now
         toast({
             title: "일정 만들기",
             description: "일정 등록 페이지로 이동합니다 (준비중)",
@@ -19,21 +18,42 @@ export const MentorMenteeCalendarPage = () => {
     };
 
     return (
-        <Box p={6}>
-            <Flex justify="space-between" align="center" mb={6}>
+        <Box p={{ base: 4, md: 6 }}>
+            <Flex 
+                justify="space-between" 
+                align="center" 
+                mb={6}
+            >
                 <Box>
-                    <Heading size="lg" mb={2}>{menteeId}님 월간 계획표</Heading>
+                    <Heading size={{ base: 'md', md: 'lg' }} mb={1}>
+                        {menteeId}님 월간 계획표
+                    </Heading>
                 </Box>
+
                 <Button
+                    display={{ base: 'none', md: 'inline-flex' }}
                     leftIcon={<AddIcon />}
                     colorScheme="blue"
                     onClick={handleCreateSchedule}
+                    size="md"
                 >
                     일정 만들기
                 </Button>
             </Flex>
 
             <MonthlyCalendar />
+
+            <Button
+                display={{ base: 'flex', md: 'none' }}
+                leftIcon={<AddIcon />}
+                colorScheme="blue"
+                onClick={handleCreateSchedule}
+                size="md"
+                w="full"
+                mt={4}
+            >
+                일정 만들기
+            </Button>
         </Box>
     );
 };
