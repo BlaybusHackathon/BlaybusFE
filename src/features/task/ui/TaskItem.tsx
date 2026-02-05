@@ -28,7 +28,6 @@ export const TaskItem = ({
     <HStack
      onClick={onClick}
       w="full"
-      minW={{base:"200", md:"320px"}}
       p={6}
       borderRadius="lg"
       boxShadow="sm"
