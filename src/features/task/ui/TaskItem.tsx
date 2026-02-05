@@ -73,7 +73,7 @@ export const TaskItem = ({
       <HStack spacing={2} flexShrink={0}>
 
         
-        {/* {canDelete && (
+        {canDelete && (
           <IconButton
             aria-label="Delete task"
             icon={<CloseIcon />}
@@ -85,7 +85,7 @@ export const TaskItem = ({
               onDelete();
             }}
           />
-        )} */}
+        )}
         <HStack spacing={6} flex={1}>
           <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} fontSize="0.6rem">
             {SUBJECT_LABELS[task.subject]}
