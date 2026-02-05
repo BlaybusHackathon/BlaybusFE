@@ -17,16 +17,13 @@ export const TaskList = () => {
   const isEditable = canAddTask(selectedDate);
   const isTimerEnabled = canUseTimer(selectedDate);
 
-  // [수정됨] 날짜에 따른 페이지 이동 분기 처리
   const handleTaskClick = (taskId: string) => {
     const today = startOfDay(new Date());
     const taskDateObj = startOfDay(new Date(selectedDate));
 
-    // 과제 날짜가 오늘보다 이전이면(과거) -> 상세(피드백 조회) 페이지
     if (isBefore(taskDateObj, today)) {
       navigate(`/mentee/task/${taskId}`);
     } else {
-      // 과제 날짜가 오늘이거나 미래면 -> 과제 제출 페이지
       navigate(`/mentee/task/${taskId}/submit`);
     }
   };
@@ -55,7 +52,7 @@ export const TaskList = () => {
   };
 
   return (
-    <VStack spacing={3} align="stretch">
+    <VStack spacing={3} justify={'center'} align="stretch" p={2}>
       {tasks.length === 0 && !isAdding ? (
         <Text textAlign="center" color="gray.500" py={10}>
           등록된 할 일이 없습니다.
