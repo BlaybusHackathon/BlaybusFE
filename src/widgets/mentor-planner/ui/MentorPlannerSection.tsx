@@ -91,7 +91,7 @@ export const MentorPlannerSection = () => {
                     <Box 
                         flexShrink={0} 
                         mx={{ base: 'auto', md: 0 }}
-                        w={{ base: '100%', md: 'auto' }}
+                        w={{ base: '100%', md: '24vw' }}
                         overflowX={{ base: 'auto', md: 'visible' }}
                         display="flex"
                         justifyContent="center"

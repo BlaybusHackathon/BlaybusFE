@@ -20,16 +20,17 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
   return (
     <Box 
       userSelect="none" 
-      w="354px"
-      h="680px"
+      w="full"
+      h={"auto"}
       display="flex"
       flexDirection="column"
+      px={2}
     >
       <Box 
         flex={1}
         borderRadius="2xl" 
-        overflow="hidden"
         overflowY="auto"
+        h={"100%"}
         bg="white"
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
@@ -42,8 +43,6 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
             key={hourIndex} 
             borderBottom="1px solid" 
             borderColor="gray.200" 
-            h="28px"
-            minH="28px"
           >
             <Flex 
               w="40px" 
@@ -57,7 +56,7 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
               {hour}
             </Flex>
 
-            <Flex flex={1}>
+            <Flex flex={1} >
               {Array.from({ length: SLOTS_PER_HOUR }, (_, slotIdx) => {
                 const globalIndex = hourIndex * SLOTS_PER_HOUR + slotIdx;
                 const subject = gridState[globalIndex];
