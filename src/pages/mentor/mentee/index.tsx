@@ -1,5 +1,5 @@
 import { Box, Text, Grid, GridItem } from '@chakra-ui/react';
-import { MenteeProfileSection } from './ui/MenteeProfileSection'; 
+import { MenteeProfileSection } from '../../../widgets/mentee-profile/ui/MenteeProfileSection'; 
 import { MentorPlannerSection } from '@/widgets/mentor-planner';
 import { MenteeWeaknessSection } from '@/widgets/mentor-weakness/ui/MenteeWeaknessSection';
 import { WeeklyReportList } from '@/widgets/mentor-report/ui/WeeklyReportList'; 
@@ -11,7 +11,7 @@ const MentorMenteeManagePage = () => {
     <Box maxW="1200px" mx="auto" py={6} px={{ base: 4, md: 0 }}>
       <Text fontSize="2xl" fontWeight="bold" mb={6}>담당 멘티</Text>
       
-      <MenteeProfileSection profile={MOCK_MENTEE_PROFILE} />
+      <MenteeProfileSection profile={MOCK_MENTEE_PROFILE} userRole='MENTOR'/>
 
       <Box mt={8}>
         <MentorPlannerSection />

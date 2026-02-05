@@ -7,13 +7,9 @@ interface Props {
 
 export const StatBadge = ({ label, value }: Props) => {
   return (
-    <Flex 
-      align="center" 
-      gap={2}
-      minW="max-content" 
-    >
+    <Flex align="center" gap={2} w="fit-content">
       <Text 
-        fontSize="md" 
+        fontSize={{ base: "12px", md: "md" }} 
         fontWeight="bold" 
         color="gray.600" 
         whiteSpace="nowrap" 
@@ -22,14 +18,13 @@ export const StatBadge = ({ label, value }: Props) => {
       </Text>
       
       <Flex
-        padding="1px 12px"
+        padding={{ base: "1px 8px", md: "1px 12px" }}
         bg="#373E56"
         borderRadius="full"
         align="center"
         justify="center"
-        flexShrink={0} 
       >
-        <Text color="white" fontWeight="semibold" fontSize="16px">
+        <Text color="white" fontWeight="semibold" fontSize={{ base: "12px", md: "16px" }}>
           {value}
         </Text>
       </Flex>

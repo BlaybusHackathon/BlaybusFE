@@ -1,4 +1,4 @@
-import type { FeedbackWithAuthor, AnswerWithAuthor } from './types';
+import type { FeedbackWithAuthor, AnswerWithAuthor, FeedbackWithTask } from './types';
 
 export const MOCK_FEEDBACKS: FeedbackWithAuthor[] = [
   {
@@ -12,7 +12,7 @@ export const MOCK_FEEDBACKS: FeedbackWithAuthor[] = [
     mentorId: 'mentor-1',
     imageId: 'img-1',
     authorName: '김멘토',
-    authorProfileUrl: null
+    authorProfileUrl: null,
   },
   {
     id: 'fb-2',
@@ -25,7 +25,39 @@ export const MOCK_FEEDBACKS: FeedbackWithAuthor[] = [
     mentorId: 'mentor-1',
     imageId: 'img-1',
     authorName: '김멘토',
-    authorProfileUrl: null
+    authorProfileUrl: null,
+  }
+];
+
+export const MOCK_FEEDBACKS_With_Task: FeedbackWithTask[] = [
+  {
+    id: 'fb-1',
+    content: '**예문과 함께** 다시 한 번 복습해보세요.',
+    imageUrl: null,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+    xPos: 70,
+    yPos: 35,
+    taskId: 'task-1',
+    mentorId: 'mentor-1',
+    imageId: 'img-1',
+    authorName: '김멘토',
+    authorProfileUrl: null,
+    taskTitle: '영어 독해 3단원: 주장 찾기'
+
+  },
+  {
+    id: 'fb-2',
+    content: '이 부분은 잘 정리했네요. **핵심 개념**을 잘 파악했습니다.',
+    imageUrl: 'https://placehold.co/600x800',
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    xPos: 30,
+    yPos: 60,
+    taskId: 'task-1',
+    mentorId: 'mentor-1',
+    imageId: 'img-1',
+    authorName: '김멘토',
+    authorProfileUrl: null,
+    taskTitle: '영어 독해 3단원: 주장 찾기'
   }
 ];
 

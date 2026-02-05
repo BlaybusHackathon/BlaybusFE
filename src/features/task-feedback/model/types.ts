@@ -1,6 +1,6 @@
 import { TaskFeedback } from '@/entities/task-feedback/types';
 import { Answer } from '@/entities/answer/types';
-import { UserRole } from '@/shared/constants/enums';
+import { Subject, UserRole } from '@/shared/constants/enums';
 
 export type FeedbacksByImage = Record<string, TaskFeedback[]>;
 
@@ -36,4 +36,12 @@ export interface AnswerWithAuthor extends Answer {
 export interface FeedbackWithAuthor extends TaskFeedback {
   authorName: string;
   authorProfileUrl: string | null;
+  subject?: Subject;
+}
+
+export interface FeedbackWithTask extends TaskFeedback {
+    authorName: string;
+    authorProfileUrl: string | null;
+    subject?: Subject;
+    taskTitle: string;
 }
