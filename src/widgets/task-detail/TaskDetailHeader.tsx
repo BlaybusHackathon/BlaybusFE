@@ -1,4 +1,4 @@
-import { Badge, Box, HStack, Stack, Text, Flex } from '@chakra-ui/react';
+import { Badge, Box, HStack, Stack, Text } from '@chakra-ui/react';
 
 interface TaskDetailHeaderProps {
     subject: string;
@@ -17,12 +17,10 @@ export const TaskDetailHeader = ({
 }: TaskDetailHeaderProps) => {
     return (
         <Box mb={12}>
-            {/* 제목 */}
             <Text fontSize="28px" fontWeight="bold" mb={6} color="#1A1A1A">
                 {title}
             </Text>
 
-            {/* 보완점 (기존 스타일 유지) */}
             {supplement && (
                 <HStack spacing={6} mb={8} fontSize="16px">
                     <Text color="#666666" fontWeight="medium">보완점</Text>
@@ -30,18 +28,13 @@ export const TaskDetailHeader = ({
                 </HStack>
             )}
 
-            {/* [수정 포인트] 정보 영역 (과목, 날짜, 멘토 확인)
-               - HStack 대신 Stack 사용
-               - direction: 모바일은 column, 데스크톱은 row
-               - spacing: 반응형으로 조절 (세로일 땐 좀 더 촘촘하게, 가로일 땐 넓게)
-            */}
+
             <Stack 
                 direction={{ base: 'column', md: 'row' }} 
                 spacing={{ base: 3, md: 10 }} 
                 fontSize="15px" 
                 align={{ base: 'flex-start', md: 'center' }}
             >
-                {/* 1. 과목 */}
                 <HStack spacing={8}>
                     <Text color="#8e8e8e" fontWeight="medium" minW="30px">과목</Text>
                     <Badge
@@ -59,13 +52,11 @@ export const TaskDetailHeader = ({
                     </Badge>
                 </HStack>
 
-                {/* 2. 날짜 */}
                 <HStack spacing={8}>
                     <Text color="#8e8e8e" fontWeight="medium" minW="30px">날짜</Text>
                     <Text color="#333333" fontWeight="bold">{date}</Text>
                 </HStack>
 
-                {/* 3. 멘토 확인 */}
                 <HStack spacing={4}>
                     <Text color="#8e8e8e" fontWeight="medium" minW="60px">멘토 확인</Text>
                     {isMentorChecked ? (
