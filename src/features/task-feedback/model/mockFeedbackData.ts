@@ -17,7 +17,7 @@ export const MOCK_FEEDBACKS: FeedbackWithAuthor[] = [
   {
     id: 'fb-2',
     content: '이 부분은 잘 정리했네요. **핵심 개념**을 잘 파악했습니다.',
-    imageUrl: 'https://via.placeholder.com/200x150?text=Reference',
+    imageUrl: 'https://placehold.co/600x800',
     createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
     xPos: 30,
     yPos: 60,
@@ -53,6 +53,6 @@ export const MOCK_ANSWERS: AnswerWithAuthor[] = [
 ];
 
 export const MOCK_SUBMISSION_IMAGES = [
-  { id: 'img-1', imageUrl: 'https://via.placeholder.com/600x800?text=Submission+1' },
-  { id: 'img-2', imageUrl: 'https://via.placeholder.com/600x800?text=Submission+2' }
+  { id: 'img-1', imageUrl: 'https://placehold.co/600x800' },
+  { id: 'img-2', imageUrl: 'https://placehold.co/600x800' }
 ];

@@ -19,11 +19,13 @@ interface FeedbackCardProps {
   onAddAnswer: (comment: string) => void;
   onUpdateAnswer: (id: string, comment: string) => void;
   onDeleteAnswer: (id: string) => void;
+  
+  // [추가] 모바일 뷰 여부 (Drawer 내부 렌더링용)
+  isMobileView?: boolean;
 }
 
 const MotionBox = motion(Box);
 
-// 점 3개 아이콘 (More)
 const MoreIcon = (props: any) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <circle cx="5" cy="12" r="2" fill="currentColor"/>
@@ -42,7 +44,8 @@ export const FeedbackCard = ({
   onDeleteFeedback,
   onAddAnswer,
   onUpdateAnswer,
-  onDeleteAnswer
+  onDeleteAnswer,
+  isMobileView = false // 기본값 false
 }: FeedbackCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newAnswer, setNewAnswer] = useState('');
@@ -52,13 +55,33 @@ export const FeedbackCard = ({
 
   const { positionStyles, transformOrigin, marginStyles } = getFeedbackPositionStyles(feedback.xPos, feedback.yPos);
 
+  // [스타일 분기]
+  const containerStyles = isMobileView ? {
+      position: 'static' as const,
+      width: '100%',
+      maxWidth: '100%',
+      boxShadow: 'none',
+      border: 'none',
+      borderRadius: '0', // Drawer가 이미 둥글어서
+      margin: 0,
+  } : {
+      ...positionStyles,
+      ...marginStyles,
+      position: 'absolute' as const,
+      width: '320px',
+      maxW: '90vw',
+      borderRadius: '12px',
+      boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.15)',
+  };
+
   if (isEditing) {
     return (
       <Box 
-        position="absolute" 
+        position={isMobileView ? 'static' : 'absolute'} 
         zIndex={200} 
+        w={isMobileView ? '100%' : undefined}
         onClick={(e) => e.stopPropagation()}
-        style={{ ...positionStyles, ...marginStyles }}
+        style={isMobileView ? {} : { ...positionStyles, ...marginStyles }}
       >
          <FeedbackInputForm
            initialContent={feedback.content}
@@ -75,24 +98,20 @@ export const FeedbackCard = ({
 
   return (
     <MotionBox
-      layoutId={`feedback-${feedback.id}`} 
-      position="absolute"
+      layoutId={isMobileView ? undefined : `feedback-${feedback.id}`} 
       zIndex={200}
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
-      style={{ ...positionStyles, ...marginStyles }}
-      
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      transformOrigin={transformOrigin}
+      style={containerStyles}
       
       bg="white"
-      borderRadius="12px"
-      boxShadow="0px 8px 24px rgba(0, 0, 0, 0.15)"
-      w="320px"
-      maxW="90vw"
       overflow="hidden"
+
+      // 애니메이션: 모바일은 Drawer가 처리하므로 끔
+      initial={isMobileView ? undefined : { opacity: 0, scale: 0.8 }}
+      animate={isMobileView ? undefined : { opacity: 1, scale: 1 }}
+      exit={isMobileView ? undefined : { opacity: 0, scale: 0.8 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      transformOrigin={transformOrigin}
     >
       {/* Header */}
       <Flex justify="space-between" align="center" p={3} borderBottom="1px solid" borderColor="gray.50" bg="white">
@@ -121,7 +140,7 @@ export const FeedbackCard = ({
       </Flex>
 
       {/* Body */}
-      <Box p={4} maxH="300px" overflowY="auto">
+      <Box p={4} maxH={isMobileView ? "60vh" : "300px"} overflowY="auto">
         <Text 
           fontSize="sm" 
           lineHeight="1.6"

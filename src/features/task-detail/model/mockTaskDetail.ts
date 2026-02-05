@@ -1,4 +1,3 @@
-// 댓글 타입 정의
 export interface Comment {
     id: string;
     author: string;
@@ -20,3 +19,14 @@ export const MOCK_TASK_DETAIL_DATA = {
     ],
     menteeComment: '틀린 단어는 체크해두었고, 다음 복습 때 예문이랑 같이 다시 외울 예정입니다.',
 };
+
+
+
+
+
+
+
+
+
+
+
