@@ -1,9 +1,19 @@
-import { Box, Heading } from '@chakra-ui/react';
+import { Box, Container, Divider } from '@chakra-ui/react';
+import { YesterdaySection } from './ui/YesterdaySection';
+import { HistorySection } from './ui/HistorySection';
 
 const MenteeFeedbackPage = () => {
   return (
-    <Box p={5}>
-      <Heading size="lg" mb={4}>피드백 확인</Heading>
+    <Box minH="100vh" py={8}>
+      <Container maxW="container.md">
+        
+        <YesterdaySection />
+
+        <Divider my={10} borderColor="gray.200" />
+
+        <HistorySection />
+
+      </Container>
     </Box>
   );
 };
