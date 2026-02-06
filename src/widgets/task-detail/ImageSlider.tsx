@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Flex, IconButton, Image, Text, Tooltip } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon, EditIcon, CloseIcon } from '@chakra-ui/icons'; 
+import { Box, Flex, IconButton, Image, Text, Tooltip, HStack } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon, EditIcon, CloseIcon , ChatIcon} from '@chakra-ui/icons'; 
 import { motion, PanInfo } from 'framer-motion';
 
 import { FeedbackOverlay } from '@/features/task-feedback/ui/FeedbackOverlay';
@@ -83,16 +83,13 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
     <Box 
       position="relative" 
       w="full"
-      h={{ base: 'auto', md: '85vh' }}
-      bg="gray.900" 
+      h={{ base: 'fit-content'}}
       borderRadius="xl" 
-      border="1px solid" 
-      borderColor="gray.200"
       userSelect="none"
       display="flex"          
       justifyContent="center" 
       alignItems={{ base: 'flex-start', md: 'center' }}
-      overflow="hidden"
+      pb={16}
     >
       <Box 
         as={motion.div}
@@ -129,7 +126,8 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
       </Box>
 
       {/* --- 컨트롤러 영역 --- */}
-      
+
+
       {isCreateMode && (
          <Box position="absolute" top={4} left="50%" transform="translateX(-50%)" zIndex={30} pointerEvents="none">
              <Box bg="blue.500" color="white" px={4} py={2} borderRadius="full" fontSize="sm" fontWeight="bold" boxShadow="lg">
@@ -138,10 +136,8 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
          </Box>
       )}
 
-      {/* [수정됨] 우측 상단 버튼 영역 */}
       <Box position="absolute" top={4} right={4} zIndex={30}>
         {isSubmissionMode ? (
-            // 1. 제출 모드: 기존 SimpleGrid 스타일의 X 버튼으로 변경
             <IconButton
                 aria-label="Delete image"
                 icon={<CloseIcon />} 
@@ -153,29 +149,34 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
                 boxShadow="md"
             />
         ) : (
-            // 2. 멘토 모드: 기존 편집 버튼 유지
             userRole === "MENTOR" && (
-                <Tooltip label={isCreateMode ? "작성 모드 종료" : "피드백 남기기"} hasArrow placement='left'>
-                    <IconButton
-                        aria-label="Toggle feedback mode"
-                        icon={isCreateMode ? <CloseIcon /> : <EditIcon />}
-                        onClick={toggleFeedbackMode}
-                        colorScheme={isCreateMode ? "red" : "blue"}
-                        isRound
-                        size="lg"
-                        boxShadow="xl"
-                        border="2px solid white"
-                    />
-                </Tooltip>
+
+                null
             )
         )}
-      </Box>
+      </Box>      
+
+        {userRole === "MENTOR" && (
+            <Box position="absolute" bottom={-16} right={0} zIndex={5}>
+                <IconButton
+                    aria-label="Comments"
+                    icon={<ChatIcon boxSize={5} color="white" />}
+                    onClick={toggleFeedbackMode}
+                    isRound
+                    w="48px" h="48px"
+                    bg="#3B82F6"
+                    _hover={{ bg: 'blue.600' }}
+                    boxShadow="md"
+                />
+            </Box>
+        )}
+
 
       {images.length > 1 && (
         <>
           <IconButton
             aria-label="Previous"
-            icon={<ChevronLeftIcon boxSize={8} />}
+            icon={<ChevronLeftIcon boxSize={8} color={'black'}/>}
             position="absolute"
             left={4}
             top="50%"
@@ -190,7 +191,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
           />
           <IconButton
             aria-label="Next"
-            icon={<ChevronRightIcon boxSize={8} />}
+            icon={<ChevronRightIcon boxSize={8} color={'black'}/>}
             position="absolute"
             right={4}
             top="50%"
@@ -221,6 +222,8 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
           </Text>
         </Box>
       </Flex>
+      
+
     </Box>
   );
 };

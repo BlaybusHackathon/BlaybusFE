@@ -15,7 +15,7 @@ const COLOR_MAP: Record<string, string> = {
 export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
   const colorCode = COLOR_MAP[colorScheme] || '#718096';
 
-  const thicknessValue = useBreakpointValue({ base: 12, md: 18 });
+  const thicknessValue = useBreakpointValue({ base: 12, md: 16 });
 
   return (
     <Box position="relative" display="flex" flexDirection="column" alignItems="center" px={4}>
