@@ -6,29 +6,27 @@ interface Props {
 
 export const MenteeCommentCard = ({ memo }: Props) => {
   return (
-    <Box 
-      bg="white" 
-      p={5} 
-      borderRadius="2xl" 
+    <Box
+      bg="white"
+      borderRadius="22px"
     >
-      <Flex align="center" mb={3} gap={2}>
-        <Text fontSize="md" fontWeight="bold" color="gray.700">
-          코멘트
+      <Flex align="center" mb={4} gap={3}>
+        <Text fontSize="20px" fontWeight="700" color="#373E56">
+          학생 코멘트
         </Text>
       </Flex>
 
-      <Box 
-        bg="#F9F9FB" 
-        p={4} 
-        borderRadius="xl" 
-        minH="80px"
+      <Box
+        bg="#F9F9FB"
+        p="32px 34px"
+        borderRadius="22px"
       >
         {memo ? (
-          <Text fontSize="sm" color="gray.700" whiteSpace="pre-wrap" lineHeight="1.6">
+          <Text fontSize="18px" color="#373E56">
             {memo}
           </Text>
         ) : (
-          <Text fontSize="sm" color="gray.400" textAlign="center" py={2}>
+          <Text fontSize="18px" color="#373E56" textAlign="center" py={2}>
             작성된 코멘트가 없습니다.
           </Text>
         )}

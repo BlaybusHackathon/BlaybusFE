@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
-import { Box, Flex, Text, VStack, IconButton, HStack } from '@chakra-ui/react';
-import { ChevronRightIcon, ChevronLeftIcon } from '@chakra-ui/icons';
+import { Box, Flex, Text, VStack, IconButton, HStack, Select } from '@chakra-ui/react';
+import { ChevronRightIcon, ChevronLeftIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { 
-  format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, 
+import {
+  format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   eachWeekOfInterval, addDays, addMonths, subMonths, isSameMonth
 } from 'date-fns';
 import { MOCK_WEEKLY_REPORTS } from '@/features/report/model/mockReportData';
@@ -17,7 +17,7 @@ export const WeeklyReportList = () => {
   const weeksInMonth = useMemo(() => {
     const monthStart = startOfMonth(currentMonthDate);
     const monthEnd = endOfMonth(currentMonthDate);
-    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); 
+    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
     const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
     const weeks = eachWeekOfInterval({
@@ -62,24 +62,81 @@ export const WeeklyReportList = () => {
     <Box bg="white" p={{ base: 4, md: 8 }} borderRadius="3xl" boxShadow="sm">
       <Flex justify="space-between" align="center" mb={6}>
         <Text fontSize="xl" fontWeight="bold">주간 학습 리포트</Text>
-        <HStack spacing={4}>
-          <IconButton 
-            icon={<ChevronLeftIcon />} 
-            aria-label="Previous Month" 
-            variant="ghost" 
-            size="sm"
-            onClick={() => setCurrentMonthDate(prev => subMonths(prev, 1))}
-          />
-          <Text fontSize="lg" fontWeight="bold" minW="100px" textAlign="center">
-            {format(currentMonthDate, 'yyyy. MM')}
-          </Text>
-          <IconButton 
-            icon={<ChevronRightIcon />} 
-            aria-label="Next Month" 
-            variant="ghost" 
-            size="sm"
-            onClick={() => setCurrentMonthDate(prev => addMonths(prev, 1))}
-          />
+        <HStack spacing={2}>
+          <Box position="relative">
+            <Text
+              as="span"
+              position="absolute"
+              right={8}
+              top="50%"
+              transform="translateY(-50%)"
+              fontSize="sm"
+              color="gray.500"
+              zIndex={1}
+              pointerEvents="none"
+            >
+              년
+            </Text>
+            <Select
+              value={format(currentMonthDate, 'yyyy')}
+              onChange={(e) => {
+                const newYear = parseInt(e.target.value);
+                setCurrentMonthDate(prev => {
+                  const newDate = new Date(prev);
+                  newDate.setFullYear(newYear);
+                  return newDate;
+                });
+              }}
+              w="100px"
+              size="sm"
+              borderRadius="md"
+              borderColor="blue.400"
+              color="blue.500"
+              fontWeight="bold"
+              icon={<ChevronDownIcon color="blue.500" />}
+            >
+              {[2024, 2025, 2026, 2027].map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </Select>
+          </Box>
+          <Box position="relative">
+            <Text
+              as="span"
+              position="absolute"
+              right={8}
+              top="50%"
+              transform="translateY(-50%)"
+              fontSize="sm"
+              color="gray.500"
+              zIndex={1}
+              pointerEvents="none"
+            >
+              월
+            </Text>
+            <Select
+              value={format(currentMonthDate, 'M')}
+              onChange={(e) => {
+                const newMonth = parseInt(e.target.value) - 1;
+                setCurrentMonthDate(prev => {
+                  const newDate = new Date(prev);
+                  newDate.setMonth(newMonth);
+                  return newDate;
+                });
+              }}
+              w="80px"
+              size="sm"
+              borderRadius="md"
+              borderColor="blue.400"
+              color="blue.500"
+              fontWeight="bold"
+              icon={<ChevronDownIcon color="blue.500" />}
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                <option key={month} value={month}>{month}</option>
+              ))}
+            </Select>
+          </Box>
         </HStack>
       </Flex>
 
