@@ -46,7 +46,7 @@ export const MenteeWeaknessSection = () => {
         id: `new-${Date.now()}`,
         title,
         fileName,
-        subject: selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject,
+        subject: selectedSubject === 'ALL' ? 'OTHER' : selectedSubject,
         menteeId: 'mentee-1',
         inforId: 'info-1',
         contentId: 'content-new',
@@ -153,7 +153,7 @@ export const MenteeWeaknessSection = () => {
             weakness={{
               id: 'temp-new',
               title: '',
-              subject: selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject,
+              subject: selectedSubject === 'ALL' ? 'OTHER' : selectedSubject,
               menteeId: '',
               inforId: '',
               contentId: '',

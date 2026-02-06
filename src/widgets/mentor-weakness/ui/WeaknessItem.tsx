@@ -4,7 +4,7 @@ import {
   Icon, Textarea, Button, Input
 } from '@chakra-ui/react';
 import {
-  AttachmentIcon, EditIcon, DeleteIcon, CheckIcon, CloseIcon, SmallCloseIcon
+  AttachmentIcon, EditIcon, DeleteIcon, CheckIcon, CloseIcon, SmallCloseIcon, AddIcon
 } from '@chakra-ui/icons';
 import { Weakness } from '@/entities/weakness/types';
 
@@ -40,7 +40,12 @@ export const WeaknessItem = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
+      const file = e.target.files[0];
+      setFileName(file.name);
+
+      if (!isEditing) {
+        onSave(weakness.id, weakness.title, file.name);
+      }
     }
   };
 
@@ -120,12 +125,7 @@ export const WeaknessItem = ({
                     자료 첨부
                   </Button>
                 )}
-                <Input
-                  type="file"
-                  display="none"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                />
+
               </Flex>
             </Flex>
           ) : (
@@ -137,19 +137,43 @@ export const WeaknessItem = ({
                 </Text>
               </Flex>
 
-              {/* Right Side: File Name */}
-              {weakness.fileName && (
+              {/* Right Side: File Name or Add Button */}
+              {weakness.fileName ? (
                 <Flex align="center" gap={2} mr={2}>
                   <Text fontSize="14px" color="#7E7E7E" noOfLines={1} maxW="200px">
                     {weakness.fileName}
                   </Text>
                 </Flex>
+              ) : (
+                <Flex
+                  align="center"
+                  gap={1}
+                  mr={2}
+                  cursor="pointer"
+                  color="#A0A5B1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  _hover={{ color: '#53A8FE' }}
+                >
+                  <Text fontSize="14px" fontWeight="500">파일 추가</Text>
+                  <AddIcon w={3} h={3} />
+                </Flex>
               )}
             </Flex>
           )}
+
+          {/* Hidden Input moved outside conditional */}
+          <Input
+            type="file"
+            display="none"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
         </Box>
 
-        <Box>
+        <Box alignSelf="flex-start" ml={2}>
           {isEditing ? (
             <Flex gap={1} ml={2}>
               <IconButton
