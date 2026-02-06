@@ -1,7 +1,6 @@
 import React from 'react';
 import { useScheduleCreateStore } from '../model/store';
 import { Subject } from '../model/types';
-import classNames from 'classnames';
 
 export const SubjectSection = () => {
     const { subject, isWeaknessSelected, setSubject, toggleWeakness } = useScheduleCreateStore();
@@ -20,10 +19,8 @@ export const SubjectSection = () => {
                     <button
                         key={sub.value}
                         onClick={() => setSubject(sub.value)}
-                        className={classNames(
-                            'px-6 py-2 rounded-lg border transition-colors font-medium',
-                            subject === sub.value ? sub.activeColorClass : `bg-white border-gray-200 text-gray-500 ${sub.colorClass}`
-                        )}
+                        className={`px-6 py-2 rounded-lg border transition-colors font-medium ${subject === sub.value ? sub.activeColorClass : `bg-white border-gray-200 text-gray-500 ${sub.colorClass}`
+                            }`}
                     >
                         {sub.label}
                     </button>
@@ -31,12 +28,10 @@ export const SubjectSection = () => {
 
                 <button
                     onClick={toggleWeakness}
-                    className={classNames(
-                        'px-6 py-2 rounded-lg border transition-colors font-medium ml-2',
-                        isWeaknessSelected
+                    className={`px-6 py-2 rounded-lg border transition-colors font-medium ml-2 ${isWeaknessSelected
                             ? 'bg-blue-400 text-white border-blue-400'
                             : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
-                    )}
+                        }`}
                 >
                     보완점
                 </button>

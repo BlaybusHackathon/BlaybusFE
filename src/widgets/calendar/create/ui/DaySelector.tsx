@@ -1,7 +1,6 @@
 import React from 'react';
 import { useScheduleCreateStore } from '../model/store';
 import { DAYS, WEEKS } from '../model/mockData';
-import classNames from 'classnames';
 
 export const DaySelector = () => {
     const { selectedWeek, setSelectedWeek, selectedDays, toggleDay } = useScheduleCreateStore();
@@ -29,12 +28,10 @@ export const DaySelector = () => {
                     <button
                         key={day.value}
                         onClick={() => toggleDay(day.value)}
-                        className={classNames(
-                            'w-10 h-10 rounded-lg border flex items-center justify-center transition-all',
-                            selectedDays.includes(day.value)
+                        className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-all ${selectedDays.includes(day.value)
                                 ? 'bg-blue-400 text-white border-blue-400 shadow-sm'
                                 : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
-                        )}
+                            }`}
                     >
                         {day.label}
                     </button>
