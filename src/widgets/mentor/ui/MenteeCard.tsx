@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Avatar, VStack, Progress } from '@chakra-ui/react';
-import { MenteeSummary } from '../model/types';
+import { MenteeSummary } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -11,27 +11,28 @@ export const MenteeCard = ({ mentee }: Props) => {
 
   return (
     <Box
-      minW="330px"
-      h="150px" // 높이를 150px로 고정 (또는 minH="150px")
-      bg="white"
-      p={5}
-      borderRadius="2xl"
-      border="1px solid"
-      borderColor="gray.100"
-      boxShadow="sm"
+      display="flex"
+      flexDirection="column"
+      alignItems="flex-start"
+      minW="380px"
+      h="185px"
+      p="30px 21px"
+      borderRadius="20px"
+      border="1px solid #53A8FE"
+      boxShadow="3px 4px 4px 0 rgba(57, 83, 177, 0.08)"
+      bg="#ffffffff"
       cursor="pointer"
       transition="all 0.2s"
-      _hover={{ transform: 'translateY(-4px)', boxShadow: 'md' }}
+      _hover={{ transform: 'translateY(-4px)', boxShadow: '3px 4px 4px 0 rgba(57, 83, 177, 0.16)' }
+      }
       onClick={() => navigate(`/mentor/mentee/${mentee.id}`)}
-      display="flex"         
-      alignItems="center"  
     >
-      <Flex align="center" w="full">
+      <Flex display="flex" alignItems="center" gap="14px">
         <Avatar
-          size="xl"
+          w="97px"
+          h="97px"
           name={mentee.name}
           src={mentee.profileImgUrl || undefined}
-          mr={6} 
         />
 
         <VStack align="stretch" spacing={3} flex={1} justify="center">
@@ -46,7 +47,7 @@ export const MenteeCard = ({ mentee }: Props) => {
           </VStack>
         </VStack>
       </Flex>
-    </Box>
+    </Box >
   );
 };
 
@@ -58,14 +59,14 @@ const AchievementRow = ({ label, value, colorScheme }: { label: string; value: n
     <Box flex={1} ml={3}>
       <Progress
         value={value}
-        height="8px" 
+        height="8px"
         colorScheme={colorScheme}
         borderRadius="full"
         bg="gray.100"
         sx={{
-            '& > div': {
-                transition: 'width 0.5s ease-in-out',
-            }
+          '& > div': {
+            transition: 'width 0.5s ease-in-out',
+          }
         }}
       />
     </Box>
