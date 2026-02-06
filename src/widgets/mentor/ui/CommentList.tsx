@@ -1,6 +1,6 @@
 import { Box, Text, VStack, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { RecentFeedbackComment } from '../model/types';
+import { RecentFeedbackComment } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -13,12 +13,12 @@ export const CommentList = ({ comments }: Props) => {
   return (
     <Box>
       <Text fontSize="lg" fontWeight="bold" mb={4}>새로 달린 댓글</Text>
-      
+
       <VStack spacing={3} align="stretch">
         {comments.map((comment) => (
           <Flex
             key={comment.id}
-            bg="white" 
+            bg="white"
             p={4}
             borderRadius="3xl"
             border="1px solid"

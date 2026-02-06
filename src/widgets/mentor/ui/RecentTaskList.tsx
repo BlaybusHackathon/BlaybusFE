@@ -1,6 +1,6 @@
 import { Box, Text, VStack, Badge, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { RecentSubmittedTask } from '../model/types';
+import { RecentSubmittedTask } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -27,7 +27,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
   return (
     <Box>
       <Text fontSize="lg" fontWeight="bold" mb={4}>최근 제출된 과제</Text>
-      
+
       <VStack spacing={3} align="stretch">
         {tasks.map((task) => (
           <Flex
@@ -56,7 +56,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
               <Badge
                 colorScheme={SUBJECT_COLOR[task.subject] || 'gray'}
                 variant="solid"
-                borderRadius="full" 
+                borderRadius="full"
                 px={4}
                 py={1}
                 fontSize="sm"
@@ -68,7 +68,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
             </Flex>
           </Flex>
         ))}
-        
+
         {tasks.length === 0 && (
           <Text color="gray.400" fontSize="sm" textAlign="center" py={4}>
             제출된 과제가 없습니다.
