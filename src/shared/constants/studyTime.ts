@@ -12,7 +12,7 @@ export const MIN_LOG_DURATION_SECONDS = 60;
 
 export const SUBJECT_COLORS: Record<Subject, { bg: string; border: string; text: string }> = {
   KOREAN: { bg: 'red.100', border: 'red.300', text: 'red.700' },
-  ENGLISH: { bg: 'blue.100', border: 'blue.300', text: 'blue.700' },
+  ENGLISH: { bg: '#53A8FE', border: '#53A8FE', text: 'white' },
   MATH: { bg: 'green.100', border: 'green.300', text: 'green.700' },
   OTHER: { bg: 'gray.100', border: 'gray.300', text: 'gray.700' },
 } as const;

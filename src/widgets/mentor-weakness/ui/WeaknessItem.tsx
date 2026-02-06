@@ -1,20 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
-import { 
-  Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem, 
-  Icon, Textarea, Button, Input 
+import {
+  Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem,
+  Icon, Textarea, Button, Input
 } from '@chakra-ui/react';
-import { 
-  AttachmentIcon, EditIcon, DeleteIcon, CheckIcon, CloseIcon, SmallCloseIcon 
+import {
+  AttachmentIcon, EditIcon, DeleteIcon, CheckIcon, CloseIcon, SmallCloseIcon, AddIcon
 } from '@chakra-ui/icons';
 import { Weakness } from '@/entities/weakness/types';
 
 interface Props {
-  weakness: Weakness; 
-  isEditing: boolean; 
-  onEditMode: () => void; 
-  onCancel: () => void;  
+  weakness: Weakness;
+  isEditing: boolean;
+  onEditMode: () => void;
+  onCancel: () => void;
   onSave: (id: string, title: string, fileName?: string) => void;
-  onDelete: (id: string) => void; 
+  onDelete: (id: string) => void;
 }
 
 const MoreIcon = () => (
@@ -23,12 +23,12 @@ const MoreIcon = () => (
   </Icon>
 );
 
-export const WeaknessItem = ({ 
-  weakness, isEditing, onEditMode, onCancel, onSave, onDelete 
+export const WeaknessItem = ({
+  weakness, isEditing, onEditMode, onCancel, onSave, onDelete
 }: Props) => {
   const [title, setTitle] = useState(weakness.title);
   const [fileName, setFileName] = useState(weakness.fileName || '');
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -40,7 +40,12 @@ export const WeaknessItem = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFileName(e.target.files[0].name);
+      const file = e.target.files[0];
+      setFileName(file.name);
+
+      if (!isEditing) {
+        onSave(weakness.id, weakness.title, file.name);
+      }
     }
   };
 
@@ -59,17 +64,17 @@ export const WeaknessItem = ({
 
   return (
     <Box
-      bg="gray.50"
-      p={5}
-      borderRadius="2xl"
+      bg="#F9F9FB"
+      p="24px 32px"
+      borderRadius="22px"
       position="relative"
       transition="all 0.2s"
       border="1px solid"
       borderColor={isEditing ? "blue.200" : "transparent"}
       _hover={{ bg: isEditing ? 'white' : 'gray.100' }}
     >
-      <Flex align="flex-start" gap={3}>
-        <Box w="8px" h="8px" borderRadius="full" bg="pink.400" mt={2} flexShrink={0} />
+      <Flex align="flex-start" gap={3} justifyContent="center" alignItems="center">
+        <Box w="8px" h="8px" mb={0.5} borderRadius="full" bg="#FF9AFE" />
 
         <Box flex={1}>
           {isEditing ? (
@@ -88,68 +93,90 @@ export const WeaknessItem = ({
 
               <Flex align="center" gap={2}>
                 {fileName ? (
-                  <Flex 
-                    align="center" 
-                    bg="gray.100" 
-                    px={3} 
-                    py={1} 
-                    borderRadius="full" 
+                  <Flex
+                    align="center"
+                    bg="gray.100"
+                    px={3}
+                    py={1}
+                    borderRadius="full"
                     gap={2}
                   >
                     <AttachmentIcon w={3} h={3} color="gray.500" />
                     <Text fontSize="xs" color="gray.600" noOfLines={1} maxW="200px">
                       {fileName}
                     </Text>
-                    <Icon 
-                      as={SmallCloseIcon} 
-                      w={4} h={4} 
-                      color="gray.500" 
-                      cursor="pointer" 
+                    <Icon
+                      as={SmallCloseIcon}
+                      w={4} h={4}
+                      color="gray.500"
+                      cursor="pointer"
                       onClick={handleRemoveFile}
                       _hover={{ color: "red.500" }}
                     />
                   </Flex>
                 ) : (
-                  <Button 
-                    size="xs" 
-                    leftIcon={<AttachmentIcon />} 
-                    variant="outline" 
+                  <Button
+                    size="xs"
+                    leftIcon={<AttachmentIcon />}
+                    variant="outline"
                     colorScheme="gray"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     자료 첨부
                   </Button>
                 )}
-                <Input 
-                  type="file" 
-                  display="none" 
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                />
+
               </Flex>
             </Flex>
           ) : (
-            <Flex align="center" justify="space-between" h="full" minH="24px">
-              <Text fontSize="md" fontWeight="bold" color="gray.700" noOfLines={1} mr={4}>
-                {weakness.title}
-              </Text>
+            <Flex align="center" justify="space-between" h="full" minH="24px" w="full">
+              {/* Left Side: Title */}
+              <Flex align="center" flex={1} mr={4}>
+                <Text fontSize="16px" fontWeight="600" color="#373E56" noOfLines={1}>
+                  {weakness.title}
+                </Text>
+              </Flex>
 
-              {weakness.fileName && (
-                <Flex align="center" gap={1} color="gray.500" flexShrink={0}>
-                  <AttachmentIcon w={3} h={3} />
-                  <Text fontSize="xs" noOfLines={1} maxW="150px">
+              {/* Right Side: File Name or Add Button */}
+              {weakness.fileName ? (
+                <Flex align="center" gap={2} mr={2}>
+                  <Text fontSize="14px" color="#7E7E7E" noOfLines={1} maxW="200px">
                     {weakness.fileName}
                   </Text>
+                </Flex>
+              ) : (
+                <Flex
+                  align="center"
+                  gap={1}
+                  mr={2}
+                  cursor="pointer"
+                  color="#A0A5B1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  _hover={{ color: '#53A8FE' }}
+                >
+                  <Text fontSize="14px" fontWeight="500">파일 추가</Text>
+                  <AddIcon w={3} h={3} />
                 </Flex>
               )}
             </Flex>
           )}
+
+          {/* Hidden Input moved outside conditional */}
+          <Input
+            type="file"
+            display="none"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+          />
         </Box>
 
-        <Box>
+        <Box alignSelf="flex-start" ml={2}>
           {isEditing ? (
             <Flex gap={1} ml={2}>
-               <IconButton
+              <IconButton
                 icon={<CloseIcon />}
                 size="xs"
                 variant="ghost"

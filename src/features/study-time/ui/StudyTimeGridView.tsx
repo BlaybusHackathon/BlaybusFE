@@ -1,10 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { Subject } from '@/shared/constants/subjects';
-import { 
-  SUBJECT_COLORS, 
-  TOTAL_HOURS, 
+import {
+  SUBJECT_COLORS,
+  TOTAL_HOURS,
   SLOTS_PER_HOUR,
-  DAY_START_HOUR 
+  DAY_START_HOUR
 } from '@/shared/constants/studyTime';
 
 interface Props {
@@ -18,20 +18,20 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
   });
 
   return (
-    <Box 
-      userSelect="none" 
+    <Box
+      userSelect="none"
       w="full"
       h={"auto"}
       display="flex"
       flexDirection="column"
-      px={2}
     >
-      <Box 
+      <Box
         flex={1}
-        borderRadius="2xl" 
+        borderRadius="2xl"
         overflowY="auto"
         h={"100%"}
         bg="white"
+        boxShadow="3px 4px 4px 0 rgba(57, 83, 177, 0.08)"
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
@@ -39,15 +39,15 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
         }}
       >
         {hours.map((hour, hourIndex) => (
-          <Flex 
-            key={hourIndex} 
-            borderBottom="1px solid" 
-            borderColor="gray.200" 
+          <Flex
+            key={hourIndex}
+            borderBottom="1px solid"
+            borderColor="gray.200"
           >
-            <Flex 
-              w="40px" 
-              justify="center" 
-              align="center" 
+            <Flex
+              w="40px"
+              justify="center"
+              align="center"
               fontSize="sm"
               color="gray.400"
               fontWeight="medium"
@@ -60,6 +60,9 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
               {Array.from({ length: SLOTS_PER_HOUR }, (_, slotIdx) => {
                 const globalIndex = hourIndex * SLOTS_PER_HOUR + slotIdx;
                 const subject = gridState[globalIndex];
+                const nextSubject = gridState[globalIndex + 1];
+
+                const isContinuous = subject && nextSubject === subject;
                 const colors = subject ? SUBJECT_COLORS[subject] : null;
 
                 const isDimmed = highlightSubject && subject && subject !== highlightSubject;
@@ -69,7 +72,8 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
                   <Box
                     key={slotIdx}
                     flex={1}
-                    borderRight="1px solid"
+                    height="100%"
+                    borderRight={isContinuous ? "none" : "1px solid"}
                     borderColor="gray.100"
                     bg={colors ? colors.bg : 'transparent'}
                     opacity={opacity}

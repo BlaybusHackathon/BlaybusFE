@@ -16,35 +16,38 @@ import { MobileBottomNav } from './mobile/MobileBottomNav';
 export const MainLayout = () => {
   const { user } = useAuthStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
   if (!user) return null;
 
   const navItems = getNavItems(user.role);
-  const sidebarWidth = isCollapsed ? '80px' : '240px';
+  const sidebarWidth = isCollapsed ? '80px' : '280px';
 
   return (
     <Box minH="100vh">
       <Box display={{ base: 'none', md: 'block' }}>
-        <DesktopHeader onToggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+        <DesktopHeader
+          onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
+          isCollapsed={isCollapsed}
+        />
         <DesktopSidebar isCollapsed={isCollapsed} />
-        <Box 
-          ml={sidebarWidth} 
-          mt="64px" 
-          p={8} 
-          minH="calc(100vh - 64px)"
+        <Box
+          ml={sidebarWidth}
+          mt="0"
+          pt="90px"
+          minH="100vh"
           transition="margin-left 0.3s ease"
         >
-           <Outlet />
+          <Outlet />
         </Box>
       </Box>
 
       <Box display={{ base: 'block', md: 'none' }}>
         <MobileHeader />
-        
+
         <Box pt="56px" pb="64px" px={0} minH="100vh" bg="white">
           <Outlet />
         </Box>
-        
+
         <MobileBottomNav navItems={navItems} />
       </Box>
     </Box>

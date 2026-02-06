@@ -13,7 +13,7 @@ export const ZoomFeedbackList = () => {
   const [page, setPage] = useState(0);
 
   const sortedFeedbacks = useMemo(() => {
-    return [...MOCK_ZOOM_FEEDBACKS].sort((a, b) => 
+    return [...MOCK_ZOOM_FEEDBACKS].sort((a, b) =>
       new Date(b.meetingDate).getTime() - new Date(a.meetingDate).getTime()
     );
   }, []);
@@ -21,47 +21,46 @@ export const ZoomFeedbackList = () => {
   const totalItems = sortedFeedbacks.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
   const currentItems = sortedFeedbacks.slice(
-    page * ITEMS_PER_PAGE, 
+    page * ITEMS_PER_PAGE,
     (page + 1) * ITEMS_PER_PAGE
   );
 
   return (
-    <Box bg="white" p={{ base: 4, md: 8 }} borderRadius="3xl" boxShadow="sm">
+    <Box bg="white">
       <Flex justify="space-between" align="center" mb={6}>
         <Text fontSize="xl" fontWeight="bold">줌 미팅 피드백</Text>
-        
-        <HStack spacing={2}>
-          <HStack spacing={1} bg="gray.50" p={1} borderRadius="lg">
-            <IconButton
-              aria-label="Previous page"
-              icon={<ChevronLeftIcon />}
-              size="xs"
-              variant="ghost"
-              isDisabled={page === 0}
-              onClick={() => setPage(p => Math.max(0, p - 1))}
-            />
-            <IconButton
-              aria-label="Next page"
-              icon={<ChevronRightIcon />}
-              size="xs"
-              variant="ghost"
-              isDisabled={page >= totalPages - 1}
-              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-            />
-          </HStack>
 
+        <HStack spacing={2}>
           <IconButton
-            aria-label="Add feedback"
-            icon={<AddIcon />}
-            size="sm"
-            colorScheme="blue"
-            borderRadius="lg"
-            onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
+            aria-label="Previous page"
+            icon={<ChevronLeftIcon w={5} h={5} />}
+            p="8px"
+            h="auto"
+            variant="outline"
+            borderColor="#53A8FE"
+            color="#53A8FE"
+            borderRadius="12px"
+            isDisabled={page === 0}
+            onClick={() => setPage(p => Math.max(0, p - 1))}
+            _hover={{ bg: 'blue.50' }}
+          />
+          <IconButton
+            aria-label="Next page"
+            icon={<ChevronRightIcon w={5} h={5} />}
+            p="8px"
+            h="auto"
+            variant="outline"
+            borderColor="#53A8FE"
+            color="#53A8FE"
+            borderRadius="12px"
+            isDisabled={page >= totalPages - 1}
+            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+            _hover={{ bg: 'blue.50' }}
           />
         </HStack>
       </Flex>
 
-      <VStack spacing={3} align="stretch" minH="300px">
+      <VStack spacing={3} align="stretch" mb={4}>
         {currentItems.length === 0 ? (
           <Flex justify="center" align="center" h="200px" color="gray.400">
             등록된 피드백이 없습니다.
@@ -74,10 +73,27 @@ export const ZoomFeedbackList = () => {
               summary={item.summary}
               meetingDate={item.meetingDate}
               onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/${item.id}`)}
+              menteeName="최연준" // Mock Data or Prop
             />
           ))
         )}
       </VStack>
+
+      <Box
+        as="button"
+        w="full"
+        p="17px"
+        bg="#F7F8FA"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        borderRadius="7px"
+        transition="all 0.2s"
+        _hover={{ bg: 'gray.100' }}
+        onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
+      >
+        <AddIcon color="gray.400" boxSize={4} />
+      </Box>
     </Box>
   );
 };
