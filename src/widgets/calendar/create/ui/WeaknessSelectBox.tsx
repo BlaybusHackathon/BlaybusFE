@@ -11,7 +11,7 @@ export const WeaknessSelectBox = () => {
     const filteredWeaknesses = MOCK_WEAKNESSES.filter((w) => w.subject === subject);
 
     return (
-        <Box mb={8} animation="fadeIn 0.3s">
+        <Box animation="fadeIn 0.3s">
             <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>보완점</Text>
             <Box w="full">
                 <Select
@@ -19,10 +19,12 @@ export const WeaknessSelectBox = () => {
                     onChange={(e) => setSelectedWeaknessId(e.target.value)}
                     placeholder="보완점 강의/오답노트 선택"
                     bg="white"
-                    borderColor="pink.200"
-                    focusBorderColor="pink.300"
-                    size="md"
+                    borderColor="#FFB5E8"
+                    focusBorderColor="#FF88D0"
+                    size="lg"
+                    height="50px"
                     borderRadius="lg"
+                    _hover={{ borderColor: '#FF88D0' }}
                 >
                     {filteredWeaknesses.map((w) => (
                         <option key={w.id} value={w.id}>

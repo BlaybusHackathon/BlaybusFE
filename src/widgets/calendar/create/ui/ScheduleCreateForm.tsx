@@ -16,18 +16,28 @@ export const ScheduleCreateForm = () => {
             <Heading size="lg" mb={4}>일정 만들기</Heading>
             <Text color="gray.500" mb={8}>학생의 학습 성향에 맞는 과제를 설정해주세요.</Text>
 
-            <Box flex={1} bg="white" borderRadius="lg" p={8} boxShadow="sm" overflowY="auto">
-                <VStack spacing={0} align="stretch">
-                    <SubjectSection />
+            <Box flex={1} bg="white" borderRadius="lg" p={0}>
+                <VStack spacing={8} align="stretch">
+                    {/* Top Row: Subject and Days */}
+                    <Flex gap={10} wrap="wrap">
+                        <Box flex={1}>
+                            <SubjectSection />
+                        </Box>
+                        <Box flex={1}>
+                            <DaySelector />
+                        </Box>
+                    </Flex>
 
-                    <Box mb={8}>
+                    <Box>
                         <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>제목</Text>
                         <Input
                             placeholder="제목을 입력하세요 (예: 독서 2지문 (2))"
                             size="lg"
-                            fontSize="lg"
+                            fontSize="md"
+                            bg="white"
                             borderColor="blue.200"
-                            focusBorderColor="blue.300"
+                            borderRadius="lg"
+                            focusBorderColor="blue.400"
                             _placeholder={{ color: 'gray.400' }}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
@@ -36,25 +46,28 @@ export const ScheduleCreateForm = () => {
 
                     <WeaknessSelectBox />
 
-                    <DaySelector />
-
                     <LearningMaterialSection />
 
-                    <Flex justify="flex-end" gap={3} mt={8}>
+                    <Flex justify="flex-end" gap={3} mt={4}>
                         <Button
                             size="lg"
                             variant="outline"
                             colorScheme="gray"
                             onClick={() => navigate(-1)}
+                            px={8}
+                            h="50px"
+                            bg="white"
                         >
                             취소
                         </Button>
                         <Button
                             size="lg"
                             colorScheme="blue"
-                            boxShadow="md"
-                            _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
-                            transition="all 0.2s"
+                            bg="#53A8FE"
+                            color="white"
+                            px={8}
+                            h="50px"
+                            _hover={{ bg: 'blue.400' }}
                         >
                             저장
                         </Button>
