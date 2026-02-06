@@ -1,10 +1,10 @@
 import { 
-  EditIcon, 
-  ChatIcon, 
-  SettingsIcon, 
-  CalendarIcon, 
-  InfoOutlineIcon
-} from '@chakra-ui/icons';
+    HomeIcon,
+    CalendarIcon,
+    FeedbackIcon,
+    MypageIcon,
+    MenteeIcon
+} from '@/shared/ui/icons';
 import { UserRole } from '@/shared/constants/enums';
 
 export interface NavItem {
@@ -18,9 +18,9 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'MENTEE':
       return [
         { 
-          label: '플래너', 
+          label: '홈', 
           path: '/mentee/planner', 
-          icon: EditIcon 
+          icon: HomeIcon 
         },
         { 
           label: '캘린더', 
@@ -30,12 +30,12 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { 
           label: '피드백', 
           path: '/mentee/feedback', 
-          icon: ChatIcon 
+          icon: FeedbackIcon 
         },
         { 
           label: '마이페이지', 
           path: '/mentee/mypage', 
-          icon: SettingsIcon 
+          icon: MypageIcon 
         },
       ];
 
@@ -44,12 +44,12 @@ export const getNavItems = (role: UserRole): NavItem[] => {
         { 
           label: '멘티 관리', 
           path: '/mentor', 
-          icon: InfoOutlineIcon 
+          icon: MenteeIcon 
         },
         { 
-          label: '마이페이지', 
+          label: '데시보드', 
           path: '/mentor/mypage', 
-          icon: SettingsIcon 
+          icon: HomeIcon 
         },
       ];
 

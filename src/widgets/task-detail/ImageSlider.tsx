@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Box, Flex, IconButton, Image, Text, Tooltip, HStack } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon, EditIcon, CloseIcon , ChatIcon} from '@chakra-ui/icons'; 
+import { Box, Flex, IconButton, Image, Text } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon, CloseIcon , ChatIcon} from '@chakra-ui/icons'; 
 import { motion, PanInfo } from 'framer-motion';
 
 import { FeedbackOverlay } from '@/features/task-feedback/ui/FeedbackOverlay';
