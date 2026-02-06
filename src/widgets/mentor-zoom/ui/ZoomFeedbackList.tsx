@@ -26,31 +26,33 @@ export const ZoomFeedbackList = () => {
   );
 
   return (
-    <Box bg="white" p={{ base: 4, md: 8 }} borderRadius="3xl" boxShadow="sm">
+    <Box bg="white">
       <Flex justify="space-between" align="center" mb={6}>
         <Text fontSize="xl" fontWeight="bold">줌 미팅 피드백</Text>
 
         <HStack spacing={2}>
           <IconButton
             aria-label="Previous page"
-            icon={<ChevronLeftIcon />}
-            size="sm"
+            icon={<ChevronLeftIcon w={5} h={5} />}
+            p="8px"
+            h="auto"
             variant="outline"
-            borderColor="blue.200"
-            color="blue.400"
-            borderRadius="md"
+            borderColor="#53A8FE"
+            color="#53A8FE"
+            borderRadius="12px"
             isDisabled={page === 0}
             onClick={() => setPage(p => Math.max(0, p - 1))}
             _hover={{ bg: 'blue.50' }}
           />
           <IconButton
             aria-label="Next page"
-            icon={<ChevronRightIcon />}
-            size="sm"
+            icon={<ChevronRightIcon w={5} h={5} />}
+            p="8px"
+            h="auto"
             variant="outline"
-            borderColor="blue.200"
-            color="blue.400"
-            borderRadius="md"
+            borderColor="#53A8FE"
+            color="#53A8FE"
+            borderRadius="12px"
             isDisabled={page >= totalPages - 1}
             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
             _hover={{ bg: 'blue.50' }}
@@ -80,14 +82,14 @@ export const ZoomFeedbackList = () => {
       <Box
         as="button"
         w="full"
-        bg="gray.100"
-        h="48px"
+        p="17px"
+        bg="#F7F8FA"
         display="flex"
         alignItems="center"
         justifyContent="center"
-        borderRadius="xl"
+        borderRadius="7px"
         transition="all 0.2s"
-        _hover={{ bg: 'gray.200' }}
+        _hover={{ bg: 'gray.100' }}
         onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
       >
         <AddIcon color="gray.400" boxSize={4} />

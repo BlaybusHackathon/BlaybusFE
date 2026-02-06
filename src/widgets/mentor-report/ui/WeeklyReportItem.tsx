@@ -27,15 +27,15 @@ export const WeeklyReportItem = ({
       align="center"
       justify="space-between"
       p="16px 24px"
-      borderRadius="16px"
+      borderRadius="7px"
       transition="all 0.2s"
       role="group"
       cursor={isFuture ? 'not-allowed' : 'pointer'}
       onClick={isFuture ? undefined : onClick}
-      bg={isFuture ? 'white' : 'gray.100'}
-      color={isFuture ? 'gray.300' : 'gray.700'}
+      bg={isFuture ? 'white' : '#F7F8FA'}
+      color={isFuture ? '#939497ff' : '#373E56'}
       _hover={!isFuture ? {
-        bg: 'gray.200',
+        bg: 'gray.100',
       } : undefined}
     >
       <Text
