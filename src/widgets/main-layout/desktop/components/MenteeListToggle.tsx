@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { useLocation } from 'react-router-dom';
+import { MenteeIcon } from '@/shared/ui/MenteeIcon';
 
 import { MenteeMenuItem, MenteeNavItem } from './MenteeMenuItem';
 
@@ -12,6 +14,9 @@ interface Props {
 export const MenteeListToggle = ({ mentees, isCollapsed }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
   const [openMenteeIds, setOpenMenteeIds] = useState<string[]>([]);
+  const location = useLocation();
+
+  const isAnyMenteeActive = location.pathname.startsWith('/mentor/mentee');
 
   const toggleMentee = (id: string) => {
     setOpenMenteeIds((prev) =>
@@ -23,28 +28,34 @@ export const MenteeListToggle = ({ mentees, isCollapsed }: Props) => {
     <Box>
       <Flex
         align="center"
-        p={3}
+        py={3}
+        pl={isCollapsed ? 3 : '44px'}
+        pr={3}
         cursor="pointer"
         onClick={() => setIsOpen(!isOpen)}
-        color="blue.500"
-        _hover={{ bg: 'gray.100' }}
+        color={isAnyMenteeActive ? "#52A8FE" : "gray.500"}
+        bg="transparent"
+        _hover={{ bg: 'gray.100', color: isAnyMenteeActive ? "#52A8FE" : "gray.900" }}
         borderRadius="md"
-        justify={isCollapsed ? 'center' : 'flex-start'}
+        justify={isCollapsed ? 'center' : 'space-between'}
       >
         {isCollapsed ? (
-          <Box>{isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}</Box>
+          <Box>{!isOpen && <MenteeIcon w={4} h={4} />}</Box>
         ) : (
           <>
-            {isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
-            <Text ml={2} fontSize="sm" fontWeight="semibold">
-              담당 멘티
-            </Text>
+            <Flex align="center">
+              <MenteeIcon w={4} h={4} />
+              <Text ml="14px" fontSize="16px" fontWeight="600">
+                담당 멘티
+              </Text>
+            </Flex>
+            {isOpen ? <ChevronDownIcon w={5} h={5} /> : <ChevronRightIcon w={5} h={5} />}
           </>
         )}
       </Flex>
 
       {isOpen && !isCollapsed && (
-        <Box pl={2}>
+        <Box>
           {mentees.map((mentee) => (
             <MenteeMenuItem
               key={mentee.id}

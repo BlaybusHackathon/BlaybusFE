@@ -1,4 +1,4 @@
-import { Flex, Text, Icon } from '@chakra-ui/react';
+import { Flex, Text, Icon, Box } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
 interface Props {
@@ -6,74 +6,54 @@ interface Props {
   summary: string;
   meetingDate: string;
   onClick: () => void;
+  menteeName?: string; // Add optional prop
 }
+
+const getOrdinal = (n: number) => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
 
 export const ZoomFeedbackItem = ({
   countNumber,
   summary,
   meetingDate,
   onClick,
+  menteeName = "최연준" // Default for now if not passed
 }: Props) => {
-  const formatDate = (dateString: string) => dateString.split(' ')[0];
-
   return (
     <Flex
       align="center"
       justify="space-between"
-      p={5}
-      borderRadius="2xl"
-      border="1px solid"
-      borderColor="gray.100"
+      p="16px 24px"
+      borderRadius="16px"
+      bg="gray.100"
       cursor="pointer"
       transition="all 0.2s"
       role="group"
       onClick={onClick}
-      _hover={{ 
-        bg: 'blue.50', 
-        borderColor: 'blue.100',
-        transform: 'translateY(-2px)',
-        boxShadow: 'sm'
+      _hover={{
+        bg: 'gray.200',
       }}
     >
-      <Flex align="center" gap={4} overflow="hidden">
-        <Flex 
-          w="36px" h="36px" 
-          borderRadius="lg" 
-          bg="gray.100" 
-          justify="center" 
-          align="center"
-          color="gray.600"
-          fontWeight="bold"
-          fontSize="sm"
-          flexShrink={0}
-          transition="all 0.2s"
-          _groupHover={{ bg: 'white', color: 'blue.500' }}
-        >
-          #{countNumber}
-        </Flex>
+      <Text
+        fontSize="16px"
+        fontWeight="600"
+        color="gray.700"
+      >
+        {menteeName}
+      </Text>
 
-        <Text 
-          fontSize="md" 
-          fontWeight="bold" 
-          color="gray.700" 
-          noOfLines={1}
-        >
-          {summary}
+      <Flex align="center" gap={4}>
+        <Text fontSize="16px" fontWeight="600" color="gray.700">
+          {getOrdinal(countNumber)}
         </Text>
-      </Flex>
 
-      <Flex align="center" gap={4} flexShrink={0}>
-        <Text fontSize="sm" color="gray.500">
-          {formatDate(meetingDate)}
-        </Text>
-        
-        <Icon 
-          as={ChevronRightIcon} 
-          color="blue.400"
-          opacity={0}
-          transform="translateX(-10px)"
-          transition="all 0.2s"
-          _groupHover={{ opacity: 1, transform: 'translateX(0)' }}
+        <Icon
+          as={ChevronRightIcon}
+          w={5} h={5}
+          color="gray.400"
         />
       </Flex>
     </Flex>

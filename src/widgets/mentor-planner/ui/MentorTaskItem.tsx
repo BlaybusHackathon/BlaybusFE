@@ -22,7 +22,7 @@ const PinIcon = () => (
 export const MentorTaskItem = ({ task, onHover }: Props) => {
   const navigate = useNavigate();
   const { menteeId } = useParams();
-  
+
   const colors = SUBJECT_COLORS[task.subject];
   const hasWeakness = task.weaknessId !== null;
   const isCompleted = task.status === 'COMPLETED';
@@ -30,15 +30,14 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
   return (
     <Flex
       bg="white"
-      px={5}
-      py={4}
-      borderRadius="2xl"
-
-      boxShadow="sm"
+      p="24px 32px"
+      borderRadius="22px"
+      boxShadow="3px 4px 4px 0 rgba(57, 83, 177, 0.08)"
       align="center"
+      mb={1}
       cursor="pointer"
       transition="all 0.2s"
-      _hover={{ 
+      _hover={{
         transform: 'translateY(-2px)',
         boxShadow: 'md',
         borderColor: colors.border
@@ -55,9 +54,9 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
 
       <Text
         flex={1}
-        fontSize="md"
-        fontWeight="bold"
-        color="gray.700"
+        fontSize="16px"
+        fontWeight="500"
+        color="#373E56"
         noOfLines={1}
       >
         {task.title}
@@ -106,11 +105,21 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
         isReadOnly
         pointerEvents="none"
         flexShrink={0}
+        iconColor="white"
         sx={{
-            '[data-checked]': {
-                borderColor: 'blue.500',
-                background: 'blue.500',
+          '.chakra-checkbox__control': {
+            borderRadius: 'full',
+            borderWidth: '1px',
+            borderColor: 'gray.300',
+            _checked: {
+              borderColor: 'blue.400',
+              bg: 'blue.400',
+              _hover: {
+                borderColor: 'blue.400',
+                bg: 'blue.400',
+              }
             }
+          }
         }}
       />
     </Flex>

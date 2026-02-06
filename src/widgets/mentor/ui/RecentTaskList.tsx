@@ -1,6 +1,6 @@
 import { Box, Text, VStack, Badge, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { RecentSubmittedTask } from '../model/types';
+import { RecentSubmittedTask } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -26,17 +26,25 @@ export const RecentTaskList = ({ tasks }: Props) => {
 
   return (
     <Box>
-      <Text fontSize="lg" fontWeight="bold" mb={4}>최근 제출된 과제</Text>
-      
+      <Text color="#373E56"
+        fontFamily="Pretendard"
+        fontSize="24px"
+        fontStyle="normal"
+        fontWeight="700"
+        lineHeight="normal"
+        mb="28px"
+      >최근 제출된 과제</Text>
+
       <VStack spacing={3} align="stretch">
         {tasks.map((task) => (
           <Flex
             key={task.id}
-            bg="white"
-            p={4}
-            borderRadius="3xl"
+
+            p="15px 32px"
+            borderRadius="22px"
             border="1px solid"
-            borderColor="gray.100"
+            borderColor="#F9F9FB"
+            bg="#F9F9FB"
             align="center"
             cursor="pointer"
             transition="all 0.2s"
@@ -44,7 +52,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
             onClick={() => navigate(`/mentor/mentee/${task.menteeId}/task/${task.id}`)}
           >
             <VStack spacing={1} mr={5} minW="50px">
-              <Avatar size="sm" name={task.menteeName} src={undefined} bg="gray.200" />
+              <Avatar size="sm" name={task.menteeName} src={undefined} bg="#D9D9D9" />
               <Text fontSize="xs" color="gray.500">{task.menteeName}</Text>
             </VStack>
 
@@ -56,7 +64,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
               <Badge
                 colorScheme={SUBJECT_COLOR[task.subject] || 'gray'}
                 variant="solid"
-                borderRadius="full" 
+                borderRadius="full"
                 px={4}
                 py={1}
                 fontSize="sm"
@@ -68,7 +76,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
             </Flex>
           </Flex>
         ))}
-        
+
         {tasks.length === 0 && (
           <Text color="gray.400" fontSize="sm" textAlign="center" py={4}>
             제출된 과제가 없습니다.
