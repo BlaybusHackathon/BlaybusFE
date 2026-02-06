@@ -1,11 +1,12 @@
 import React from 'react';
+import { Box } from '@chakra-ui/react';
 import { ScheduleCreateForm } from '@/widgets/calendar/create/ui/ScheduleCreateForm';
 
 const MentorScheduleCreatePage = () => {
     return (
-        <div className="w-full h-full">
+        <Box w="full" h="full" maxW="1200px" mx="auto" p={{ base: 4, md: 6 }}>
             <ScheduleCreateForm />
-        </div>
+        </Box>
     );
 };
 
