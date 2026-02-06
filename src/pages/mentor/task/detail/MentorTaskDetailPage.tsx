@@ -101,7 +101,7 @@ const MentorTaskDetailPage = () => {
                 </Box>
 
                 {/* Mentee Comment Section */}
-                <Box>
+                <Box pt={16}>
                     <Text fontSize="16px" fontWeight="bold" mb={4} color="#333333">남긴 메모</Text>
                     <Box
                         p={6}
