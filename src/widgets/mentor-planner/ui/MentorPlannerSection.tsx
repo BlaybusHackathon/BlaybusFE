@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Box, Flex, Text, Divider } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { Subject } from '@/shared/constants/subjects';
 import { logsToGridState, StudyTimeGridView } from '@/features/study-time';
@@ -71,13 +71,13 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
                 />
 
                 <Flex
-                    gap="34px"
+                    gap="26px"
                     align="flex-start"
                     direction={{ base: 'column', md: 'row' }}
                     mb={10}
                     bg="#F9F9FB"
-                    p="32px 48px"
-                    borderRadius="3xl"
+                    p="32px 34px"
+                    borderRadius="22px"
                 >
                     <Box
                         flex={1}
@@ -105,8 +105,6 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
                         />
                     </Box>
                 </Flex>
-
-                <Divider mb={6} borderColor="gray.100" />
 
                 <Box>
                     <MenteeCommentCard
