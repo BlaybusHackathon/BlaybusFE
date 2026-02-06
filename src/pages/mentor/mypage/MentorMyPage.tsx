@@ -13,9 +13,9 @@ import {
 export default function MentorMyPage() {
   return (
     <Box maxW="1051px" mx="auto">
-      <Text fontSize="36px" fontWeight="700" mb="71px">마이페이지</Text>
+      <Text fontSize="36px" fontWeight="700" mb="40px">마이페이지</Text>
 
-      <Box mb="67px">
+      <Box mb="30px">
         <Box display="inline-flex" alignItems="center" gap="50px">
           <StatCard label="과제 미확인" count={MOCK_STATS.uncheckedTaskCount} />
           <StatCard label="피드백 대기" count={MOCK_STATS.pendingFeedbackCount} />
@@ -26,7 +26,7 @@ export default function MentorMyPage() {
         <MenteeList mentees={MOCK_MY_MENTEES} />
       </Box>
 
-      <Divider h="3px" mt="52px" mb="52px" bg="#F4F4F4" />
+      <Divider h="3px" mt="50px" mb="50px" bg="#F4F4F4" />
 
 
       <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} pb={10}>
