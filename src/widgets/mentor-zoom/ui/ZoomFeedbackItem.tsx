@@ -27,14 +27,14 @@ export const ZoomFeedbackItem = ({
       align="center"
       justify="space-between"
       p="16px 24px"
-      borderRadius="16px"
-      bg="gray.100"
+      borderRadius="7px"
+      bg="#F7F8FA"
       cursor="pointer"
       transition="all 0.2s"
       role="group"
       onClick={onClick}
       _hover={{
-        bg: 'gray.200',
+        bg: 'gray.100',
       }}
     >
       <Text
