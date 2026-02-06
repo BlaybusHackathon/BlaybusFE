@@ -17,9 +17,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 interface MonthlyCalendarProps {
     onTaskClickOverride?: (taskId: string) => void;
+    menteeName?: string;
+    onCreateSchedule?: () => void;
 }
 
-export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) => {
+export const MonthlyCalendar = ({
+    onTaskClickOverride,
+    menteeName = "최연준",
+    onCreateSchedule
+}: MonthlyCalendarProps) => {
     const { menteeId } = useParams();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
@@ -50,9 +56,9 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
     });
 
     const getTasksForDay = () => {
-        const allTasks = generateMockTasks(currentDate); 
+        const allTasks = generateMockTasks(currentDate);
         return allTasks.filter(() => {
-            return Math.random() > 0.95; 
+            return Math.random() > 0.95;
         });
     };
 
@@ -64,22 +70,24 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
                 onNextMonth={handleNextMonth}
                 showIncompleteOnly={showIncompleteOnly}
                 onToggleIncomplete={setShowIncompleteOnly}
+                menteeName={menteeName}
+                onCreateSchedule={onCreateSchedule}
             />
 
-            <Box border="1px solid" borderColor="gray.200" borderRadius="xl" overflow="hidden" bg="white">
-                <SimpleGrid columns={7} bg="gray.50" borderBottom="1px solid" borderColor="gray.200">
+            <Box border="1px solid" borderColor="gray.200" borderRadius="20px" overflow="hidden" bg="white">
+                <SimpleGrid columns={7} bg="white" borderBottom="1px solid" borderColor="gray.200">
                     {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-                        <Box 
-                            key={day} 
-                            py={2} 
-                            textAlign="center" 
-                            borderRight={index !== 6 ? "1px solid" : "none"} 
+                        <Box
+                            key={day}
+                            py={4}
+                            textAlign="center"
+                            borderRight={index !== 6 ? "1px solid" : "none"}
                             borderColor="gray.100"
                         >
                             <Text
-                                fontSize={{ base: 'xs', md: 'sm' }}
+                                fontSize="sm"
                                 fontWeight="bold"
-                                color={index === 0 ? 'red.500' : index === 6 ? 'blue.500' : 'gray.600'}
+                                color="gray.400"
                             >
                                 {day}
                             </Text>
@@ -88,16 +96,20 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
                 </SimpleGrid>
 
                 <SimpleGrid columns={7} spacing={0}>
-                    {calendarDays.map((date) => (
-                        <CalendarDay
-                            key={date.toISOString()}
-                            day={date.getDate()}
-                            date={date}
-                            isCurrentMonth={isSameMonth(date, monthStart)}
-                            tasks={getTasksForDay()}
-                            onTaskClick={handleTaskClick}
-                        />
-                    ))}
+                    {calendarDays.map((date, index) => {
+                        const isLastColumn = (index + 1) % 7 === 0;
+                        return (
+                            <CalendarDay
+                                key={date.toISOString()}
+                                day={date.getDate()}
+                                date={date}
+                                isCurrentMonth={isSameMonth(date, monthStart)}
+                                tasks={getTasksForDay()}
+                                onTaskClick={handleTaskClick}
+                                isLastColumn={isLastColumn}
+                            />
+                        );
+                    })}
                 </SimpleGrid>
             </Box>
         </Box>
