@@ -25,7 +25,7 @@ export const MobileBottomNav = ({ navItems }: MobileBottomNavProps) => {
       <Flex justify="space-around" align="center" h="full">
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
-          const color = isActive ? "blue.500" : "gray.400";
+          const color = isActive ? "gray.800" : "gray.400";
 
           return (
             <VStack 

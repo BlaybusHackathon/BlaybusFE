@@ -31,7 +31,7 @@ const MenteePlannerPage = () => {
           </Box>
         </Box>
 
-        <Box mb={10}>
+        <Box p={{ base: 4, md: 6 }}>
           <MentorFeedbackWidget />
         </Box>
 

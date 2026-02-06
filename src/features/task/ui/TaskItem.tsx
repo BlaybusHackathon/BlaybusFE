@@ -28,7 +28,8 @@ export const TaskItem = ({
     <HStack
      onClick={onClick}
       w="full"
-      p={6}
+      p={2}
+      px={6}
       borderRadius="lg"
       boxShadow="sm"
       justify="space-between"
@@ -86,7 +87,7 @@ export const TaskItem = ({
           />
         )}
         <HStack spacing={6} flex={1}>
-          <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} fontSize="0.6rem">
+          <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} color={'white'} fontSize="0.6rem" borderRadius={'full'} px={3} py={1}>
             {SUBJECT_LABELS[task.subject]}
           </Badge>
 
@@ -96,8 +97,21 @@ export const TaskItem = ({
               e.stopPropagation();
               onToggle();
             }}
-            size="lg"
+            size="md"
             colorScheme="blue"
+            sx={{
+              '& > input:checked + span': {
+                borderRadius: 'full',
+                width: '24px',
+                height: '24px',
+              },
+              '& > input + span': {
+                borderRadius: 'full',
+                width: '24px',
+                height: '24px',
+                bgColor: 'gray.300',
+              }
+            }}
           />
         </HStack>
       </HStack>

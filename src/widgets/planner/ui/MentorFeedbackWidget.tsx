@@ -12,10 +12,10 @@ export const MentorFeedbackWidget = () => {
     >
       <Flex align="center" mb={2} gap={2}>
         <Text 
-          fontSize="sm" 
+          fontSize="md" 
           fontWeight="bold" 
         >
-          멘토 쌤의 피드백
+          멘토 피드백
         </Text>
       </Flex>
 
@@ -33,7 +33,7 @@ export const MentorFeedbackWidget = () => {
               {feedback}
             </Text>
           ) : (
-            <Text fontSize="sm" color="gray.400" fontStyle="italic">
+            <Text fontSize="sm" color="gray.400">
               아직 작성된 피드백이 없어요.
             </Text>
           )}

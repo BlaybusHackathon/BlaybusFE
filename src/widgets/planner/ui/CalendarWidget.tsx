@@ -49,7 +49,6 @@ export const CalendarWidget = () => {
         cursor="pointer" 
         onClick={toggleViewMode}
         mt={2}
-        _hover={{ bg: 'gray.50' }}
       >
         <Box w="40px" h="4px" bg="gray.300" borderRadius="full" />
       </Flex>
