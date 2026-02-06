@@ -60,9 +60,7 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
 
     return (
         <Box>
-            <Box
-                mb={8}
-            >
+            <Box>
                 <Text fontSize="20px" fontWeight="bold" mb={6}>{menteeName}님 플래너</Text>
 
                 <DateController
@@ -106,18 +104,18 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
                     </Box>
                 </Flex>
 
-                <Box>
+                <Box mb={8}>
                     <MenteeCommentCard
                         memo={currentPlanner?.dailyMemo ?? null}
                     />
                 </Box>
-            </Box>
 
-            <Box>
-                <MentorFeedbackCard
-                    feedback={currentPlanner?.mentorFeedback ?? null}
-                    onSave={handleSaveFeedback}
-                />
+                <Box mb={8}>
+                    <MentorFeedbackCard
+                        feedback={currentPlanner?.mentorFeedback ?? null}
+                        onSave={handleSaveFeedback}
+                    />
+                </Box>
             </Box>
         </Box>
     );

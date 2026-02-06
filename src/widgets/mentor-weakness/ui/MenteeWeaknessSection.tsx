@@ -10,16 +10,18 @@ const SUBJECT_TABS: { value: Subject; label: string }[] = [
   { value: 'KOREAN', label: '국어' },
   { value: 'ENGLISH', label: '영어' },
   { value: 'MATH', label: '수학' },
+  { value: 'OTHER', label: '기타' },
 ];
 
 export const MenteeWeaknessSection = () => {
-  const [selectedSubject, setSelectedSubject] = useState<Subject>('KOREAN');
+  const [selectedSubject, setSelectedSubject] = useState<Subject | 'ALL'>('ALL');
   const [weaknesses, setWeaknesses] = useState(MOCK_WEAKNESSES);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
   const filteredList = useMemo(() => {
+    if (selectedSubject === 'ALL') return weaknesses;
     return weaknesses.filter((w) => w.subject === selectedSubject);
   }, [weaknesses, selectedSubject]);
 
@@ -44,7 +46,7 @@ export const MenteeWeaknessSection = () => {
         id: `new-${Date.now()}`,
         title,
         fileName,
-        subject: selectedSubject,
+        subject: selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject,
         menteeId: 'mentee-1',
         inforId: 'info-1',
         contentId: 'content-new',
@@ -68,35 +70,47 @@ export const MenteeWeaknessSection = () => {
 
   const handleTabChange = (subject: Subject) => {
     setSelectedSubject(subject);
-    handleCancel(); 
+    handleCancel();
   };
 
   return (
-    <Box bg="white" p={{ base: 4, md: 8 }} borderRadius="3xl" boxShadow="sm">
-      <Flex 
-        justify="space-between" 
-        align={{ base: 'flex-start', md: 'center' }} 
-        mb={6} 
-        direction={{ base: 'column', md: 'row' }} 
+    <Box bg="white" borderRadius="22px">
+      <Flex
+        direction="column"
+        align="flex-start"
+        mb={6}
         gap={4}
       >
-        <Text fontSize="xl" fontWeight="bold">보완점 리스트</Text>
+        <Text fontSize="20px" fontWeight="700" color="#373E56">보완점 리스트</Text>
 
-        <HStack spacing={2} bg="gray.50" p={1} borderRadius="xl" overflowX="auto">
+        <HStack spacing={2} overflowX="auto">
+          <Button
+            variant={selectedSubject === 'ALL' ? 'solid' : 'outline'} // 'ALL' if supported, logic adjustment needed below
+            onClick={() => handleTabChange('ALL' as any)} // Temporary cast, handle logic below
+            borderRadius="18px"
+            p="4px 16px"
+            bg={selectedSubject === 'ALL' ? '#53A8FE' : 'white'}
+            color={selectedSubject === 'ALL' ? 'white' : '#A0A5B1'}
+            borderColor={selectedSubject === 'ALL' ? '#53A8FE' : '#E2E4E8'}
+            _hover={{ bg: selectedSubject === 'ALL' ? '#4297ED' : '#F7F8FA' }}
+            fontWeight="600"
+          >
+            전체
+          </Button>
           {SUBJECT_TABS.map((tab) => {
             const active = selectedSubject === tab.value;
             return (
               <Button
                 key={tab.value}
-                size="sm"
-                variant={active ? 'solid' : 'ghost'}
-                colorScheme={active ? 'blue' : 'gray'}
-                bg={active ? 'white' : 'transparent'}
-                color={active ? 'blue.600' : 'gray.500'}
-                shadow={active ? 'sm' : 'none'}
-                borderRadius="lg"
+                variant={active ? 'solid' : 'outline'}
+                borderRadius="18px"
+                p="4px 16px"
+                bg={active ? '#53A8FE' : 'white'}
+                color={active ? 'white' : '#A0A5B1'}
+                borderColor={active ? '#53A8FE' : '#E2E4E8'}
                 onClick={() => handleTabChange(tab.value)}
-                _hover={{ bg: active ? 'white' : 'gray.100' }}
+                _hover={{ bg: active ? '#4297ED' : '#F7F8FA' }}
+                fontWeight="600"
               >
                 {tab.label}
               </Button>
@@ -107,11 +121,11 @@ export const MenteeWeaknessSection = () => {
 
       <VStack spacing={3} align="stretch">
         {filteredList.length === 0 && !isAdding && (
-          <Flex 
-            h="120px" 
-            justify="center" 
-            align="center" 
-            color="gray.400" 
+          <Flex
+            h="120px"
+            justify="center"
+            align="center"
+            color="gray.400"
             fontSize="sm"
             bg="gray.50"
             borderRadius="2xl"
@@ -139,16 +153,16 @@ export const MenteeWeaknessSection = () => {
             weakness={{
               id: 'temp-new',
               title: '',
-              subject: selectedSubject,
+              subject: selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject,
               menteeId: '',
               inforId: '',
               contentId: '',
             }}
             isEditing={true}
-            onEditMode={() => {}}
+            onEditMode={() => { }}
             onCancel={handleCancel}
             onSave={handleSave}
-            onDelete={() => setIsAdding(false)} 
+            onDelete={() => setIsAdding(false)}
           />
         ) : (
           <AddWeaknessButton onClick={handleAddClick} />

@@ -12,7 +12,7 @@ export const MenteeCommentCard = ({ memo }: Props) => {
     >
       <Flex align="center" mb={4} gap={3}>
         <Text fontSize="20px" fontWeight="700" color="#373E56">
-          코멘트
+          학생 코멘트
         </Text>
       </Flex>
 

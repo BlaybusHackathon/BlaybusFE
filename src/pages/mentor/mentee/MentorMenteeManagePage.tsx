@@ -26,7 +26,16 @@ const MentorMenteeManagePage = () => {
                 <MentorPlannerSection menteeName={MOCK_MENTEE_PROFILE.name} />
             </Box>
 
-            <Box mt={8}>
+            <Divider
+                orientation="horizontal"
+                borderBottomWidth="3px"
+                borderColor="#F4F4F4"
+                my="50px"
+                opacity={1}
+                borderStyle="solid"
+            />
+
+            <Box mb={10}>
                 <MenteeWeaknessSection />
             </Box>
 
