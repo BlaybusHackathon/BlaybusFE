@@ -1,4 +1,5 @@
 import { Box, VStack } from '@chakra-ui/react';
+import { SeolStudyLogo } from '@/shared/ui/SeolStudyLogo';
 
 import { useAuthStore } from '@/shared/stores/authStore';
 
@@ -25,16 +26,16 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
   return (
     <Box
       as="nav"
-      w={isCollapsed ? '80px' : '240px'}
+      w={isCollapsed ? '80px' : '280px'}
       h="100vh"
       bg="white"
-      borderRight="1px solid"
-      borderColor="gray.200"
+      borderRight="6px solid #F7F7F7"
       position="fixed"
-      top="64px"
+      top={0}
       left={0}
       overflowY="auto"
       transition="width 0.3s ease"
+      zIndex="1100"
       css={{
         '&::-webkit-scrollbar': { width: '4px' },
         '&::-webkit-scrollbar-thumb': {
@@ -44,7 +45,14 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
       }}
     >
       <VStack spacing={1} align="stretch" p={2}>
-        {/* === 1. MENTOR View === */}
+        <Box h="64px" display="flex" alignItems="center" justifyContent="center" mb={4}>
+          {isCollapsed ? (
+            <SeolStudyLogo w="40px" h="auto" />
+          ) : (
+            <SeolStudyLogo w="140px" h="auto" />
+          )}
+        </Box>
+
         {role === 'MENTOR' && (
           <>
             {getNavItems('MENTOR').map((item) => (
@@ -52,7 +60,7 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
                 key={item.path}
                 label={item.label}
                 path={item.path}
-                icon={<item.icon />}
+                icon={<item.icon w={4} h={4} />}
                 isCollapsed={isCollapsed}
               />
             ))}
@@ -60,7 +68,6 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
           </>
         )}
 
-        {/* === 2. MENTEE View === */}
         {role === 'MENTEE' && (
           <>
             {menteeNavItems.map((item) => (
@@ -68,7 +75,7 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
                 key={item.path}
                 label={item.label}
                 path={item.path}
-                icon={<item.icon />}
+                icon={<item.icon w={4} h={4} />}
                 isCollapsed={isCollapsed}
               />
             ))}

@@ -12,7 +12,7 @@ import {
 
 export default function MentorMyPage() {
   return (
-    <Box maxW="1300px" mx="auto">
+    <Box maxW="1051px" mx="auto">
       <Text fontSize="36px" fontWeight="700" mb="71px">마이페이지</Text>
 
       <Box mb="67px">

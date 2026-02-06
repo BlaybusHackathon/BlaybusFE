@@ -18,25 +18,25 @@ export const SidebarMenuItem = ({ label, path, icon, isCollapsed }: Props) => {
   return (
     <Flex
       align="center"
-      p={3}
+      py={3}
+      pl={isCollapsed ? 3 : '44px'}
+      pr={3}
       cursor="pointer"
-      color={isActive ? 'blue.500' : 'gray.700'}
+      color={isActive ? '#52A8FE' : 'gray.700'}
+      bg="transparent"
       fontWeight={isActive ? 'semibold' : 'normal'}
       borderRadius="md"
       onClick={() => navigate(path)}
       transition="all 0.2s"
       _hover={{
-        bg: isActive ? 'blue.100' : 'gray.100',
+        bg: 'gray.100',
+        color: isActive ? '#52A8FE' : 'gray.900'
       }}
       justify={isCollapsed ? 'center' : 'flex-start'}
     >
-      {icon && (
-        <Flex minW="20px" justify="center">
-          {icon}
-        </Flex>
-      )}
+      {icon}
       {!isCollapsed && (
-        <Text ml={3} fontSize="sm">
+        <Text ml="14px" fontSize="16px" fontWeight="600">
           {label}
         </Text>
       )}

@@ -1,70 +1,55 @@
-import { Flex, Text, HStack, Button, IconButton } from '@chakra-ui/react';
+import { Flex, IconButton, Text } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useAuthStore } from '@/shared/stores/authStore';
-import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onToggleSidebar: () => void;
+  isCollapsed: boolean;
 }
 
-export const DesktopHeader = ({ onToggleSidebar }: Props) => {
-  const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const handleLogoClick = () => {
-    if (user?.role === 'MENTOR') navigate('/mentor');
-    else navigate('/mentee/planner');
-  };
+export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
+  const { user } = useAuthStore();
+  const sidebarWidth = isCollapsed ? '80px' : '280px';
 
   return (
     <Flex
       as="header"
-      h="64px"
-      bg="white"
-      borderBottom="1px solid"
-      borderColor="gray.200"
-      px={4}
+      h="80px"
+      bg="#fff"
+      pl={`calc(${sidebarWidth} + 28px)`}
+      transition="padding-left 0.3s ease"
       alignItems="center"
       justifyContent="space-between"
       position="fixed"
       top={0}
       left={0}
       right={0}
-      zIndex={999}
+      zIndex={1000}
+      pointerEvents="none"
     >
-      <HStack spacing={4}>
-        <IconButton
-          icon={<HamburgerIcon />}
-          aria-label="Toggle Sidebar"
-          onClick={onToggleSidebar}
-          variant="ghost"
-          size="md"
-        />
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          color="blue.500"
-          cursor="pointer"
-          onClick={handleLogoClick}
-        >
-          SeolStudy
-        </Text>
-      </HStack>
-
-      <HStack spacing={4}>
-        <Text fontSize="sm" color="gray.600">
-          어서오세요, {user?.name}
-          {user?.role === 'MENTOR' ? '멘토님!' : '님!'}
-        </Text>
-        <Button size="sm" colorScheme="blue" variant="outline" onClick={handleLogout}>
-          로그아웃
-        </Button>
-      </HStack>
+      <Text
+        fontFamily="Pretendard"
+        fontSize="20px"
+        fontWeight="600"
+        color="#394250"
+        lineHeight="normal"
+        pointerEvents="auto"
+      >
+        어서오세요, <Text as="span" color="#52A8FE">{user?.name}</Text>
+        {user?.role === 'MENTOR' ? '멘토님!' : '님!'}
+      </Text>
+      <IconButton
+        icon={<HamburgerIcon w={6} h={6} />}
+        mr="24px"
+        aria-label="Toggle Sidebar"
+        onClick={onToggleSidebar}
+        bg="white"
+        boxShadow="0px 2px 5px rgba(0,0,0,0.1)"
+        borderRadius="full"
+        size="lg"
+        _hover={{ bg: 'gray.50' }}
+        pointerEvents="auto"
+      />
     </Flex>
   );
 };
