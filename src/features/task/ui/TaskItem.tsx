@@ -1,8 +1,8 @@
 import { HStack, Checkbox, Text, IconButton, Badge, Box, Icon, VStack } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { Task } from '@/entities/task/types';
-import { SUBJECT_LABELS } from '@/shared/constants/subjects';
-import { TaskTimer } from '@/features/timer';
+import { SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { TaskTimer } from '@/features/timer/ui/TaskTimer';
 
 interface TaskItemProps {
   task: Task;
@@ -24,9 +24,12 @@ export const TaskItem = ({
   const isCompleted = task.status === 'COMPLETED';
   const canDelete = isEditable && !task.isMandatory;
   
+  // 과목 색상 (Hex Code)
+  const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
+  
   return (
     <HStack
-     onClick={onClick}
+      onClick={onClick}
       w="full"
       p={2}
       px={6}
@@ -35,6 +38,8 @@ export const TaskItem = ({
       justify="space-between"
       _hover={{ boxShadow: 'md' }}
       align="center"
+      bg="white"
+      cursor="pointer"
     >
       <VStack justify="flex-start" align="stretch" spacing={4} flex={1} minW={0}>
         <HStack spacing={3} flex={1} overflow="hidden">
@@ -48,7 +53,7 @@ export const TaskItem = ({
               </Icon>
             </Box>
           )}
-          <Box flex={1} cursor="pointer" minW={0}>
+          <Box flex={1} minW={0}>
             <Text
               fontWeight="medium"
               textDecoration={isCompleted ? 'line-through' : 'none'}
@@ -60,19 +65,16 @@ export const TaskItem = ({
           </Box>
         </HStack>
         <HStack>
-          {isTimerEnabled && (
+          {isTimerEnabled && !isCompleted && (
             <TaskTimer 
               taskId={task.id} 
-              isDisabled={isCompleted} 
+              subject={task.subject}
             />
           )}
         </HStack>
       </VStack>
 
-
       <HStack spacing={2} flexShrink={0}>
-
-        
         {canDelete && (
           <IconButton
             aria-label="Delete task"
@@ -87,7 +89,16 @@ export const TaskItem = ({
           />
         )}
         <HStack spacing={6} flex={1}>
-          <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} color={'white'} fontSize="0.6rem" borderRadius={'full'} px={3} py={1}>
+          <Badge 
+            bg={subjectColor} 
+            color={'white'} 
+            fontSize="0.6rem" 
+            borderRadius={'full'} 
+            px={3} 
+            py={1}
+            border="1px solid"
+            borderColor={subjectColor}
+          >
             {SUBJECT_LABELS[task.subject]}
           </Badge>
 
@@ -98,18 +109,20 @@ export const TaskItem = ({
               onToggle();
             }}
             size="md"
-            colorScheme="blue"
+            // [수정] 스타일 구조 유지 + 색상만 동적 할당
             sx={{
               '& > input:checked + span': {
                 borderRadius: 'full',
                 width: '24px',
                 height: '24px',
+                backgroundColor: `${subjectColor} !important`, // 체크 시 배경색
+                borderColor: `${subjectColor} !important`,     // 체크 시 테두리색
               },
               '& > input + span': {
                 borderRadius: 'full',
                 width: '24px',
                 height: '24px',
-                bgColor: 'gray.300',
+                bgColor: 'gray.300', // 체크 해제 시 배경색 (기본 유지)
               }
             }}
           />

@@ -23,3 +23,13 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+export const getAuthorizedUser = (): User => {
+  const { user } = useAuthStore.getState();
+  
+  if (!user) {
+    throw new Error("Unauthorized: User is not logged in.");
+  }
+  
+  return user;
+};

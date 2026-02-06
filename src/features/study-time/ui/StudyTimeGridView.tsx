@@ -1,7 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Subject } from '@/shared/constants/subjects';
+import { Subject, SUBJECT_COLORS } from '@/shared/constants/subjects';
 import { 
-  SUBJECT_COLORS, 
   TOTAL_HOURS, 
   SLOTS_PER_HOUR,
   DAY_START_HOUR 
@@ -42,26 +41,30 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
           <Flex 
             key={hourIndex} 
             borderBottom="1px solid" 
-            borderColor="gray.200" 
+            borderColor="gray.100" 
+            h="24px"
           >
             <Flex 
               w="40px" 
               justify="center" 
               align="center" 
-              fontSize="sm"
+              fontSize="xs"
               color="gray.400"
               fontWeight="medium"
               flexShrink={0}
+              borderRight="1px solid"
+              borderColor="gray.100"
             >
               {hour}
             </Flex>
 
-            <Flex flex={1} >
+            <Flex flex={1}>
               {Array.from({ length: SLOTS_PER_HOUR }, (_, slotIdx) => {
                 const globalIndex = hourIndex * SLOTS_PER_HOUR + slotIdx;
                 const subject = gridState[globalIndex];
-                const colors = subject ? SUBJECT_COLORS[subject] : null;
-
+                
+                const hexColor = subject ? SUBJECT_COLORS[subject] : null;
+                
                 const isDimmed = highlightSubject && subject && subject !== highlightSubject;
                 const opacity = isDimmed ? 0.2 : 1;
 
@@ -70,10 +73,14 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
                     key={slotIdx}
                     flex={1}
                     borderRight="1px solid"
-                    borderColor="gray.100"
-                    bg={colors ? colors.bg : 'transparent'}
+                    borderColor="gray.50"
+                    bg={hexColor || 'transparent'}
                     opacity={opacity}
-                    transition="opacity 0.15s"
+                    transition="all 0.2s"
+                    _hover={{
+                      opacity: hexColor ? 0.8 : 1,
+                      bg: hexColor || 'gray.50', 
+                    }}
                   />
                 );
               })}

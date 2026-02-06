@@ -55,17 +55,17 @@ export const calculateTotalMinutes = (grid: (Subject | null)[]): number => {
   return grid.filter((s) => s !== null).length * MINUTES_PER_SLOT;
 };
 
-export const formatMinutes = (minutes: number): string => {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (h > 0) return `${h}시간 ${m}분`;
-  return `${m}분`;
+export const getTaskDurationMinutes = (logs: TaskLog[]): number => {
+  if (!logs || logs.length === 0) return 0;
+  
+  const totalSeconds = logs.reduce((acc, log) => acc + (log.duration || 0), 0);
+  return Math.floor(totalSeconds / 60);
 };
 
-export const getTaskDurationMinutes = (taskId: string, logs: TaskLog[]): number => {
-  const totalSeconds = logs
-    .filter((log) => log.taskId === taskId)
-    .reduce((acc, log) => acc + log.duration, 0);
+export const formatMinutes = (totalMinutes: number): string => {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
   
-  return Math.floor(totalSeconds / 60);
+  if (hours === 0) return `${minutes}분`;
+  return `${hours}시간 ${minutes}분`;
 };

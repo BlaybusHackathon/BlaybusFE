@@ -1,35 +1,46 @@
-import { useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useTimerStore } from '@/shared/stores/timerStore';
-import { usePlannerStore } from '@/shared/stores/plannerStore';
-import { MIN_LOG_DURATION_SECONDS } from '@/shared/constants/studyTime';
 
 export const useTaskTimer = (taskId: string) => {
-  const { activeTaskId, taskTimers, startTimer, stopTimer } = useTimerStore();
-  const { addTaskLog } = usePlannerStore();
+  const { activeTaskId, startTimer, stopTimer, getTimerData } = useTimerStore();
   
-  const timerData = taskTimers[taskId];
-  const isRunning = activeTaskId === taskId && !!timerData?.timerStartedAt;
+  const isRunning = activeTaskId === taskId;
+  
+  const initialData = getTimerData(taskId);
+  const [duration, setDuration] = useState(initialData?.elapsedTime || 0);
 
-  const toggle = useCallback(() => {
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
     if (isRunning) {
-      const result = stopTimer(taskId);
-      
-      if (result && result.duration >= MIN_LOG_DURATION_SECONDS) {
-        addTaskLog({
-          id: `temp-${Date.now()}`,
-          taskId,
-          startAt: result.startAt,
-          endAt: result.endAt,
-          duration: result.duration,
-        });
-      }
+      intervalId = setInterval(() => {
+        const currentData = getTimerData(taskId);
+        if (currentData.startTimeISO) {
+          const start = new Date(currentData.startTimeISO).getTime();
+          const now = Date.now();
+          const currentSession = Math.floor((now - start) / 1000);
+          setDuration(currentData.elapsedTime + currentSession);
+        }
+      }, 1000);
+    } else {
+      const currentData = getTimerData(taskId);
+      setDuration(currentData?.elapsedTime || 0);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [isRunning, taskId, getTimerData]);
+
+  const toggle = () => {
+    if (isRunning) {
+      stopTimer(taskId);
     } else {
       startTimer(taskId);
     }
-  }, [isRunning, taskId, startTimer, stopTimer, addTaskLog]);
+  };
 
   return {
     isRunning,
     toggle,
+    duration,
   };
 };
