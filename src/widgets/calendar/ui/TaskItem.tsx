@@ -29,7 +29,7 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
         <Box
             bg={bgColor}
             color="white"
-            fontSize={{ base: '10px', md: 'xs' }}
+            fontSize={{ base: '12px', md: '14px' }}
             px={{ base: 2, md: 3 }}
             py={{ base: 0.5, md: 1 }}
             borderRadius="full"
@@ -45,9 +45,15 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            minH="22px"
+            minH="26px"
         >
-            <Text noOfLines={1} fontWeight="medium" flex="1">
+            <Text
+                noOfLines={1}
+                fontWeight="medium"
+                flex="1"
+                isTruncated
+                textAlign="center"
+            >
                 {task.title}
             </Text>
             {task.hasReview && (
