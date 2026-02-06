@@ -12,15 +12,17 @@ export const TaskTimer = ({ taskId, isDisabled = false }: Props) => {
   return (
     <IconButton
       aria-label={isRunning ? 'Pause' : 'Start'}
-      size="sm"
-      colorScheme={isRunning ? 'orange' : 'blue'}
+      size="xs"
+      pb={0.9}
+      pl={0.9}
+      borderRadius={'full'}
       variant={isRunning ? 'solid' : 'outline'}
       isDisabled={isDisabled}
       onClick={(e) => {
         e.stopPropagation();
         toggle();
       }}
-      icon={<span>{isRunning ? '||' : '▶'}</span>}
+      icon={<span>{isRunning ? 'II' : '▶'}</span>}
     />
   );
 };

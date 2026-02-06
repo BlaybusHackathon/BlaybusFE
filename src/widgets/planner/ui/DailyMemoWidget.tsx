@@ -26,7 +26,7 @@ export const DailyMemoWidget = () => {
     >
       <Flex align="center" mb={2} gap={2}>
         <Text 
-          fontSize="sm" 
+          fontSize="md" 
           fontWeight="bold" 
         >
           코멘트
@@ -44,14 +44,13 @@ export const DailyMemoWidget = () => {
           resize="none"
           rows={2}
           fontSize="sm"
+          border={'none'}
+          _active={{ dropShadow: 'dark-lg' }}
         />
       ) : (
         <Box 
           p={2} 
           bg="white" 
-          borderRadius="md" 
-          border="1px solid" 
-          borderColor="gray.200"
           minH="40px"
         >
           <Text fontSize="sm" color={memoInput ? "gray.700" : "gray.400"}>
