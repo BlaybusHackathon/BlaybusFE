@@ -1,14 +1,15 @@
-import { HStack, Checkbox, Text, IconButton, Badge, Box, Icon, VStack } from '@chakra-ui/react';
+import { HStack, Checkbox, Text, IconButton, Badge, Box, VStack } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { Task } from '@/entities/task/types';
 import { SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
 import { TaskTimer } from '@/features/timer/ui/TaskTimer';
+import { PinOutlinedIcon } from '@/shared/ui/icons';
 
 interface TaskItemProps {
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
-  onClick: () => void;
+  onClick: () => void; 
   isTimerEnabled: boolean;
   isEditable: boolean;
 }
@@ -24,12 +25,11 @@ export const TaskItem = ({
   const isCompleted = task.status === 'COMPLETED';
   const canDelete = isEditable && !task.isMandatory;
   
-  // 과목 색상 (Hex Code)
   const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
   
   return (
     <HStack
-      onClick={onClick}
+      onClick={onClick} 
       w="full"
       p={2}
       px={6}
@@ -42,22 +42,18 @@ export const TaskItem = ({
       cursor="pointer"
     >
       <VStack justify="flex-start" align="stretch" spacing={4} flex={1} minW={0}>
-        <HStack spacing={3} flex={1} overflow="hidden">
+        <HStack spacing={1} flex={1} overflow="hidden">
           {task.isMandatory && (
-            <Box mr={3} flexShrink={0}>
-              <Icon viewBox="0 0 24 24" w="20px" h="20px" color="#373E56">
-                <path
-                  fill="currentColor"
-                  d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z"
-                />
-              </Icon>
+            <Box mr={1} flexShrink={0}>
+              <PinOutlinedIcon 
+                style={{ color: isCompleted ? '#A6A6A6' : '#373E56' }} 
+              />
             </Box>
           )}
           <Box flex={1} minW={0}>
             <Text
-              fontWeight="medium"
-              textDecoration={isCompleted ? 'line-through' : 'none'}
-              color={isCompleted ? 'gray.400' : 'gray.800'}
+              fontWeight="semibold"
+              color={isCompleted ? '#A6A6A6' : '#373E56'}
               isTruncated
             >
               {task.title}
@@ -65,10 +61,11 @@ export const TaskItem = ({
           </Box>
         </HStack>
         <HStack>
-          {isTimerEnabled && !isCompleted && (
+          {isTimerEnabled && (
             <TaskTimer 
               taskId={task.id} 
               subject={task.subject}
+              isDisabled={isCompleted} 
             />
           )}
         </HStack>
@@ -83,7 +80,7 @@ export const TaskItem = ({
             variant="ghost"
             colorScheme="red"
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); 
               onDelete();
             }}
           />
@@ -102,30 +99,55 @@ export const TaskItem = ({
             {SUBJECT_LABELS[task.subject]}
           </Badge>
 
-          <Checkbox
-            isChecked={isCompleted}
-            onChange={(e) => {
+          <Box
+            onClick={(e) => {
               e.stopPropagation();
-              onToggle();
             }}
-            size="md"
-            // [수정] 스타일 구조 유지 + 색상만 동적 할당
-            sx={{
-              '& > input:checked + span': {
-                borderRadius: 'full',
-                width: '24px',
-                height: '24px',
-                backgroundColor: `${subjectColor} !important`, // 체크 시 배경색
-                borderColor: `${subjectColor} !important`,     // 체크 시 테두리색
-              },
-              '& > input + span': {
-                borderRadius: 'full',
-                width: '24px',
-                height: '24px',
-                bgColor: 'gray.300', // 체크 해제 시 배경색 (기본 유지)
-              }
+            _hover={{ 
+              transform: 'scale(1.1)', 
+              transition: 'transform 0.2s',
+              cursor: 'pointer'
             }}
-          />
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Checkbox
+              isChecked={isCompleted}
+              onChange={() => {
+                onToggle();
+              }}
+              size="md"
+              sx={{
+                '[data-checked]': {
+                  borderColor: `${subjectColor} !important`,
+                  background: `${subjectColor} !important`,
+                },
+                '.chakra-checkbox__control': {
+                  borderRadius: 'full',
+                  width: '24px',
+                  height: '24px',
+                  borderColor: 'gray.300',
+                  borderWidth: '2px',
+                  _hover: {
+                    borderColor: subjectColor, 
+                    bg: 'gray.50'
+                  },
+                  _checked: {
+                    borderColor: `${subjectColor} !important`,
+                    bg: `${subjectColor} !important`,
+                    _hover: {
+                      borderColor: `${subjectColor} !important`,
+                      bg: `${subjectColor} !important`,
+                    }
+                  }
+                },
+                '.chakra-checkbox__control svg': {
+                    fontSize: '0.8em',
+                }
+              }}
+            />
+          </Box>
         </HStack>
       </HStack>
     </HStack>

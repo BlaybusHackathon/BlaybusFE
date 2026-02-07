@@ -11,7 +11,6 @@ import { ko } from 'date-fns/locale';
 const MenteePlannerPage = () => {
   const { selectedDate } = usePlannerStore();
   
-  // 날짜 포맷 (예: 2월 6일 금요일)
   const dateText = format(new Date(selectedDate), 'M월 d일 EEEE', { locale: ko });
 
   return (

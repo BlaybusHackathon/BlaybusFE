@@ -4,6 +4,7 @@ export interface TaskLog {
   endAt: string;
   duration: number;
   taskId: string;
+  timerStatus: string;
 }
 
 export const mapTaskLogFromApi = (raw: any): TaskLog => ({
@@ -12,4 +13,5 @@ export const mapTaskLogFromApi = (raw: any): TaskLog => ({
   endAt: raw.end_at,
   duration: raw.duration,
   taskId: String(raw.task_id),
+  timerStatus: raw.timer_status || 'COMPLETED',
 });

@@ -1,3 +1,4 @@
+
 import { 
     HomeIcon,
     CalendarIcon,
@@ -17,16 +18,18 @@ export const getNavItems = (role: UserRole): NavItem[] => {
   switch (role) {
     case 'MENTEE':
       return [
+
         { 
           label: '홈', 
           path: '/mentee/planner', 
           icon: HomeIcon 
         },
-        { 
-          label: '캘린더', 
-          path: '/mentee/calendar', 
-          icon: CalendarIcon 
+        {
+          label: '캘린더',
+          path: '/mentee/calendar',
+          icon: CalendarIcon
         },
+
         { 
           label: '피드백', 
           path: '/mentee/feedback', 
@@ -41,6 +44,7 @@ export const getNavItems = (role: UserRole): NavItem[] => {
 
     case 'MENTOR':
       return [
+
         { 
           label: '멘티 관리', 
           path: '/mentor', 

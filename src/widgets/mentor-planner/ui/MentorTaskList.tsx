@@ -1,4 +1,4 @@
-import { VStack, Text, Box, Flex} from '@chakra-ui/react';
+import { VStack, Text, Box, Flex } from '@chakra-ui/react';
 import { Task } from '@/entities/task/types';
 import { TaskLog } from '@/entities/task-log/types';
 import { Subject } from '@/shared/constants/subjects';
@@ -20,15 +20,28 @@ export const MentorTaskList = ({ tasks, logs, onHoverSubject }: Props) => {
   });
 
   return (
-    <Box h="full" overflowY="auto" pr={2} css={{
+    <Box
+      h="full"
+      overflowY="auto"
+      pr={2}
+      css={{
         '&::-webkit-scrollbar': { width: '4px' },
         '&::-webkit-scrollbar-track': { background: 'transparent' },
         '&::-webkit-scrollbar-thumb': { background: '#EDF2F7', borderRadius: '4px' },
-    }}>
-    <Text fontSize="md" fontWeight="semibold" mb={6}>과제</Text>
+      }}
+    >
+      <Text
+        fontSize="20px"
+        fontWeight="700"
+        fontFamily="Pretendard"
+        color="#373E56"
+        mb={6}
+      >
+        과제란
+      </Text>
       {sortedTasks.length === 0 ? (
         <Flex h="200px" justify="center" align="center" direction="column" color="gray.400">
-             <Text fontSize="md">등록된 과제가 없습니다.</Text>
+          <Text fontSize="md">등록된 과제가 없습니다.</Text>
         </Flex>
       ) : (
         <VStack spacing={3} align="stretch" pb={4}>
@@ -36,7 +49,7 @@ export const MentorTaskList = ({ tasks, logs, onHoverSubject }: Props) => {
             <MentorTaskItem
               key={task.id}
               task={task}
-              durationMinutes={getTaskDurationMinutes(task.id, logs)}
+              durationMinutes={getTaskDurationMinutes(logs)}
               onHover={onHoverSubject}
             />
           ))}

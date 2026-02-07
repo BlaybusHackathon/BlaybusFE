@@ -43,24 +43,25 @@ export const MenteeMenuItem = ({ mentee, isOpen, onToggle, isCollapsed }: Props)
     <Box>
       <Flex
         align="center"
-        p={2}
-        pl={4}
+        py={3}
+        pl="44px"
+        pr={3}
         cursor="pointer"
         bg={isManageActive ? 'blue.50' : 'transparent'}
         color={isManageActive ? 'blue.500' : 'gray.700'}
         borderRadius="md"
         _hover={{ bg: isManageActive ? 'blue.100' : 'gray.50' }}
       >
-        <Box onClick={handleToggleClick} mr={2}>
-          {isOpen ? <ChevronDownIcon /> : <ChevronRightIcon />}
+        <Box onClick={handleToggleClick} w={4} h={4} display="flex" alignItems="center" justifyContent="center">
+          {isOpen ? <ChevronDownIcon w={5} h={5} /> : <ChevronRightIcon w={5} h={5} />}
         </Box>
-        <Text fontSize="sm" fontWeight="medium" onClick={handleNameClick} flex="1">
+        <Text ml="14px" fontSize="16px" fontWeight="medium" onClick={handleNameClick} flex="1">
           {mentee.name}
         </Text>
       </Flex>
 
       {isOpen && (
-        <Box pl={8}>
+        <Box pl="74px">
           <Flex
             align="center"
             p={2}

@@ -19,26 +19,27 @@ export const TaskTimer = ({ taskId, isDisabled, subject = 'OTHER' }: TaskTimerPr
       <IconButton
         aria-label={isRunning ? 'Pause' : 'Start'}
         size="xs"
-        pb={0.9}
         pl={0.9}
         borderRadius={'full'}
-        variant={isRunning ? 'solid' : 'outline'}
         isDisabled={isDisabled}
         onClick={(e) => {
           e.stopPropagation();
           toggle();
         }}
-        bg={isRunning ? subjectColor : 'transparent'}
-        borderColor={subjectColor}
+        
+        color={subjectColor}
+        bg={isRunning ? `${subjectColor}4D` : `${subjectColor}1A`}
         borderWidth="1px"
-        color={isRunning ? 'white' : subjectColor}
+        borderColor={"none"}
+        
         _hover={{
-          bg: isRunning ? subjectColor : `${subjectColor}1A`, 
-          opacity: isRunning ? 0.9 : 1,
+          bg: isRunning ? `${subjectColor}80` : `${subjectColor}40`,
+          transform: 'scale(1.05)', 
         }}
         _active={{
-          bg: isRunning ? subjectColor : `${subjectColor}33`,
+          bg: isRunning ? `${subjectColor}99` : `${subjectColor}60`,
         }}
+        
         icon={<span>{isRunning ? 'II' : '▶'}</span>}
       />
       

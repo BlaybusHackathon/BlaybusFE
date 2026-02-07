@@ -1,6 +1,6 @@
 import { Box, Text, VStack, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { RecentFeedbackComment } from '../model/types';
+import { RecentFeedbackComment } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -12,17 +12,23 @@ export const CommentList = ({ comments }: Props) => {
 
   return (
     <Box>
-      <Text fontSize="lg" fontWeight="bold" mb={4}>새로 달린 댓글</Text>
-      
+      <Text color="#373E56"
+        fontFamily="Pretendard"
+        fontSize="24px"
+        fontStyle="normal"
+        fontWeight="700"
+        lineHeight="normal"
+        mb="28px">새로 달린 댓글</Text>
+
       <VStack spacing={3} align="stretch">
         {comments.map((comment) => (
           <Flex
             key={comment.id}
-            bg="white" 
-            p={4}
-            borderRadius="3xl"
+            bg="#F9F9FB"
+            p="15px 32px"
+            borderRadius="22px"
             border="1px solid"
-            borderColor="gray.100"
+            borderColor="#F9F9FB"
             align="center"
             cursor="pointer"
             transition="all 0.2s"
@@ -30,7 +36,7 @@ export const CommentList = ({ comments }: Props) => {
             onClick={() => navigate(`/mentor/mentee/${comment.menteeId}/task/${comment.taskId}?feedbackId=${comment.feedbackId}`)}
           >
             <VStack spacing={1} mr={5} minW="50px">
-              <Avatar size="sm" name={comment.menteeName} src={undefined} bg="gray.200" />
+              <Avatar size="sm" name={comment.menteeName} src={undefined} bg="#D9D9D9" />
               <Text fontSize="xs" color="gray.500">{comment.menteeName}</Text>
             </VStack>
 

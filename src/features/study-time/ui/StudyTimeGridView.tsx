@@ -1,14 +1,15 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Subject, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { Subject, SUBJECT_COLORS } from '@/shared/constants/subjects'; // [수정] Subject 타입 import 추가
 import { 
   TOTAL_HOURS, 
   SLOTS_PER_HOUR,
   DAY_START_HOUR 
 } from '@/shared/constants/studyTime';
+import { GridSlotItem } from '../model/studyTimeUtils';
 
 interface Props {
-  gridState: (Subject | null)[];
-  highlightSubject?: Subject | null;
+  gridState: GridSlotItem[][];
+  highlightSubject?: Subject | null; 
 }
 
 export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
@@ -44,6 +45,7 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
             borderColor="gray.100" 
             h="24px"
           >
+            {/* 시간 라벨 */}
             <Flex 
               w="40px" 
               justify="center" 
@@ -58,15 +60,11 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
               {hour}
             </Flex>
 
+            {/* 그리드 슬롯 영역 */}
             <Flex flex={1}>
               {Array.from({ length: SLOTS_PER_HOUR }, (_, slotIdx) => {
                 const globalIndex = hourIndex * SLOTS_PER_HOUR + slotIdx;
-                const subject = gridState[globalIndex];
-                
-                const hexColor = subject ? SUBJECT_COLORS[subject] : null;
-                
-                const isDimmed = highlightSubject && subject && subject !== highlightSubject;
-                const opacity = isDimmed ? 0.2 : 1;
+                const slotItems = gridState[globalIndex] || [];
 
                 return (
                   <Box
@@ -74,14 +72,29 @@ export const StudyTimeGridView = ({ gridState, highlightSubject }: Props) => {
                     flex={1}
                     borderRight="1px solid"
                     borderColor="gray.50"
-                    bg={hexColor || 'transparent'}
-                    opacity={opacity}
-                    transition="all 0.2s"
-                    _hover={{
-                      opacity: hexColor ? 0.8 : 1,
-                      bg: hexColor || 'gray.50', 
-                    }}
-                  />
+                    position="relative"
+                    overflow="hidden"
+                  >
+                    {slotItems.map((item, idx) => {
+                      // [추가] 하이라이트 로직 적용
+                      // highlightSubject가 있는데 내 과목과 다르면 흐리게(0.2), 아니면 기본(0.8)
+                      const isDimmed = highlightSubject && item.subject !== highlightSubject;
+                      const opacity = isDimmed ? 0.2 : 0.8;
+
+                      return (
+                        <Box
+                          key={idx}
+                          position="absolute"
+                          top="0"
+                          bottom="0"
+                          left={`${item.leftPercent}%`}
+                          width={`${item.widthPercent}%`}
+                          bg={SUBJECT_COLORS[item.subject]}
+                          opacity={opacity} // [수정] 동적 투명도 적용
+                        />
+                      );
+                    })}
+                  </Box>
                 );
               })}
             </Flex>
