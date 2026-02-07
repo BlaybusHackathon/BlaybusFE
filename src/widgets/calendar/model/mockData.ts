@@ -25,46 +25,6 @@ export const generateMockTasks = (currentDate: Date): CalendarTaskData[] => {
             hasReview: false,
             isCompleted: true,
             date: `${year}-${formattedMonth}-02`,
-        },
-        {
-            id: '3',
-            title: '수학 미적분 예제 풀이',
-            subject: 'MATH',
-            hasReview: true,
-            isCompleted: false,
-            date: `${year}-${formattedMonth}-02`,
-        },
-        {
-            id: '4',
-            title: '국어 비문학 독해',
-            subject: 'KOREAN',
-            hasReview: true,
-            isCompleted: false,
-            date: `${year}-${formattedMonth}-03`,
-        },
-        {
-            id: '5',
-            title: '수학 기하와 벡터',
-            subject: 'MATH',
-            hasReview: false,
-            isCompleted: true,
-            date: `${year}-${formattedMonth}-15`,
-        },
-        {
-            id: '6',
-            title: '영어 독해 연습',
-            subject: 'ENGLISH',
-            hasReview: true,
-            isCompleted: false,
-            date: `${year}-${formattedMonth}-20`,
-        },
-        {
-            id: '7',
-            title: '수학 모의고사 풀이',
-            subject: 'MATH',
-            hasReview: true,
-            isCompleted: false,
-            date: `${year}-${formattedMonth}-20`,
         }
     ];
 };
