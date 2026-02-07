@@ -16,8 +16,6 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
 
   const colorCode = COLOR_MAP[colorScheme] || '#718096';
 
-  const thicknessValue = useBreakpointValue({ base: 12, md: 16 });
-
   return (
     <Box position="relative"
       display="inline-flex"
@@ -57,7 +55,6 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
         size={{ base: "122px", md: "122px" }}
         textAlign="center"
         color={colorCode}
-        thickness={14}
         capIsRound
       >
         <CircularProgressLabel

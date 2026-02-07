@@ -12,9 +12,9 @@ const LoginPage = lazy(() => import('@/pages/login'));
 
 // Mentee Pages
 const MenteePlannerPage = lazy(() => import('@/pages/mentee/planner'));
-const MenteeCalendarPage = lazy(() => import('@/pages/mentee/calendar')); 
+const MenteeCalendarPage = lazy(() => import('@/pages/mentee/calendar'));
 const MenteeTaskDetailPage = lazy(() => import('@/pages/mentee/task/[id]'));
-const MenteeTaskSubmissionPage = lazy(() => import('@/pages/mentee/task/submit')); 
+const MenteeTaskSubmissionPage = lazy(() => import('@/pages/mentee/task/submit'));
 const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
 
@@ -23,6 +23,7 @@ const MentorMyPage = lazy(() => import('@/pages/mentor/mypage'));
 
 // Mentor - Mentee Management Pages
 const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee'));
+const MentorScheduleCreatePage = lazy(() => import('@/pages/mentor/mentee/calendar/create')); // [NEW]
 const MentorMenteeCalendarPage = lazy(() => import('@/pages/mentor/mentee/calendar'));
 const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback'));
 const MentorZoomFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback/zoom'));
@@ -50,14 +51,14 @@ export const router = createBrowserRouter([
   },
 
   {
-    element: <MainLayout />, 
+    element: <MainLayout />,
     children: [
       { path: '/mentee/planner', element: withSuspense(MenteePlannerPage) },
       { path: '/mentee/calendar', element: withSuspense(MenteeCalendarPage) },
-      
+
       { path: '/mentee/task/:taskId', element: withSuspense(MenteeTaskDetailPage) },
       { path: '/mentee/task/:taskId/submit', element: withSuspense(MenteeTaskSubmissionPage) },
-      
+
       { path: '/mentee/feedback', element: withSuspense(MenteeFeedbackPage) },
       { path: '/mentee/mypage', element: withSuspense(MenteeMyPage) },
 
@@ -66,6 +67,7 @@ export const router = createBrowserRouter([
 
       { path: '/mentor/mentee/:menteeId', element: withSuspense(MentorMenteeManagePage) },
       { path: '/mentor/mentee/:menteeId/calendar', element: withSuspense(MentorMenteeCalendarPage) },
+      { path: '/mentor/mentee/:menteeId/calendar/create', element: withSuspense(MentorScheduleCreatePage) }, // [NEW]
       { path: '/mentor/mentee/:menteeId/feedback', element: withSuspense(MentorMenteeFeedbackPage) },
       { path: '/mentor/mentee/:menteeId/task/:taskId', element: withSuspense(MentorTaskDetailPage) },
 
