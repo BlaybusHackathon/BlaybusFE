@@ -9,10 +9,19 @@ import {
 import { MOCK_WEEKLY_REPORTS } from '@/widgets/mentor-report/model/mockWeeklyReports';
 import { WeeklyReportItem } from './WeeklyReportItem';
 
-export const WeeklyReportList = () => {
+interface WeeklyReportListProps {
+  externalDate?: Date;
+  onItemClick?: (startDate: string, endDate: string) => void;
+}
+
+export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportListProps) => {
   const navigate = useNavigate();
   const { menteeId } = useParams();
-  const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
+  
+  const [internalDate, setInternalDate] = useState(new Date());
+  
+  const currentMonthDate = externalDate ?? internalDate;
+  const isControlled = !!externalDate; 
 
   const weeksInMonth = useMemo(() => {
     const monthStart = startOfMonth(currentMonthDate);
@@ -48,6 +57,11 @@ export const WeeklyReportList = () => {
   };
 
   const handleClick = (startDate: string, endDate: string) => {
+    if (onItemClick) {
+        onItemClick(startDate, endDate);
+        return;
+    }
+
     const report = MOCK_WEEKLY_REPORTS.find(r => r.startDate === startDate);
     if (report) {
       navigate(`/mentor/mentee/${menteeId}/report/${report.id}`);
@@ -59,107 +73,110 @@ export const WeeklyReportList = () => {
   const displayMonth = Number(format(currentMonthDate, 'M'));
 
   return (
-    <Box bg="white">
-      <Flex justify="space-between" align="center" mb={6}>
-        <Text fontSize="xl" fontWeight="bold">주간 학습 리포트</Text>
-        <HStack spacing={2}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon color="#A0A5B1" w={5} h={5} />}
-              w="110px"
-              p="15px"
-              fontSize="sm"
-              borderRadius="12px"
-              border="1px solid"
-              borderColor="#53A8FE"
-              bg="white"
-              color="#5F6575"
-              fontWeight="600"
-              textAlign="left"
-              gap={4}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              lineHeight="1"
-              _hover={{ borderColor: '#53A8FE', bg: 'white' }}
-              _active={{ bg: 'white' }}
-              sx={{ span: { flex: 1, textAlign: 'left' } }}
-            >
-              <Text as="span">{format(currentMonthDate, 'yyyy')}년</Text>
-            </MenuButton>
-            <MenuList maxH="200px" overflowY="auto" borderRadius="12px" boxShadow="lg" minW="110px">
-              {[2024, 2025, 2026, 2027].map(year => (
-                <MenuItem
-                  key={year}
-                  onClick={() => {
-                    setCurrentMonthDate(prev => {
-                      const newDate = new Date(prev);
-                      newDate.setFullYear(year);
-                      return newDate;
-                    });
-                  }}
-                  fontSize="sm"
-                  color="#373E56"
-                  fontWeight="500"
-                  _hover={{ bg: '#F7F8FA', color: '#373E56' }}
-                >
-                  {year}년
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
+    <Box px={4} mb={20}>
+      <Flex justify="space-between" align="center" mb={{base:1, md:6}}>
+        <Text my={2} fontSize={{base:"1rem", md:"xl"}} fontWeight="bold">주간 학습 리포트</Text>
+        
+        {!isControlled && (
+          <HStack spacing={2}>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon color="#A0A5B1" w={5} h={5} />}
+                w="110px"
+                p="15px"
+                fontSize="sm"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#53A8FE"
+                bg="white"
+                color="#5F6575"
+                fontWeight="600"
+                textAlign="left"
+                gap={4}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                lineHeight="1"
+                _hover={{ borderColor: '#53A8FE', bg: 'white' }}
+                _active={{ bg: 'white' }}
+                sx={{ span: { flex: 1, textAlign: 'left' } }}
+              >
+                <Text as="span">{format(currentMonthDate, 'yyyy')}년</Text>
+              </MenuButton>
+              <MenuList maxH="200px" overflowY="auto" borderRadius="12px" boxShadow="lg" minW="110px">
+                {[2024, 2025, 2026, 2027].map(year => (
+                  <MenuItem
+                    key={year}
+                    onClick={() => {
+                      setInternalDate(prev => {
+                        const newDate = new Date(prev);
+                        newDate.setFullYear(year);
+                        return newDate;
+                      });
+                    }}
+                    fontSize="sm"
+                    color="#373E56"
+                    fontWeight="500"
+                    _hover={{ bg: '#F7F8FA', color: '#373E56' }}
+                  >
+                    {year}년
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
 
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon color="#A0A5B1" w={5} h={5} />}
-              w="90px"
-              p="15px"
-              fontSize="sm"
-              borderRadius="12px"
-              border="1px solid"
-              borderColor="#53A8FE"
-              bg="white"
-              color="#5F6575"
-              fontWeight="600"
-              textAlign="left"
-              gap={4}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              lineHeight="1"
-              _hover={{ borderColor: '#53A8FE', bg: 'white' }}
-              _active={{ bg: 'white' }}
-              sx={{ span: { flex: 1, textAlign: 'left' } }}
-            >
-              <Text as="span">{format(currentMonthDate, 'M')}월</Text>
-            </MenuButton>
-            <MenuList maxH="200px" overflowY="auto" borderRadius="12px" boxShadow="lg" minW="90px">
-              {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                <MenuItem
-                  key={month}
-                  onClick={() => {
-                    setCurrentMonthDate(prev => {
-                      const newDate = new Date(prev);
-                      newDate.setMonth(month - 1);
-                      return newDate;
-                    });
-                  }}
-                  fontSize="sm"
-                  color="#373E56"
-                  fontWeight="500"
-                  _hover={{ bg: 'gray.100', color: '#373E56' }}
-                >
-                  {month}월
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </HStack>
+            <Menu>
+              <MenuButton
+                as={Button}
+                rightIcon={<ChevronDownIcon color="#A0A5B1" w={5} h={5} />}
+                w="90px"
+                p="15px"
+                fontSize="sm"
+                borderRadius="12px"
+                border="1px solid"
+                borderColor="#53A8FE"
+                bg="white"
+                color="#5F6575"
+                fontWeight="600"
+                textAlign="left"
+                gap={4}
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                lineHeight="1"
+                _hover={{ borderColor: '#53A8FE', bg: 'white' }}
+                _active={{ bg: 'white' }}
+                sx={{ span: { flex: 1, textAlign: 'left' } }}
+              >
+                <Text as="span">{format(currentMonthDate, 'M')}월</Text>
+              </MenuButton>
+              <MenuList maxH="200px" overflowY="auto" borderRadius="12px" boxShadow="lg" minW="90px">
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                  <MenuItem
+                    key={month}
+                    onClick={() => {
+                      setInternalDate(prev => {
+                        const newDate = new Date(prev);
+                        newDate.setMonth(month - 1);
+                        return newDate;
+                      });
+                    }}
+                    fontSize="sm"
+                    color="#373E56"
+                    fontWeight="500"
+                    _hover={{ bg: 'gray.100', color: '#373E56' }}
+                  >
+                    {month}월
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </HStack>
+        )}
       </Flex>
 
-      <VStack spacing={3} align="stretch"  borderRadius={22} bg={'#F9F9FB'} p={4}>
+      <VStack spacing={3} align="stretch"  borderRadius={22} bg={{base: "#fff", md:'#F9F9FB'}} px={4} py={3}>
         {weeksInMonth.map((week) => {
           const status = getWeekStatus(week.startDate, week.endDate);
           const hasReport = MOCK_WEEKLY_REPORTS.some(r => r.startDate === week.startDate);

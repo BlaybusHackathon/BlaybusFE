@@ -20,18 +20,44 @@ import { generateMockTasks } from './model/mockData';
 
 interface MonthlyCalendarProps {
   onTaskClickOverride?: (taskId: string) => void;
+  // [추가] 외부에서 날짜를 제어하기 위한 선택적 Props
+  selectedDate?: Date;
+  onDateChange?: (date: Date) => void;
 }
 
 export const MonthlyCalendar = ({
   onTaskClickOverride,
+  selectedDate, // Optional
+  onDateChange, // Optional
 }: MonthlyCalendarProps) => {
   const { menteeId } = useParams();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // 내부 상태 (외부 props가 없을 때 사용됨)
+  const [internalDate, setInternalDate] = useState(new Date());
   const [showCompletedOnly, setShowCompletedOnly] = useState(false);
   const navigate = useNavigate();
 
-  const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
-  const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
+  // [핵심] 제어/비제어 패턴: 외부 props가 있으면 그것을 사용, 없으면 내부 state 사용
+  const currentDate = selectedDate ?? internalDate;
+
+  // 날짜 변경 핸들러
+  const handlePrevMonth = () => {
+    const newDate = subMonths(currentDate, 1);
+    if (onDateChange) {
+      onDateChange(newDate); // 제어 컴포넌트 모드
+    } else {
+      setInternalDate(newDate); // 비제어 컴포넌트 모드 (기존 유지)
+    }
+  };
+
+  const handleNextMonth = () => {
+    const newDate = addMonths(currentDate, 1);
+    if (onDateChange) {
+      onDateChange(newDate);
+    } else {
+      setInternalDate(newDate);
+    }
+  };
 
   const handleTaskClick = (taskId: string) => {
     if (onTaskClickOverride) {
@@ -62,84 +88,84 @@ export const MonthlyCalendar = ({
   };
 
   return (
-    <Box bg="white" borderRadius="lg" px={{base:0, md:6}} py={{base:0, md:2}} boxShadow="sm">
-      <Flex 
-        justify={{ base: 'center', md: 'space-between' }}
-        align="center" 
-        mb={6}
-      >
-        <CalendarHeader
-        currentDate={currentDate}
-        onPrevMonth={handlePrevMonth}
-        onNextMonth={handleNextMonth}
-        />
-
-
-        <Box flex={1} display={{ base: 'none', md: 'block' }}>
-          <CalendarLegend 
-            showCompletedOnly={showCompletedOnly}
-            onToggleCompleted={setShowCompletedOnly}
+    <Box borderRadius="lg" px={{base:0, md:6}} py={{base:0, md:2}} boxShadow={{base:'none',md:"sm"}}>
+      <Box bg={{base:"white", md:'none'}} borderRadius={'lg'} boxShadow={{base:'sm',md:"none"}}>
+        <Flex 
+          justify={{ base: 'center', md: 'space-between' }}
+          align="center" 
+          mb={{base:2, md:6}}
+        >
+          <CalendarHeader
+            currentDate={currentDate}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
           />
-        </Box>
-      </Flex>
 
-      <Box 
-        mb={{base:'none', md:4}}
-        bg="white"
-        >
-         <SimpleGrid columns={7} bg="white">
-            {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
-                <Box
-                    key={day}
-                    py={{base:1, md:4}}
-                    textAlign="center"
-                    bg="white"
-                >
-                    <Text
-                        fontSize={{base:"12px", md:"20px"}}
-                        fontWeight="bold"
-                        color="#999999"
-                    >
-                        {day}
-                    </Text>
-                </Box>
-            ))}
-        </SimpleGrid>
+          <Box flex={1} display={{ base: 'none', md: 'block' }}>
+            <CalendarLegend 
+              showCompletedOnly={showCompletedOnly}
+              onToggleCompleted={setShowCompletedOnly}
+            />
+          </Box>
+        </Flex>
 
-        <Box
-            border={{base:'none', md:"1px solid gray.200"}}
-            borderRadius="20px"
-            overflow="hidden"
-            bg="white"
-        >
-            <SimpleGrid columns={7} spacing={0}>
-                {calendarDays.map((date, index) => {
-                    const isLastColumn = (index + 1) % 7 === 0;
-                    const isFirstColumn = index % 7 === 0;
-                    return (
-                        <Box
-                            key={date.toISOString()}
-                            bg={{
-                                base: 'none',
-                                md: isFirstColumn || isLastColumn ? '#F7F9F9' : 'none'
-                                }}
-                        >
-                            <CalendarDay
-                                day={date.getDate()}
-                                date={date}
-                                isCurrentMonth={isSameMonth(date, monthStart)}
-                                tasks={getTasksForDay(date)}
-                                onTaskClick={handleTaskClick}
-                                isLastColumn={isLastColumn}
-                            />
-                        </Box>
-                    );
-                })}
-            </SimpleGrid>
+        <Box 
+          mb={{base:'none', md:4}}
+          mx={2}
+          >
+          <SimpleGrid columns={7} mb={1}>
+              {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
+                  <Box
+                      key={day}
+                      py={{base:1, md:4}}
+                      textAlign="center"
+                  >
+                      <Text
+                          fontSize={{base:"12px", md:"20px"}}
+                          fontWeight="bold"
+                          color="#999999"
+                      >
+                          {day}
+                      </Text>
+                  </Box>
+              ))}
+          </SimpleGrid>
+
+          <Box
+              border={{base:'none', md:"1px solid #E2E4E5"}}
+              borderRadius="20px"
+              overflow="hidden"
+              bg="white"
+          >
+              <SimpleGrid columns={7} spacing={0}>
+                  {calendarDays.map((date, index) => {
+                      const isLastColumn = (index + 1) % 7 === 0;
+                      const isFirstColumn = index % 7 === 0;
+                      return (
+                          <Box
+                              key={date.toISOString()}
+                              bg={{
+                                  base: 'none',
+                                  md: isFirstColumn || isLastColumn ? '#F7F9F9' : 'none'
+                                  }}
+                          >
+                              <CalendarDay
+                                  day={date.getDate()}
+                                  date={date}
+                                  isCurrentMonth={isSameMonth(date, monthStart)}
+                                  tasks={getTasksForDay(date)}
+                                  onTaskClick={handleTaskClick}
+                                  isLastColumn={isLastColumn}
+                              />
+                          </Box>
+                      );
+                  })}
+              </SimpleGrid>
+          </Box>
         </Box>
       </Box>
 
-      <Box display={{ base: 'block', md: 'none' }} mt={6}>
+      <Box display={{ base: 'block', md: 'none' }} px={4}>
         <CalendarLegend 
           showCompletedOnly={showCompletedOnly}
           onToggleCompleted={setShowCompletedOnly}

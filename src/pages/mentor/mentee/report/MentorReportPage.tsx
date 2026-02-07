@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, Heading, Button, useToast, Container, Text, Flex } from '@chakra-ui/react';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, getMonth, getWeekOfMonth, getYear } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ReportDetailWidget } from '@/widgets/mentor-report/detail/ReportDetailWidget';
 import { ReportData } from '@/widgets/mentor-report/model/mockReportData';
@@ -22,38 +22,65 @@ const MentorReportPage = () => {
   const isNewMode = !reportId || reportId === 'new';
 
   const [reportData, setReportData] = useState<ReportData>({
+    menteeId: menteeId || '', 
+    startDate: startDate || '',
+    endDate: endDate || '',
     totalReview: '',
     wellDone: '',
     improvements: '',
   });
+
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
+  const currentDateInfo = useMemo(() => {
+    if (!startDate && !dateRange.start) {
+        const now = new Date();
+        return { 
+            year: getYear(now), 
+            month: getMonth(now) + 1, 
+            week: getWeekOfMonth(now, { weekStartsOn: 0 }) 
+        };
+    }
+    
+    const targetDateStr = startDate || dateRange.start;
+    const targetDate = parseISO(targetDateStr);
+    
+    return {
+        year: getYear(targetDate),
+        month: getMonth(targetDate) + 1,
+        week: getWeekOfMonth(targetDate, { weekStartsOn: 0 }) 
+    };
+  }, [startDate, dateRange.start]);
+
   useEffect(() => {
     const loadData = async () => {
+      if (!menteeId) return;
+
       setLoading(true);
       try {
         if (isNewMode && startDate && endDate) {
           setDateRange({ start: startDate, end: endDate });
-          const existingReport = getWeeklyReportByStartDate(startDate);
+          
+          const existingReport = getWeeklyReportByStartDate(startDate, menteeId);
+          
           if (existingReport) {
-            setReportData({
-              totalReview: existingReport.overallFeedback || '',
-              wellDone: existingReport.strengths || '',
-              improvements: existingReport.weaknesses || '',
-            });
+            setReportData(existingReport);
           } else {
-            setReportData({ totalReview: '', wellDone: '', improvements: '' });
+            setReportData({
+                menteeId,
+                startDate,
+                endDate,
+                totalReview: '', 
+                wellDone: '', 
+                improvements: '' 
+            });
           }
         } else if (reportId && reportId !== 'new') {
           const report = getWeeklyReportById(reportId);
           if (report) {
             setDateRange({ start: report.startDate, end: report.endDate });
-            setReportData({
-              totalReview: report.overallFeedback || '',
-              wellDone: report.strengths || '',
-              improvements: report.weaknesses || '',
-            });
+            setReportData(report);
           }
         }
       } finally {
@@ -61,7 +88,7 @@ const MentorReportPage = () => {
       }
     };
     loadData();
-  }, [reportId, startDate, endDate, isNewMode]);
+  }, [reportId, startDate, endDate, isNewMode, menteeId]);
 
   const formatDateRange = () => {
     if (!dateRange.start || !dateRange.end) return '';
@@ -91,7 +118,10 @@ const MentorReportPage = () => {
 
     setLoading(true);
     try {
+      console.log('Saving report:', reportData); 
+      
       await new Promise((resolve) => setTimeout(resolve, 500));
+      
       toast({
         title: '저장되었습니다.',
         status: 'success',
@@ -126,7 +156,11 @@ const MentorReportPage = () => {
       </Text>
 
       <Box mb="80px">
-        <ReportDetailWidget data={reportData} onChange={handleInputChange} />
+        <ReportDetailWidget 
+            data={reportData} 
+            dateInfo={currentDateInfo}
+            onChange={handleInputChange} 
+        />
       </Box>
 
       <Flex justify="flex-end" gap={4} mb={20}>

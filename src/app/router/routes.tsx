@@ -17,13 +17,14 @@ const MenteeTaskDetailPage = lazy(() => import('@/pages/mentee/task/[id]'));
 const MenteeTaskSubmissionPage = lazy(() => import('@/pages/mentee/task/submit'));
 const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
+const MenteeReportDetailPage = lazy(() => import('@/pages/mentee/report/MenteeReportDetailPage'));
 
 // Mentor Pages
 const MentorMyPage = lazy(() => import('@/pages/mentor/mypage'));
 
 // Mentor - Mentee Management Pages
 const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee'));
-const MentorScheduleCreatePage = lazy(() => import('@/pages/mentor/mentee/calendar/create')); // [NEW]
+const MentorScheduleCreatePage = lazy(() => import('@/pages/mentor/mentee/calendar/create'));
 const MentorMenteeCalendarPage = lazy(() => import('@/pages/mentor/mentee/calendar'));
 const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback/list/FeedbackListPage'));
 const MentorZoomFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback/zoom'));
@@ -62,12 +63,14 @@ export const router = createBrowserRouter([
       { path: '/mentee/feedback', element: withSuspense(MenteeFeedbackPage) },
       { path: '/mentee/mypage', element: withSuspense(MenteeMyPage) },
 
+      { path: '/mentee/report/:reportId', element: withSuspense(MenteeReportDetailPage) },
+
       { path: '/mentor', element: withSuspense(MentorMyPage) },
       { path: '/mentor/mypage', element: withSuspense(MentorMyPage) },
 
       { path: '/mentor/mentee/:menteeId', element: withSuspense(MentorMenteeManagePage) },
       { path: '/mentor/mentee/:menteeId/calendar', element: withSuspense(MentorMenteeCalendarPage) },
-      { path: '/mentor/mentee/:menteeId/calendar/create', element: withSuspense(MentorScheduleCreatePage) }, // [NEW]
+      { path: '/mentor/mentee/:menteeId/calendar/create', element: withSuspense(MentorScheduleCreatePage) },
       { path: '/mentor/mentee/:menteeId/feedback', element: withSuspense(MentorMenteeFeedbackPage) },
       { path: '/mentor/mentee/:menteeId/task/:taskId', element: withSuspense(MentorTaskDetailPage) },
 

@@ -43,8 +43,7 @@ export const MainLayout = () => {
 
       <Box display={{ base: 'block', md: 'none' }}>
         <MobileHeader />
-
-        <Box pt="56px" pb="64px" px={0} minH="100vh" bg="white">
+        <Box pt="4.5rem" pb="64px" px={0} minH="100vh" bg={{base:"#F9F9FB", md:"white"}}>
           <Outlet />
         </Box>
 

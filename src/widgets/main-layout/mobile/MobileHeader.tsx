@@ -9,6 +9,7 @@ export const MobileHeader = () => {
   const mainTabPaths = [
     '/mentee/planner', 
     '/mentee/feedback', 
+    '/mentee/calendar',
     '/mentee/mypage',
     '/mentor',
     '/mentor/mentee',
@@ -17,8 +18,9 @@ export const MobileHeader = () => {
 
   const isMainTab = mainTabPaths.some(path => location.pathname === path);
 
-  let title = "Math Mentor";
+  let title = "";
   if (location.pathname.includes('planner')) title = "학습 플래너";
+  if (location.pathname.includes('calendar')) title = "달력";
   if (location.pathname.includes('feedback')) title = "피드백";
   if (location.pathname.includes('mypage')) title = "마이페이지";
   if (location.pathname.includes('task')) title = "과제 상세";
@@ -29,13 +31,13 @@ export const MobileHeader = () => {
       as="header"
       position="fixed"
       top={0} left={0} right={0}
-      height="56px"
+      h="4.5625rem"
       bg="white"
       align="center"
       justify="center"
-      borderBottom="1px solid"
-      borderColor="gray.100"
       zIndex={1100} 
+      borderBottomRadius={22}
+      boxShadow={'md'}
       px={4}
     >
       {!isMainTab && (
@@ -50,7 +52,7 @@ export const MobileHeader = () => {
           color="gray.600"
         />
       )}
-      <Text fontSize="17px" fontWeight="bold" color="gray.800">
+      <Text fontSize="1.25rem" fontWeight="bold" color="gray.800">
         {title}
       </Text>
     </Flex>

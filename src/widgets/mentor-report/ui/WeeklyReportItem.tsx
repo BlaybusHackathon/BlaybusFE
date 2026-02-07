@@ -22,7 +22,7 @@ export const WeeklyReportItem = ({
     <Flex
       align="center"
       justify="space-between"
-      p="12px 16px"
+      p={{base:("6px 24px"), md:("12px 16px")}}
       borderRadius="7"
       transition="all 0.2s"
       role="group"
@@ -34,7 +34,7 @@ export const WeeklyReportItem = ({
         bg: 'gray.100',
       } : undefined}
     >
-      <Flex gap={10}>
+      <Flex gap={{base:20, md:10}}>
         <Text
           fontSize="16px"
           fontWeight="600"
@@ -42,7 +42,7 @@ export const WeeklyReportItem = ({
           {weekNumber}주차
         </Text>
 
-        <Text fontSize="15px" fontWeight="500">
+        <Text fontSize="15px" fontWeight="bold">
           {displayRange}
         </Text>
       </Flex>

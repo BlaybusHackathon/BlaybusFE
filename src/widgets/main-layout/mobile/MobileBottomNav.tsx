@@ -17,6 +17,7 @@ export const MobileBottomNav = ({ navItems }: MobileBottomNavProps) => {
       bottom={0} left={0} right={0}
       bg="white"
       borderTop="1px solid"
+      borderTopRadius={22}
       borderColor="gray.100"
       height="64px"
       zIndex={1100}
