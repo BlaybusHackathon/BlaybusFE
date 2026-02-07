@@ -28,35 +28,39 @@ export const LoginForm = () => {
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
       <VStack spacing={6} align="stretch">
         <Box>
-          <Text fontSize="sm" fontWeight="bold" color="#373E56" mb={2}>아이디</Text>
+          <Text fontSize="md" fontWeight="bold" color="#373E56" mb={2} ml={1}>아이디</Text>
           <Input
             placeholder=""
             value={loginId}
             onChange={(e) => setLoginId(e.target.value)}
             isDisabled={isLoading}
-            height="50px"
+            height="55px" // Slightly taller
             borderColor="#E0E5EB"
-            borderRadius="md"
+            borderRadius="12px"
             _focus={{ borderColor: '#53A8FE', boxShadow: 'none' }}
             _hover={{ borderColor: '#53A8FE' }}
             color="#373E56"
+            fontSize="lg"
+            pl={6}
           />
         </Box>
 
         <Box>
-          <Text fontSize="sm" fontWeight="bold" color="#373E56" mb={2}>비밀번호</Text>
+          <Text fontSize="md" fontWeight="bold" color="#373E56" mb={2} ml={1}>비밀번호</Text>
           <Input
             type="password"
             placeholder=""
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             isDisabled={isLoading}
-            height="50px"
+            height="55px"
             borderColor="#E0E5EB"
-            borderRadius="md"
+            borderRadius="12px"
             _focus={{ borderColor: '#53A8FE', boxShadow: 'none' }}
             _hover={{ borderColor: '#53A8FE' }}
             color="#373E56"
+            fontSize="lg"
+            pl={6}
           />
         </Box>
 
@@ -65,13 +69,13 @@ export const LoginForm = () => {
           bg="#53A8FE"
           color="white"
           size="lg"
-          height="50px"
-          borderRadius="md"
-          fontSize="md"
+          height="55px"
+          borderRadius="12px"
+          fontSize="xl"
           fontWeight="bold"
           isLoading={isLoading}
           loadingText="로그인 중"
-          mt={4}
+          mt={6}
           _hover={{ bg: '#4293E3' }}
           _active={{ bg: '#3178C6' }}
         >
