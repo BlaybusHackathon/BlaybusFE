@@ -22,7 +22,7 @@ export const SidebarMenuItem = ({ label, path, icon, isCollapsed }: Props) => {
       pl={isCollapsed ? 3 : '44px'}
       pr={3}
       cursor="pointer"
-      color={isActive ? '#52A8FE' : 'gray.700'}
+      color={isActive ? '#52A8FE' : '#989898'}
       bg="transparent"
       fontWeight={isActive ? 'semibold' : 'normal'}
       borderRadius="md"

@@ -32,11 +32,12 @@ export const LoginForm = () => {
           <Input
             placeholder=""
             value={loginId}
+            bg={'white'}
             onChange={(e) => setLoginId(e.target.value)}
             isDisabled={isLoading}
-            height="55px" // Slightly taller
+            height="48px" 
             borderColor="#E0E5EB"
-            borderRadius="12px"
+            borderRadius="9"
             _focus={{ borderColor: '#53A8FE', boxShadow: 'none' }}
             _hover={{ borderColor: '#53A8FE' }}
             color="#373E56"
@@ -53,7 +54,7 @@ export const LoginForm = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             isDisabled={isLoading}
-            height="55px"
+            height="48px"
             borderColor="#E0E5EB"
             borderRadius="12px"
             _focus={{ borderColor: '#53A8FE', boxShadow: 'none' }}
