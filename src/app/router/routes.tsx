@@ -25,7 +25,7 @@ const MentorMyPage = lazy(() => import('@/pages/mentor/mypage'));
 const MentorMenteeManagePage = lazy(() => import('@/pages/mentor/mentee'));
 const MentorScheduleCreatePage = lazy(() => import('@/pages/mentor/mentee/calendar/create')); // [NEW]
 const MentorMenteeCalendarPage = lazy(() => import('@/pages/mentor/mentee/calendar'));
-const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback'));
+const MentorMenteeFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback/list/FeedbackListPage'));
 const MentorZoomFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback/zoom'));
 const MentorTaskDetailPage = lazy(() => import('@/pages/mentor/task/detail'));
 const MentorReportPage = lazy(() => import('@/pages/mentor/mentee/report'));
