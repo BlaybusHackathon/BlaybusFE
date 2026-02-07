@@ -7,30 +7,33 @@ interface CalendarDayProps {
     tasks: CalendarTask[];
     isCurrentMonth: boolean;
     onTaskClick: (taskId: string) => void;
+    isLastColumn?: boolean;
 }
 
-export const CalendarDay = ({ day, tasks, isCurrentMonth, onTaskClick }: CalendarDayProps) => {
+export const CalendarDay = ({ day, tasks, isCurrentMonth, onTaskClick, isLastColumn }: CalendarDayProps) => {
     return (
         <Box
-            minH={{ base: '80px', md: '120px' }}
+            minH={{ base: '120px', md: '160px' }}
             h="auto"
-            borderRight="1px solid"
+            borderRight={isLastColumn ? 'none' : "1px solid"}
             borderBottom="1px solid"
             borderColor="gray.100"
-            bg={isCurrentMonth ? 'white' : 'gray.50'}
-            p={{ base: 1, md: 2 }}
+            bg="transparent"
+            px={{ base: 3, md: 4 }}
+            py={{ base: 4, md: 6 }}
             position="relative"
         >
             <Text
-                fontSize={{ base: 'xs', md: 'sm' }}
+                fontSize="20px"
                 fontWeight={isCurrentMonth ? 'medium' : 'normal'}
-                color={isCurrentMonth ? 'gray.700' : 'gray.400'}
-                mb={1}
-                textAlign="center"
+                color={isCurrentMonth ? '#394250' : '#A0A5B1'}
+                mb={4}
+                textAlign="right"
+                mr={1}
             >
                 {day}
             </Text>
-            
+
             <VStack align="stretch" spacing={1} overflow="hidden">
                 {tasks.map((task) => (
                     <TaskItem key={task.id} task={task} onClick={onTaskClick} />
