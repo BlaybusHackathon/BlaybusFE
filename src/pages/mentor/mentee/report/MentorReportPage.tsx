@@ -3,11 +3,11 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, Heading, Button, useToast, Container, Text, Flex } from '@chakra-ui/react';
 import { format, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
-import { ReportForm } from './ui/ReportForm';
+import { ReportDetailWidget } from '@/widgets/mentor-report/detail/ReportDetailWidget';
 import { ReportData } from './mockReportData';
-import { 
-  getWeeklyReportById, 
-  getWeeklyReportByStartDate 
+import {
+  getWeeklyReportById,
+  getWeeklyReportByStartDate
 } from '@/features/report/model/mockReportData';
 
 const MentorReportPage = () => {
@@ -121,41 +121,50 @@ const MentorReportPage = () => {
         주간 학습 리포트
       </Heading>
 
-      <Text color="gray.500" mb={10} fontSize="md">
+      <Text color="#7E7E7E" mb={10} fontSize="16px" fontWeight="500">
         {formatDateRange()}
       </Text>
 
       <Box mb={20}>
-        <ReportForm data={reportData} onChange={handleInputChange} />
+        <ReportDetailWidget data={reportData} onChange={handleInputChange} />
       </Box>
 
-      <Box 
-        position="fixed" 
-        bottom={0} 
-        left={0} 
-        right={0} 
-        p={4} 
-        bg="white" 
-        borderTop="1px solid" 
-        borderColor="gray.200" 
+      <Box
+        position="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        p={4}
+        bg="white"
+        borderTop="1px solid"
+        borderColor="gray.200"
         zIndex={10}
       >
         <Container maxW="container.lg">
           <Flex justify="flex-end" gap={4}>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              minW="100px" 
+            <Button
+              variant="outline"
+              size="lg"
+              minW="100px"
               onClick={handleCancel}
+              borderColor="#E2E4E8"
+              color="#7E7E7E"
+              fontSize="16px"
+              fontWeight="600"
+              _hover={{ bg: '#F9F9FB' }}
             >
               취소
             </Button>
-            <Button 
-              colorScheme="blue" 
-              size="lg" 
-              minW="100px" 
-              onClick={handleSave} 
+            <Button
+              bg="#53A8FE"
+              color="white"
+              size="lg"
+              minW="100px"
+              onClick={handleSave}
               isLoading={loading}
+              fontSize="16px"
+              fontWeight="600"
+              _hover={{ bg: '#4297ED' }}
             >
               저장
             </Button>
