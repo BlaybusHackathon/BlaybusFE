@@ -9,7 +9,7 @@ export const StatBadge = ({ label, value }: Props) => {
   return (
     <Flex display="flex" alignItems="center" gap="8px">
       <Text
-        fontSize={{ base: "md", md: "18px" }}
+        fontSize={{ base: "xs", md: "18px" }}
         fontWeight="bold"
         color="gray.600"
         whiteSpace="nowrap"
@@ -18,13 +18,13 @@ export const StatBadge = ({ label, value }: Props) => {
       </Text>
 
       <Flex
-        padding={{ base: "1px 13px", md: "1px 13px" }}
+        padding={{ base: "1px 8px", md: "1px 13px" }}
         bg="#373E56"
-        borderRadius="11px"
+        borderRadius="11"
         align="center"
         justify="center"
       >
-        <Text color="white" fontWeight="semibold" height="22px" fontSize={{ base: "sm", md: "16px" }}>
+        <Text color="white" fontWeight={{base:"medium", md:"semibold"}} fontSize={{ base: "xs", md: "md" }} whiteSpace="nowrap">
           {value}
         </Text>
       </Flex>

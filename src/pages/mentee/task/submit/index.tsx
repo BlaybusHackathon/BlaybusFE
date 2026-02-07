@@ -1,125 +1,99 @@
-// src/pages/mentee/task/submit/index.tsx
+import { useEffect } from 'react';
 import { 
     Box, Button, Container, VStack, Textarea, 
-    Input, Flex, Text
+    Input, Flex, Text, useToast
 } from '@chakra-ui/react';
-import { DownloadIcon, AddIcon } from '@chakra-ui/icons'; // CloseIcon 제거 (Slider 내부로 이동됨)
+import { AddIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '@/shared/stores/authStore';
-import { usePlannerStore } from '@/shared/stores/plannerStore';
-import { useTaskSubmission } from '@/features/task-submission/model/useTaskSubmission';
-import { MOCK_WEAKNESSES } from '@/features/weakness/model/mockWeaknessData';
-import { TaskDetailHeader } from '@/widgets/task-detail/TaskDetailHeader';
 
-// [New] ImageSlider 및 데이터 타입 가져오기
+import { useAuthStore } from '@/shared/stores/authStore';
+import { useTaskSubmission } from '@/features/task-submission/model/useTaskSubmission';
+import { getTaskDetailById } from '@/shared/mocks/totalMockData';
+import { TaskDetailHeader } from '@/widgets/task-detail/TaskDetailHeader';
 import { ImageSlider, SubmissionImageData } from '@/widgets/task-detail/ImageSlider';
 
 const MenteeTaskSubmissionPage = () => {
     const { taskId } = useParams(); 
     const navigate = useNavigate();
     const { user } = useAuthStore();
-    const { tasks } = usePlannerStore(); 
+    const toast = useToast();
 
-    const task = tasks.find(t => t.id === taskId);
-    const weakness = MOCK_WEAKNESSES.find(w => w.id === task?.weaknessId);
+    const taskData = getTaskDetailById(taskId);
 
     const { 
-        memo, setMemo, images, 
-        handleAddImages, handleRemoveImage, handleSubmit 
-    } = useTaskSubmission(taskId || '', '');
+        memo, setMemo, images, setImages,
+        handleAddImages, handleRemoveImage, handleSubmit
+    } = useTaskSubmission(taskId || '', taskData?.submission?.memo || '');
 
-    if (!user) return <Box p={10} textAlign="center">로그인이 필요합니다.</Box>;
-    if (!task) return <Box p={10} textAlign="center">과제 정보를 찾을 수 없습니다. (ID: {taskId})</Box>;
+    useEffect(() => {
+        if (taskData?.submission && taskData.submission.images.length > 0) {
+            const initialImages = taskData.submission.images.map((url, idx) => ({
+                id: `existing-${idx}`,
+                file: new File([], "existing_image"),
+                previewUrl: url
+            }));
+            
+            setImages(initialImages);
+        }
+    }, [taskData, setImages]);
+
+    const onAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            if (images.length + e.target.files.length > 20) {
+                toast({
+                    title: '이미지 초과',
+                    description: '최대 20장까지만 업로드 가능합니다.',
+                    status: 'warning',
+                    isClosable: true,
+                });
+                return;
+            }
+            handleAddImages(e);
+        }
+    };
 
     const onComplete = () => {
-        handleSubmit();
+        handleSubmit(); 
+        toast({ title: '제출이 완료되었습니다.', status: 'success' });
         navigate(-1);
     };
 
-    // [변환] 로컬 이미지 상태(previewUrl)를 ImageSlider 포맷(imageUrl)으로 매핑
+    if (!user) return <Box p={10}>로그인이 필요합니다.</Box>;
+    if (!taskData) return <Box p={10}>과제 정보가 없습니다.</Box>;
+
     const sliderImages: SubmissionImageData[] = images.map(img => ({
         id: img.id,
         imageUrl: img.previewUrl
     }));
 
     return (
-        <Container maxW="container.lg" py={12} bg="white" minH="100vh">
-            <VStack spacing={10} align="stretch" maxW="1000px" mx="auto">
+        <Container maxW="container.lg" py={6} minH="100vh">
+            <VStack align="stretch" maxW="1000px" mx="auto">
                 
-                {/* 1. 헤더 */}
                 <TaskDetailHeader
-                    title={task.title}
-                    subject={task.subject}
-                    date={task.taskDate}
-                    isMentorChecked={task.isMentorChecked}
-                    supplement={weakness?.title}
-                    action={weakness?.fileUrl && (
-                        <Button 
-                            as="a" 
-                            href={weakness.fileUrl} 
-                            download 
-                            leftIcon={<DownloadIcon />} 
-                            size="sm" 
-                            colorScheme="gray" 
-                            variant="outline"
-                            _hover={{ bg: 'gray.100' }}
-                        >
-                            학습지 다운로드
-                        </Button>
-                    )}
+                    title={taskData.title}
+                    subject={taskData.subject}
+                    date={taskData.taskDate}
+                    isMentorChecked={taskData.isMentorChecked}
+                    supplement={taskData.weakness?.title}
                 />
 
-                {/* 2. 보완점 미리보기 */}
-                {weakness?.fileUrl && (
-                    <Box>
-                         <Text fontSize="lg" fontWeight="bold" mb={4}>학습지 미리보기</Text>
-                        <Box 
-                            w="100%" 
-                            h="500px" 
-                            bg="gray.50" 
-                            borderRadius="xl" 
-                            overflow="hidden"
-                            border="1px solid"
-                            borderColor="gray.200"
-                        >
-                            <iframe 
-                                src={weakness.fileUrl} 
-                                width="100%" 
-                                height="100%" 
-                                title="Task Preview"
-                                style={{ border: 'none' }}
-                            /> 
-                        </Box>
-                    </Box>
-                )}
-
-                {/* 3. 과제 인증샷 업로드 (ImageSlider 재사용) */}
                 <Box>
                     <Flex justify="space-between" align="center" mb={4}>
-                        <Text fontSize="lg" fontWeight="bold">과제 인증샷 올리기</Text>
+                        <Text fontSize="lg" fontWeight="bold">
+                            업로드 <Text as="span" fontSize="md" fontWeight="normal" color="gray.500" ml={2}></Text>
+                        </Text>
                         
-                        {/* 사진 추가 버튼 (슬라이더 밖 상단에 배치) */}
-                        <Box as="label" cursor="pointer">
-                            <Input 
-                                type="file" 
-                                accept="image/*" 
-                                display="none" 
-                                multiple 
-                                onChange={handleAddImages}
-                            />
-                            <Button 
-                                as="span" 
-                                size="sm" 
-                                leftIcon={<AddIcon />} 
-                                colorScheme="blue" 
-                                variant="outline"
-                            >
-                                사진 추가
-                            </Button>
-                        </Box>
+                        {images.length < 20 && (
+                            <Box as="label" cursor="pointer">
+                                <Input type="file" accept="image/*" display="none" multiple onChange={onAddImages} />
+                                <Button as="span" size="sm" leftIcon={<AddIcon />} bg={'#53A8FE'} color={'white'}>
+                                    추가
+                                </Button>
+                            </Box>
+                        )}
                     </Flex>
 
-                    {/* [핵심] 재사용된 ImageSlider */}
                     <Box w="full">
                         {sliderImages.length > 0 ? (
                             <ImageSlider 
@@ -127,73 +101,56 @@ const MenteeTaskSubmissionPage = () => {
                                 taskId={taskId || ''}
                                 currentUserId={user.id}
                                 userRole={user.role}
-                                onDelete={handleRemoveImage} // 삭제 함수 전달 -> 제출 모드 활성화
+                                onDelete={handleRemoveImage}
                             />
                         ) : (
-                            // 이미지가 없을 때의 Empty State (클릭하여 업로드 유도)
                             <Box 
                                 as="label"
-                                w="full" 
-                                h="400px" 
-                                bg="gray.50" 
-                                borderRadius="xl" 
-                                border="2px dashed" 
-                                borderColor="gray.300"
-                                display="flex"
-                                flexDirection="column"
-                                alignItems="center"
-                                justifyContent="center"
-                                cursor="pointer"
-                                _hover={{ borderColor: 'blue.400', bg: 'blue.50' }}
+                                w="full" py={6} bg="white" borderRadius="xl" shadow={'sm'}
+                                display="flex" flexDirection="column" alignItems="center" justifyContent="center"
+                                cursor="pointer" _hover={{ bg: 'blue.50' }}
                             >
-                                <Input 
-                                    type="file" 
-                                    accept="image/*" 
-                                    display="none" 
-                                    multiple 
-                                    onChange={handleAddImages}
-                                />
-                                <AddIcon boxSize={8} color="gray.400" mb={4} />
-                                <Text color="gray.500" fontSize="lg" fontWeight="medium">
-                                    여기를 눌러 과제 사진을 업로드하세요
-                                </Text>
+                                <Input type="file" accept="image/*" display="none" multiple onChange={onAddImages} />
+                                <AddIcon boxSize={{base:4, md:6}} color="gray.400" />
                             </Box>
                         )}
                     </Box>
                 </Box>
 
-                {/* 4. 메모 작성 */}
                 <Box>
-                    <Text fontSize="lg" fontWeight="bold" mb={4}>나의 메모</Text>
+                    <Text fontSize="lg" fontWeight="bold" mb={{base:2, md:4}}>메모장</Text>
                     <Textarea 
                         value={memo}
                         onChange={(e) => setMemo(e.target.value)}
                         placeholder="과제를 하면서 어려웠던 점이나 멘토님께 하고 싶은 말을 적어주세요."
                         minH="150px"
-                        p={4}
-                        bg="gray.50"
+                        p={5}
+                        bg="#fff"
                         border="none"
                         borderRadius="xl"
                         resize="none"
                         focusBorderColor="blue.400"
+                        fontSize="16px"
                         _placeholder={{ color: 'gray.400' }}
                     />
                 </Box>
 
-                {/* 5. 제출 버튼 */}
-                <Flex justify="center" pt={4} pb={10}>
+                <Flex align='center' justify='flex-end' gap={4} pt={4} pb={10}>
                     <Button 
-                        size="lg" 
-                        colorScheme="blue" 
-                        w="full" 
-                        maxW="300px"
-                        h="56px"
-                        fontSize="lg"
-                        borderRadius="xl"
+                        size="sm" variant="outline" py={6} px={8} fontSize="lg" borderRadius="xl"
+                        onClick={() => navigate(-1)}
+                        color={'#9B9BA4'}
+                    >
+                        취소
+                    </Button>
+                    <Button 
+                        size="sm" colorScheme="blue" py={6} px={8} fontSize="lg" borderRadius="xl"
                         onClick={onComplete}
                         isDisabled={images.length === 0}
+                        bg={"#53A8FE"}
+                        boxShadow="0 4px 14px 0 rgba(0,118,255,0.3)"
                     >
-                        과제 제출완료
+                        {taskData.submission ? '수정' : '제출'}
                     </Button>
                 </Flex>
 

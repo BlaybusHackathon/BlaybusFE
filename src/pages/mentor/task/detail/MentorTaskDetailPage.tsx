@@ -19,6 +19,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MOCK_TASK_DETAIL_DATA } from './mockTaskDetail';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { ImageSlider, TaskDetailHeader } from '@/widgets/task-detail';
+import { Subject } from '@/widgets/task-detail/TaskDetailHeader';
 
 const MentorTaskDetailPage = () => {
     const { id } = useParams(); 
@@ -81,7 +82,7 @@ const MentorTaskDetailPage = () => {
                 {/* Header Section */}
                 <Box>
                     <TaskDetailHeader
-                        subject={data.subject}
+                        subject={data.subject as Subject}
                         date={data.date}
                         isMentorChecked={data.isMentorChecked}
                         title={data.title}

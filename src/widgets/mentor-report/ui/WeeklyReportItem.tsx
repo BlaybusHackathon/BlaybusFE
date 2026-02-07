@@ -34,15 +34,15 @@ export const WeeklyReportItem = ({
         bg: 'gray.100',
       } : undefined}
     >
-      <Flex gap={{base:20, md:10}}>
+      <Flex gap={{base:12, md:'20'}}>
         <Text
-          fontSize="16px"
+          fontSize={{base:"sm",md:"16px"}}
           fontWeight="600"
         >
           {weekNumber}주차
         </Text>
 
-        <Text fontSize="15px" fontWeight="bold">
+        <Text fontSize={{base:"sm",md:"16px"}} fontWeight="bold">
           {displayRange}
         </Text>
       </Flex>

@@ -5,35 +5,39 @@ import { Subject, SUBJECT_COLORS } from '@/shared/constants/subjects';
 
 interface TaskTimerProps {
   taskId: string;
-  isDisabled?: boolean;
+  isDisabled?: boolean;     
+  isTimerEnabled?: boolean; 
   subject?: Subject;
 }
 
-export const TaskTimer = ({ taskId, isDisabled, subject = 'OTHER' }: TaskTimerProps) => {
+export const TaskTimer = ({ 
+  taskId, 
+  isDisabled, 
+  isTimerEnabled = true, 
+  subject = 'OTHER' 
+}: TaskTimerProps) => {
   const { isRunning, toggle, duration } = useTaskTimer(taskId);
-
   const subjectColor = SUBJECT_COLORS[subject] || 'gray';
+
+  const isButtonDisabled = isDisabled || !isTimerEnabled;
 
   return (
     <HStack spacing={2}>
       <IconButton
         aria-label={isRunning ? 'Pause' : 'Start'}
         size="xs"
-        pl={0.9}
         borderRadius={'full'}
-        isDisabled={isDisabled}
+        isDisabled={isButtonDisabled}
         onClick={(e) => {
           e.stopPropagation();
           toggle();
         }}
         
         color={subjectColor}
-        bg={isRunning ? `${subjectColor}4D` : `${subjectColor}1A`}
-        borderWidth="1px"
-        borderColor={"none"}
+        bg={isRunning ? `${subjectColor}60` : `${subjectColor}40`}
         
         _hover={{
-          bg: isRunning ? `${subjectColor}80` : `${subjectColor}40`,
+          bg: isRunning ? `${subjectColor}80` : `${subjectColor}70`,
           transform: 'scale(1.05)', 
         }}
         _active={{
@@ -44,12 +48,12 @@ export const TaskTimer = ({ taskId, isDisabled, subject = 'OTHER' }: TaskTimerPr
       />
       
       <Text 
-        fontSize="sm" 
-        fontWeight="bold" 
-        fontFamily="monospace"
+        fontSize="md" 
+        fontWeight="medium" 
         minW="60px"
         textAlign="center"
-        color={isRunning ? subjectColor : 'gray.500'}
+        letterSpacing="widest"
+        color={isRunning ? subjectColor : '#373E56'}
       >
         {formatDuration(duration)}
       </Text>

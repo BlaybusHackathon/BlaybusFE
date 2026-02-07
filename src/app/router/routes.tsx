@@ -16,6 +16,8 @@ const MenteeCalendarPage = lazy(() => import('@/pages/mentee/calendar'));
 const MenteeTaskDetailPage = lazy(() => import('@/pages/mentee/task/[id]'));
 const MenteeTaskSubmissionPage = lazy(() => import('@/pages/mentee/task/submit'));
 const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
+// [추가] 멘티 줌 피드백 상세 페이지 Import
+const MenteeZoomFeedbackDetailPage = lazy(() => import('@/pages/mentee/feedback/zoom/MenteeZoomFeedbackDetailPage')); 
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
 const MenteeReportDetailPage = lazy(() => import('@/pages/mentee/report/MenteeReportDetailPage'));
 
@@ -61,6 +63,9 @@ export const router = createBrowserRouter([
       { path: '/mentee/task/:taskId/submit', element: withSuspense(MenteeTaskSubmissionPage) },
 
       { path: '/mentee/feedback', element: withSuspense(MenteeFeedbackPage) },
+      // [추가] 멘티 줌 피드백 상세 라우트 등록
+      { path: '/mentee/feedback/zoom/:zoomId', element: withSuspense(MenteeZoomFeedbackDetailPage) },
+      
       { path: '/mentee/mypage', element: withSuspense(MenteeMyPage) },
 
       { path: '/mentee/report/:reportId', element: withSuspense(MenteeReportDetailPage) },

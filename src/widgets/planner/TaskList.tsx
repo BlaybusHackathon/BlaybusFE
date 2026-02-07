@@ -33,7 +33,6 @@ export const TaskList = () => {
   };
 
   const handleAddTask = (data: { title: string; subject: any }) => {
-    // [수정] 유저가 없으면 중단 (안전장치)
     if (!user) {
       console.error("User not logged in");
       return;
@@ -47,7 +46,7 @@ export const TaskList = () => {
       status: 'PENDING',
       isMandatory: false,
       isMentorChecked: false,
-      menteeId: user.id, // [수정] 'mentee-1' -> user.id 동적 할당
+      menteeId: user.id,
       recurringGroupId: null,
       contentId: null,
       weaknessId: null,
@@ -56,7 +55,7 @@ export const TaskList = () => {
   };
 
   return (
-    <VStack spacing={3} justify={'center'} align="stretch" p={2}>
+    <VStack spacing={3} justify={'center'} align="stretch">
       {tasks.length === 0 ? (
         <Text textAlign="center" color="gray.500" py={10}>
           등록된 할 일이 없습니다.
@@ -76,7 +75,7 @@ export const TaskList = () => {
       )}
 
       {isEditable && (
-        <Box mt={2}>
+        <Box>
           <TaskAddForm 
             onSubmit={handleAddTask} 
             onCancel={() => {}} 

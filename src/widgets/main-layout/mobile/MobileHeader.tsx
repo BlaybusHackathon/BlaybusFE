@@ -19,7 +19,7 @@ export const MobileHeader = () => {
   const isMainTab = mainTabPaths.some(path => location.pathname === path);
 
   let title = "";
-  if (location.pathname.includes('planner')) title = "학습 플래너";
+  if (location.pathname.includes('planner')) title = "";
   if (location.pathname.includes('calendar')) title = "달력";
   if (location.pathname.includes('feedback')) title = "피드백";
   if (location.pathname.includes('mypage')) title = "마이페이지";
@@ -32,12 +32,12 @@ export const MobileHeader = () => {
       position="fixed"
       top={0} left={0} right={0}
       h="4.5625rem"
-      bg="white"
+      bg={'white'}
       align="center"
       justify="center"
       zIndex={1100} 
-      borderBottomRadius={22}
-      boxShadow={'md'}
+      borderBottomRadius={(location.pathname.includes('planner')) ? "none" : "lg"}
+      boxShadow={(location.pathname.includes('planner')) ? "none" : "sm"}
       px={4}
     >
       {!isMainTab && (

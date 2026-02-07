@@ -31,8 +31,7 @@ export const TaskItem = ({
     <HStack
       onClick={onClick} 
       w="full"
-      p={2}
-      px={6}
+      p={5}
       borderRadius="lg"
       boxShadow="sm"
       justify="space-between"
@@ -61,13 +60,15 @@ export const TaskItem = ({
           </Box>
         </HStack>
         <HStack>
-          {isTimerEnabled && (
-            <TaskTimer 
-              taskId={task.id} 
-              subject={task.subject}
-              isDisabled={isCompleted} 
-            />
-          )}
+          {/* [수정] 조건부 렌더링을 제거하고 항상 TaskTimer를 렌더링함 
+            대신 버튼 활성화 여부를 props로 전달함
+          */}
+          <TaskTimer 
+            taskId={task.id} 
+            subject={task.subject}
+            isDisabled={isCompleted} 
+            isTimerEnabled={isTimerEnabled} 
+          />
         </HStack>
       </VStack>
 
@@ -91,8 +92,8 @@ export const TaskItem = ({
             color={'white'} 
             fontSize="0.6rem" 
             borderRadius={'full'} 
-            px={3} 
-            py={1}
+            px={2} 
+            py={0.4}
             border="1px solid"
             borderColor={subjectColor}
           >
@@ -127,17 +128,13 @@ export const TaskItem = ({
                   borderRadius: 'full',
                   width: '24px',
                   height: '24px',
-                  borderColor: 'gray.300',
                   borderWidth: '2px',
                   _hover: {
-                    borderColor: subjectColor, 
-                    bg: 'gray.50'
+                    bg: 'subjectColor'
                   },
                   _checked: {
-                    borderColor: `${subjectColor} !important`,
                     bg: `${subjectColor} !important`,
                     _hover: {
-                      borderColor: `${subjectColor} !important`,
                       bg: `${subjectColor} !important`,
                     }
                   }

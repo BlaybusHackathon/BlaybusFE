@@ -1,10 +1,9 @@
 import { Flex, Text, Checkbox, Box } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Task } from '@/entities/task/types';
-import { SUBJECT_COLORS } from '@/shared/constants/studyTime';
+import { SUBJECT_COLORS } from '@/shared/constants/subjects';
 import { Subject } from '@/shared/constants/subjects';
 import { PinIcon } from '@/shared/ui/icons';
-
 
 interface Props {
   task: Task;
@@ -16,7 +15,8 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
   const navigate = useNavigate();
   const { menteeId } = useParams();
 
-  const colors = SUBJECT_COLORS[task.subject] || { border: 'gray.200' };
+  const subjectColor = SUBJECT_COLORS[task.subject] || 'gray.200';
+  
   const hasWeakness = task.weaknessId !== null;
   const isCompleted = task.status === 'COMPLETED';
 
@@ -37,8 +37,11 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
       _hover={{
         transform: 'translateY(-2px)',
         boxShadow: 'md',
-        borderColor: colors.border
+        borderColor: subjectColor, 
+        borderWidth: '1px', 
+        borderStyle: 'solid'
       }}
+      border="1px solid transparent" 
       onClick={() => navigate(`/mentor/mentee/${menteeId}/task/${task.id}`)}
     >
       {task.isMandatory && (

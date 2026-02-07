@@ -176,7 +176,7 @@ export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportList
         )}
       </Flex>
 
-      <VStack spacing={3} align="stretch"  borderRadius={22} bg={{base: "#fff", md:'#F9F9FB'}} px={4} py={3}>
+      <VStack spacing={{base:2,md:3}} align="stretch"  borderRadius={22} bg={{base: "#fff", md:'#F9F9FB'}} px={4} py={3}>
         {weeksInMonth.map((week) => {
           const status = getWeekStatus(week.startDate, week.endDate);
           const hasReport = MOCK_WEEKLY_REPORTS.some(r => r.startDate === week.startDate);

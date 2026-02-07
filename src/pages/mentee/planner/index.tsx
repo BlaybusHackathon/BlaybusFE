@@ -17,23 +17,23 @@ const MenteePlannerPage = () => {
     <Box w="100%" minH="100vh">
       <Container maxW="1200px" p={0}>
         
-        <Box bg="white" borderRadius="3xl" boxShadow="sm" mb={6} overflow="hidden">
+        <Box boxShadow="sm" mt={-2} mb={6} overflow="hidden">
           
-          <Box p={{ base: 4, md: 6 }} borderBottom="1px solid" borderColor="gray.100">
+          <Box p={{ base: 0, md: 6 }}>
             <CalendarWidget />
           </Box>
 
-          <Flex direction={{ base: 'column', md: 'row' }} p={{ base: 4, md: 6 }} gap={{ base: 8, lg: 12 }}>
-            <Box flex={1} w="full" minW={0} p={2}>
+          <Flex direction={{ base: 'column', md: 'row' }} justify="center" pt={{base:6, md:'none'}} p={{ base: 'none', md: 6 }} gap={{ base: 8, md: 4 }}>
+            <Box flex={1} w="full" minW={0} p={4}>
               <HStack align="baseline" spacing={2} mb={4}>
-                <Text fontSize="xl" fontWeight="semibold">오늘 할 일</Text>
-                <Text fontSize="md" color="gray.500" fontWeight="medium">
+                <Text fontSize="xl" fontWeight="semibold" p={1}>오늘 할 일</Text>
+                <Text fontSize="sm" color="#989898" fontWeight="medium">
                   {dateText}
                 </Text>
               </HStack>
                <TaskList />
             </Box>
-            <Box w={{ base: 'auto', md: '24vw' }} flexShrink={0}>
+            <Box w={{ base: 'auto', md: '24vw' }} maxW={{base:"none", md:"450px"}} flexShrink={0}>
               <StudyTimeChart />
             </Box>
           </Flex>

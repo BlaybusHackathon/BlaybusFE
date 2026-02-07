@@ -26,7 +26,7 @@ const MenteeCalendarPage = () => {
     return (
         <Box p={{ base: 0, md: 6 }}>
             <Flex 
-                display={{base:"none", md:"display"}}
+                display={{base:"none", md:"flex"}}
                 justify="space-between" 
                 align="center" 
                 mb={6}

@@ -8,13 +8,13 @@ export const HistorySection = () => {
 
   return (
     <Box>
-      <Heading size="md" mb={4} color="gray.700">지난 피드백 모아보기</Heading>
+      <Heading size="sm" mb={4} color="gray.700">지난 피드백 모아보기</Heading>
       
       <FilterBar filters={filters} setters={setters} />
 
-      <Box minH="300px">
+      <Box >
         {data.length > 0 ? (
-          <VStack spacing={4} align="stretch">
+          <VStack spacing={2} align="stretch">
             {data.map(fb => (
               <SimpleFeedbackCard key={fb.id} feedback={fb} />
             ))}

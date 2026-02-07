@@ -26,10 +26,10 @@ export const DailyMemoWidget = () => {
     >
       <Flex align="center" mb={2} gap={2}>
         <Text 
-          fontSize="md" 
+          fontSize="lg" 
           fontWeight="bold" 
         >
-          코멘트
+          코멘트를 작성해 주세요!
         </Text>
       </Flex>
 
@@ -39,6 +39,9 @@ export const DailyMemoWidget = () => {
           onChange={(e) => setMemoInput(e.target.value)}
           onBlur={handleBlur}
           placeholder="오늘의 목표나 다짐을 적어보세요!"
+          borderRadius={10}
+          boxShadow="sm"
+          p={6}
           bg="white"
           size="sm"
           resize="none"
