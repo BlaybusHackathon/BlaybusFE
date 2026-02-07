@@ -9,7 +9,7 @@ interface TaskAddFormProps {
   onCancel: () => void;
 }
 
-export const TaskAddForm = ({ onSubmit, onCancel }: TaskAddFormProps) => {
+export const TaskAddForm = ({ onSubmit }: TaskAddFormProps) => {
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState<Subject>('OTHER');
 

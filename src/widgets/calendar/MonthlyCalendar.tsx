@@ -17,12 +17,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 interface MonthlyCalendarProps {
     onTaskClickOverride?: (taskId: string) => void;
+    menteeName?: string;
+    onCreateSchedule?: () => void;
 }
 
-export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) => {
+export const MonthlyCalendar = ({
+    onTaskClickOverride,
+    menteeName = "최연준",
+    onCreateSchedule
+}: MonthlyCalendarProps) => {
     const { menteeId } = useParams();
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
+    const [showCompletedOnly, setShowCompletedOnly] = useState(false);
     const navigate = useNavigate();
 
     const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
@@ -50,10 +56,11 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
     });
 
     const getTasksForDay = () => {
-        const allTasks = generateMockTasks(currentDate); 
-        return allTasks.filter(() => {
-            return Math.random() > 0.95; 
-        });
+        const allTasks = generateMockTasks(currentDate);
+        if (showCompletedOnly) {
+            return allTasks.filter(task => task.isCompleted);
+        }
+        return allTasks;
     };
 
     return (
@@ -62,24 +69,25 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
                 currentDate={currentDate}
                 onPrevMonth={handlePrevMonth}
                 onNextMonth={handleNextMonth}
-                showIncompleteOnly={showIncompleteOnly}
-                onToggleIncomplete={setShowIncompleteOnly}
+                showCompletedOnly={showCompletedOnly}
+                onToggleCompleted={setShowCompletedOnly}
+                menteeName={menteeName}
+                onCreateSchedule={onCreateSchedule}
             />
 
-            <Box border="1px solid" borderColor="gray.200" borderRadius="xl" overflow="hidden" bg="white">
-                <SimpleGrid columns={7} bg="gray.50" borderBottom="1px solid" borderColor="gray.200">
-                    {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-                        <Box 
-                            key={day} 
-                            py={2} 
-                            textAlign="center" 
-                            borderRight={index !== 6 ? "1px solid" : "none"} 
-                            borderColor="gray.100"
+            <Box bg="white">
+                <SimpleGrid columns={7} bg="white">
+                    {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
+                        <Box
+                            key={day}
+                            py={4}
+                            textAlign="center"
+                            bg="white"
                         >
                             <Text
-                                fontSize={{ base: 'xs', md: 'sm' }}
+                                fontSize="20px"
                                 fontWeight="bold"
-                                color={index === 0 ? 'red.500' : index === 6 ? 'blue.500' : 'gray.600'}
+                                color="#999999"
                             >
                                 {day}
                             </Text>
@@ -87,18 +95,35 @@ export const MonthlyCalendar = ({ onTaskClickOverride }: MonthlyCalendarProps) =
                     ))}
                 </SimpleGrid>
 
-                <SimpleGrid columns={7} spacing={0}>
-                    {calendarDays.map((date) => (
-                        <CalendarDay
-                            key={date.toISOString()}
-                            day={date.getDate()}
-                            date={date}
-                            isCurrentMonth={isSameMonth(date, monthStart)}
-                            tasks={getTasksForDay()}
-                            onTaskClick={handleTaskClick}
-                        />
-                    ))}
-                </SimpleGrid>
+                <Box
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="20px"
+                    overflow="hidden"
+                    bg="white"
+                >
+                    <SimpleGrid columns={7} spacing={0}>
+                        {calendarDays.map((date, index) => {
+                            const isLastColumn = (index + 1) % 7 === 0;
+                            const isFirstColumn = index % 7 === 0;
+                            return (
+                                <Box
+                                    key={date.toISOString()}
+                                    bg={isFirstColumn || isLastColumn ? '#F7F9F9' : 'white'}
+                                >
+                                    <CalendarDay
+                                        day={date.getDate()}
+                                        date={date}
+                                        isCurrentMonth={isSameMonth(date, monthStart)}
+                                        tasks={getTasksForDay()}
+                                        onTaskClick={handleTaskClick}
+                                        isLastColumn={isLastColumn}
+                                    />
+                                </Box>
+                            );
+                        })}
+                    </SimpleGrid>
+                </Box>
             </Box>
         </Box>
     );

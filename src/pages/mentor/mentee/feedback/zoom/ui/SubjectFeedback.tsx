@@ -3,25 +3,25 @@ import { VStack, Text, Box, Badge, Textarea } from '@chakra-ui/react';
 interface SingleSubjectFeedbackProps {
     subject: string;
     value: string;
-    colorScheme: string;
+    bg: string;
     onChange: (value: string) => void;
 }
 
-const SingleSubjectFeedback = ({ subject, value, colorScheme, onChange }: SingleSubjectFeedbackProps) => {
+const SingleSubjectFeedback = ({ subject, value, bg, onChange }: SingleSubjectFeedbackProps) => {
     return (
-        <Box bg="gray.50" p={6} borderRadius="lg">
-            <Badge colorScheme={colorScheme} mb={3} px={3} py={1} borderRadius="full">
+        <Box p={6} borderRadius="lg">
+            <Badge color={'white'}bg={bg} mb={3} px={4} py={1} borderRadius="full">
                 {subject}
             </Badge>
             <Textarea
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={`${subject} 과목에 대한 피드백을 입력해주세요.`}
-                bg="white"
+                bg="#F9F9FB"
                 border="none"
                 minH="100px"
                 resize="none"
-                _focus={{ border: '1px solid', borderColor: `${colorScheme}.400` }}
+                _focus={{ border: '1px solid', borderColor: `${bg}.400` }}
             />
         </Box>
     );
@@ -46,19 +46,19 @@ export const SubjectFeedback = ({ subjects, onChange }: SubjectFeedbackProps) =>
                 <SingleSubjectFeedback
                     subject="국어"
                     value={subjects.korean}
-                    colorScheme="blue"
+                    bg="#53A8FE"
                     onChange={(val) => onChange('korean', val)}
                 />
                 <SingleSubjectFeedback
                     subject="영어"
                     value={subjects.english}
-                    colorScheme="green"
+                    bg="#4ED4A9"
                     onChange={(val) => onChange('english', val)}
                 />
                 <SingleSubjectFeedback
                     subject="수학"
                     value={subjects.math}
-                    colorScheme="purple"
+                    bg="#A16AFF"
                     onChange={(val) => onChange('math', val)}
                 />
             </VStack>
