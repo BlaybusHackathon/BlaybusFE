@@ -5,7 +5,7 @@ import { SidebarMenuItem } from './components/SidebarMenuItem';
 import { MenteeListToggle } from './components/MenteeListToggle';
 import { MenteeNavItem } from './components/MenteeMenuItem';
 import { getNavItems } from '../navConfig';
-import { FiLogOut } from 'react-icons/fi'; 
+import { FiLogOut } from 'react-icons/fi';
 
 // [추가 1] 페이지 이동을 위한 훅 import
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ interface Props {
 export const DesktopSidebar = ({ isCollapsed }: Props) => {
   const { user, logout } = useAuthStore();
   const role = user?.role;
-  
+
   // [추가 2] navigate 함수 생성
   const navigate = useNavigate();
 
@@ -50,8 +50,8 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
       display="flex"
       flexDirection="column"
     >
-      <Box 
-        flex={1} 
+      <Box
+        flex={1}
         overflowY="auto"
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
@@ -61,7 +61,7 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
           },
         }}
       >
-        <VStack spacing={1} align="stretch" p={2}>
+        <VStack spacing={8} align="stretch" p={2} mt={8}>
           <Box h="64px" display="flex" alignItems="center" justifyContent="center" mb={4}>
             {isCollapsed ? (
               <SeolStudyLogo w="40px" h="auto" />
@@ -112,15 +112,15 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
           cursor="pointer"
           color="gray.500"
           transition="all 0.2s"
-          _hover={{ 
-            bg: 'red.50', 
+          _hover={{
+            bg: 'red.50',
             color: 'red.500',
             transform: 'translateY(-1px)'
           }}
           spacing={3}
         >
           <Icon as={FiLogOut} w={5} h={5} />
-          
+
           {!isCollapsed && (
             <Text fontSize="md" fontWeight="medium">
               로그아웃

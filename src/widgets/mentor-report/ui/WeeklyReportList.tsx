@@ -6,7 +6,7 @@ import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   eachWeekOfInterval, addDays, isSameMonth
 } from 'date-fns';
-import { MOCK_WEEKLY_REPORTS } from '@/features/report/model/mockReportData';
+import { MOCK_WEEKLY_REPORTS } from '@/widgets/mentor-report/model/mockWeeklyReports';
 import { WeeklyReportItem } from './WeeklyReportItem';
 
 export const WeeklyReportList = () => {

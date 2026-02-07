@@ -1,10 +1,9 @@
 
-import { 
-    HomeIcon,
-    CalendarIcon,
-    FeedbackIcon,
-    MypageIcon,
-    MenteeIcon
+import {
+  HomeIcon,
+  CalendarIcon,
+  FeedbackIcon,
+  MypageIcon,
 } from '@/shared/ui/icons';
 import { UserRole } from '@/shared/constants/enums';
 
@@ -19,10 +18,10 @@ export const getNavItems = (role: UserRole): NavItem[] => {
     case 'MENTEE':
       return [
 
-        { 
-          label: '홈', 
-          path: '/mentee/planner', 
-          icon: HomeIcon 
+        {
+          label: '홈',
+          path: '/mentee/planner',
+          icon: HomeIcon
         },
         {
           label: '캘린더',
@@ -30,30 +29,24 @@ export const getNavItems = (role: UserRole): NavItem[] => {
           icon: CalendarIcon
         },
 
-        { 
-          label: '피드백', 
-          path: '/mentee/feedback', 
-          icon: FeedbackIcon 
+        {
+          label: '피드백',
+          path: '/mentee/feedback',
+          icon: FeedbackIcon
         },
-        { 
-          label: '마이페이지', 
-          path: '/mentee/mypage', 
-          icon: MypageIcon 
+        {
+          label: '마이페이지',
+          path: '/mentee/mypage',
+          icon: MypageIcon
         },
       ];
 
     case 'MENTOR':
       return [
-
-        { 
-          label: '멘티 관리', 
-          path: '/mentor', 
-          icon: MenteeIcon 
-        },
-        { 
-          label: '데시보드', 
-          path: '/mentor/mypage', 
-          icon: HomeIcon 
+        {
+          label: '마이페이지',
+          path: '/mentor/mypage',
+          icon: MypageIcon
         },
       ];
 

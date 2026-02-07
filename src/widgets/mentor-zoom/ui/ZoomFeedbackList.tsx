@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Box, Flex, Text, VStack, IconButton, HStack } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon, AddIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MOCK_ZOOM_FEEDBACKS } from '@/features/report/model/mockReportData';
+import { MOCK_ZOOM_FEEDBACKS } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
 import { ZoomFeedbackItem } from './ZoomFeedbackItem';
 
 const ITEMS_PER_PAGE = 4;

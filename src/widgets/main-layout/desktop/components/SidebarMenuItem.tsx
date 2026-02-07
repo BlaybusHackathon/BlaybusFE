@@ -36,7 +36,7 @@ export const SidebarMenuItem = ({ label, path, icon, isCollapsed }: Props) => {
     >
       {icon}
       {!isCollapsed && (
-        <Text ml="14px" fontSize="16px" fontWeight="600">
+        <Text ml="14px" fontSize="18px" fontWeight="700">
           {label}
         </Text>
       )}
