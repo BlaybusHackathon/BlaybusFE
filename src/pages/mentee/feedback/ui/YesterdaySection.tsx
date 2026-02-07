@@ -12,7 +12,7 @@ export const YesterdaySection = () => {
 
   return (
     <Box mb={10}>
-      <Heading size="lg" mb={2} color="gray.800">어제자 피드백</Heading>
+      <Heading size="sm" mb={2} color="#373E56">어제자 피드백</Heading>
 
       {yesterdayFeedbacks.length > 0 ? (
         <VStack spacing={4} align="stretch" py={2}>
@@ -22,12 +22,10 @@ export const YesterdaySection = () => {
         </VStack>
       ) : (
         <Flex 
-          bg="white" 
           p={8} 
           borderRadius="xl" 
           justify="center" 
           align="center" 
-          border="1px dashed" 
           borderColor="gray.200"
         >
           <Text color="gray.400">어제 도착한 피드백이 없습니다.</Text>

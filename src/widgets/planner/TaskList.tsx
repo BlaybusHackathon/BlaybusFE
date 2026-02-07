@@ -33,7 +33,6 @@ export const TaskList = () => {
   };
 
   const handleAddTask = (data: { title: string; subject: any }) => {
-    // [수정] 유저가 없으면 중단 (안전장치)
     if (!user) {
       console.error("User not logged in");
       return;
@@ -47,7 +46,7 @@ export const TaskList = () => {
       status: 'PENDING',
       isMandatory: false,
       isMentorChecked: false,
-      menteeId: user.id, // [수정] 'mentee-1' -> user.id 동적 할당
+      menteeId: user.id,
       recurringGroupId: null,
       contentId: null,
       weaknessId: null,

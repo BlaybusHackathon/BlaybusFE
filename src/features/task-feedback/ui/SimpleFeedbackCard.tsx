@@ -1,12 +1,19 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { FeedbackWithTask } from '../model/types';
-import { parseEmphasis, formatRelativeTime } from '../model/feedbackUtils';
+import { formatRelativeTime } from '../model/feedbackUtils';
 
 interface Props {
   feedback: FeedbackWithTask;
 }
 
 export const SimpleFeedbackCard = ({ feedback }: Props) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/mentee/task/${feedback.taskId}`); 
+  };
+
   return (
     <Box 
       bg="white" 
@@ -18,35 +25,22 @@ export const SimpleFeedbackCard = ({ feedback }: Props) => {
       _hover={{ boxShadow: 'md', transform: 'translateY(-2px)' }}
       transition="all 0.2s"
       cursor="pointer"
+      onClick={handleClick} 
     >
-      <Flex justify="space-between" align="center" mb={3}>
+      <Flex justify="space-between" align="center">
         <Text 
             fontSize="lg" 
             fontWeight="800" 
             color="gray.800" 
-            mb={2}
             lineHeight="1.3"
         >
         {feedback.taskTitle}
       </Text>
-        <Text fontSize="xs" color="gray.400">
+        <Text fontSize="xs" color="gray.400" flexShrink={0} ml={4}>
           {formatRelativeTime(feedback.createdAt)}
         </Text>
       </Flex>
-
-
-
-      <Box 
-        fontSize="sm" 
-        color="gray.600" 
-        lineHeight="1.5"
-        noOfLines={2}
-        dangerouslySetInnerHTML={{ __html: parseEmphasis(feedback.content) }}
-        sx={{
-            'strong': { color: 'blue.600', fontWeight: '600' } 
-        }}
-        mb={3}
-      />
+      
 
     </Box>
   );
