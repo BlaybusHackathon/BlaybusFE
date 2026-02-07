@@ -3,7 +3,7 @@ import { useScheduleCreateStore } from '../model/store';
 import { Subject } from '../model/types';
 
 export const SubjectSection = () => {
-    const { subject, isWeaknessSelected, setSubject, toggleWeakness } = useScheduleCreateStore();
+    const { subject, setSubject } = useScheduleCreateStore();
 
     const subjects: { label: string; value: Subject; colorScheme: string }[] = [
         { label: '국어', value: 'KOREAN', colorScheme: 'blue' },

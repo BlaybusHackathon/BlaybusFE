@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { usePlannerStore } from '@/shared/stores/plannerStore';
 import { Task } from '@/entities/task/types';
 import { addDays, startOfWeek, addWeeks, format } from 'date-fns';
-import { getAdjustedDate } from '@/shared/lib/date'; // Assuming this exists or use new Date()
 
 // Helper to calculate date from "1주차" + "MONDAY"
 const calculateDate = (weekLabel: string, dayValue: string): string => {
