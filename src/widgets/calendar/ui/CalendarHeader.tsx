@@ -38,7 +38,7 @@ export const CalendarHeader = ({
                     px={16}
                     py={6}
                     borderRadius="md"
-                    fontSize="20px"
+                    fontSize="16px"
                     fontWeight="700"
                     _hover={{ bg: '#4297ED' }}
                     onClick={onCreateSchedule}
@@ -86,18 +86,18 @@ export const CalendarHeader = ({
 
                     {/* Legends */}
                     <HStack spacing={3}>
-                        <Flex bg="#53A8FE" color="white" px={4} py={1} borderRadius="full" fontSize="16px" fontWeight="600" align="center">
+                        <Flex bg="#53A8FE" color="white" px="15px" py="6px" borderRadius="full" fontSize="14px" fontWeight="600" align="center">
                             국어
                         </Flex>
-                        <Flex bg="#35CE9D" color="white" px={4} py={1} borderRadius="full" fontSize="16px" fontWeight="600" align="center">
+                        <Flex bg="#35CE9D" color="white" px="15px" py="6px" borderRadius="full" fontSize="14px" fontWeight="600" align="center">
                             영어
                         </Flex>
-                        <Flex bg="#A16AFF" color="white" px={4} py={1} borderRadius="full" fontSize="16px" fontWeight="600" align="center">
+                        <Flex bg="#A16AFF" color="white" px="15px" py="6px" borderRadius="full" fontSize="14px" fontWeight="600" align="center">
                             수학
                         </Flex>
                         <HStack spacing={2} ml={2}>
                             <Box w="10px" h="10px" bg="#FF99CC" borderRadius="full" />
-                            <Text fontSize="16px" fontWeight="600" color="gray.600">보완점</Text>
+                            <Text fontSize="14px" fontWeight="600" color="gray.600">보완점</Text>
                         </HStack>
                     </HStack>
                 </Flex>

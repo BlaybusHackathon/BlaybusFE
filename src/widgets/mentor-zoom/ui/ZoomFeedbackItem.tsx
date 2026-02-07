@@ -24,36 +24,34 @@ export const ZoomFeedbackItem = ({
     <Flex
       align="center"
       justify="space-between"
-      p="16px 24px"
-      borderRadius="7px"
+      p="12px 16px"
+      borderRadius="7"
       bg="#F7F8FA"
       cursor="pointer"
       transition="all 0.2s"
       role="group"
       onClick={onClick}
       _hover={{
-        bg: 'gray.100',
+        bg: '#EDF3FF',
       }}
     >
-      <Text
-        fontSize="16px"
-        fontWeight="600"
-        color="gray.700"
-      >
-        {menteeName}
+    <Text
+      fontSize="16px"
+      fontWeight="600"
+      color="gray.700"
+    >
+      {menteeName}
+    </Text>
+
+      <Text fontSize="16px" fontWeight="600" color="gray.700">
+        {getOrdinal(countNumber)}
       </Text>
 
-      <Flex align="center" gap={4}>
-        <Text fontSize="16px" fontWeight="600" color="gray.700">
-          {getOrdinal(countNumber)}
-        </Text>
-
-        <Icon
-          as={ChevronRightIcon}
-          w={5} h={5}
-          color="gray.400"
-        />
-      </Flex>
+      <Icon
+        as={ChevronRightIcon}
+        w={5} h={5}
+        color="gray.400"
+      />
     </Flex>
   );
 };

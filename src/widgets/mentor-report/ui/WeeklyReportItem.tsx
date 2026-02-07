@@ -22,29 +22,31 @@ export const WeeklyReportItem = ({
     <Flex
       align="center"
       justify="space-between"
-      p="16px 24px"
-      borderRadius="7px"
+      p="12px 16px"
+      borderRadius="7"
       transition="all 0.2s"
       role="group"
       cursor={isFuture ? 'not-allowed' : 'pointer'}
       onClick={isFuture ? undefined : onClick}
-      bg={isFuture ? 'white' : '#F7F8FA'}
+      bg={isFuture ? 'none' : '#EDF3FF'}
       color={isFuture ? '#939497ff' : '#373E56'}
       _hover={!isFuture ? {
         bg: 'gray.100',
       } : undefined}
     >
-      <Text
-        fontSize="16px"
-        fontWeight="600"
-      >
-        {weekNumber}주차
-      </Text>
+      <Flex gap={10}>
+        <Text
+          fontSize="16px"
+          fontWeight="600"
+        >
+          {weekNumber}주차
+        </Text>
 
-      <Flex align="center" gap={4}>
         <Text fontSize="15px" fontWeight="500">
           {displayRange}
         </Text>
+      </Flex>
+
 
         {!isFuture && (
           <Icon
@@ -53,7 +55,6 @@ export const WeeklyReportItem = ({
             color="gray.400"
           />
         )}
-      </Flex>
     </Flex>
   );
 };

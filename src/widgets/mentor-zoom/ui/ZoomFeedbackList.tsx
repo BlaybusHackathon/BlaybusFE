@@ -60,7 +60,7 @@ export const ZoomFeedbackList = () => {
         </HStack>
       </Flex>
 
-      <VStack spacing={3} align="stretch" mb={4}>
+      <VStack spacing={3} align="stretch" borderRadius={22} bg={'#F9F9FB'} p={4}>
         {currentItems.length === 0 ? (
           <Flex justify="center" align="center" h="200px" color="gray.400">
             등록된 피드백이 없습니다.
@@ -77,23 +77,25 @@ export const ZoomFeedbackList = () => {
             />
           ))
         )}
+
+        <Box
+          as="button"
+          w="full"
+          p={2}
+          bg="#EDEDF1"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="7px"
+          transition="all 0.2s"
+          _hover={{ bg: 'gray.100' }}
+          onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
+        >
+          <AddIcon color="gray.400" boxSize={4} />
+        </Box>
       </VStack>
 
-      <Box
-        as="button"
-        w="full"
-        p="17px"
-        bg="#F7F8FA"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        borderRadius="7px"
-        transition="all 0.2s"
-        _hover={{ bg: 'gray.100' }}
-        onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
-      >
-        <AddIcon color="gray.400" boxSize={4} />
-      </Box>
+
     </Box>
   );
 };
