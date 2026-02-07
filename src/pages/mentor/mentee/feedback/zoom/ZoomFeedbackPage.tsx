@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+
 import { 
   Box, Heading, Button, useToast, Container, Flex, VStack 
 } from '@chakra-ui/react';
-import { FeedbackMemo } from './ui/FeedbackMemo';
-import { SubjectFeedback } from './ui/SubjectFeedback';
-import { OperationalFeedback } from './ui/OperationalFeedback';
-import { ZoomFeedbackData, MOCK_ZOOM_FEEDBACK_DATA } from './mockZoomFeedbackData';
+import { ZoomFeedbackDetailWidget } from '@/widgets/mentor-zoom/detail/ZoomFeedbackDetailWidget';
+import { ZoomFeedbackData, MOCK_ZOOM_FEEDBACK_DATA } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
 import { getZoomFeedbackById } from '@/features/report/model/mockReportData';
 
 const ZoomFeedbackPage = () => {
@@ -77,77 +76,52 @@ const ZoomFeedbackPage = () => {
     navigate(`/mentor/mentee/${menteeId}`);
   };
 
-  const handleSubjectChange = (subject: 'korean' | 'english' | 'math', value: string) => {
-    setData((prev) => ({
-      ...prev,
-      subjects: { ...prev.subjects, [subject]: value },
-    }));
+  const handleChange = (field: string, value: any) => {
+    setData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <Container maxW="container.lg" py={10}>
+    <Container maxW="1200px" py={10}>
       <Flex justifyContent="space-between" alignItems="center" mb={12}>
         <VStack align="start" spacing={1}>
-          <Heading as="h1" size="lg" color="gray.800">
+          <Heading as="h1" size="lg" color="#373E56">
             줌 미팅 피드백
           </Heading>
         </VStack>
       </Flex>
 
-      <Box mb={10}>
-        <FeedbackMemo 
-          value={data.memo} 
-          onChange={(val) => setData({ ...data, memo: val })} 
-        />
+      <Box mb="80px">
+        <ZoomFeedbackDetailWidget data={data} onChange={handleChange} />
       </Box>
 
-      <Box mb={10}>
-        <SubjectFeedback 
-          subjects={data.subjects} 
-          onChange={handleSubjectChange} 
-        />
-      </Box>
-
-      <Box mb={24}>
-        <OperationalFeedback 
-          value={data.operation} 
-          onChange={(val) => setData({ ...data, operation: val })} 
-        />
-      </Box>
-
-      <Box 
-        position="fixed" 
-        bottom={0} 
-        left={0} 
-        right={0} 
-        p={4} 
-        bg="white" 
-        borderTop="1px solid" 
-        borderColor="gray.200" 
-        zIndex={10}
-      >
-        <Container maxW="container.lg">
-          <Flex justify="flex-end" gap={4}>
-            <Button 
-              variant="outline" 
-              size="lg" 
-              minW="100px"
-              onClick={handleCancel}
-            >
-              취소
-            </Button>
-            <Button 
-              colorScheme="blue" 
-              size="lg" 
-              minW="100px" 
-              onClick={handleSave} 
-              isLoading={loading}
-            >
-              저장
-            </Button>
-          </Flex>
-        </Container>
-      </Box>
+      <Flex justify="flex-end" gap={4} mb={20}>
+        <Button
+          variant="outline"
+          size="lg"
+          minW="100px"
+          onClick={handleCancel}
+          borderColor="#E2E4E8"
+          color="#7E7E7E"
+          fontSize="16px"
+          fontWeight="600"
+          _hover={{ bg: '#F9F9FB' }}
+        >
+          취소
+        </Button>
+        <Button
+          bg="#53A8FE"
+          color="white"
+          size="lg"
+          minW="100px"
+          onClick={handleSave}
+          isLoading={loading}
+          fontSize="16px"
+          fontWeight="600"
+          _hover={{ bg: '#4297ED' }}
+        >
+          저장
+        </Button>
+      </Flex>
     </Container>
   );
 };
