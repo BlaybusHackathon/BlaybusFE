@@ -6,15 +6,20 @@ export interface Weakness {
     subject: Subject;
 }
 
-export interface LearningMaterial {
-    fullPath: string; // File path or URL
-    name: string;
-    size?: number; // Optional size
-}
+// export interface LearningMaterial {
+//     fullPath: string; // File path or URL
+//     name: string;
+//     size?: number; // Optional size
+// }
 
-export interface DaySchedule {
-    dayOfWeek: string; // 'MONDAY', 'WEDNESDAY', etc.
-    material: LearningMaterial | null;
+export interface Worksheet {
+    id: string;
+    file: {
+        name: string;
+        size?: number;
+        fullPath: string; // File path or URL
+    } | null;
+    selectedDays: string[]; // Days assigned to this specific worksheet
 }
 
 export interface ScheduleCreateState {
@@ -23,11 +28,10 @@ export interface ScheduleCreateState {
     selectedWeaknessId: string | null;
 
     selectedWeek: string; // e.g., '1주차'
-    selectedDays: string[]; // ['MONDAY', 'WEDNESDAY']
+    selectedDays: string[]; // ['MONDAY', 'WEDNESDAY'] - Global selected days
 
     title: string;
 
-    // Mapping day of week to specific material
-    // Key: dayOfWeek (e.g., 'MONDAY'), Value: uploaded file info
-    materialsByDay: Record<string, LearningMaterial | null>;
+    // List of worksheets
+    worksheets: Worksheet[];
 }
