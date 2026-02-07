@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem,
-  Icon, Textarea, Button, Input
+  Icon, Textarea,  Input
 } from '@chakra-ui/react';
 import {
-  AttachmentIcon, EditIcon, DeleteIcon, CheckIcon, CloseIcon, SmallCloseIcon, AddIcon
+   CheckIcon, CloseIcon, AddIcon
 } from '@chakra-ui/icons';
 import { Weakness } from '@/entities/weakness/types';
+import { ModifyIcon, MoreIcon } from '@/shared/ui/icons';
+import { DeleteIcon } from '@/shared/ui/icons';
 
 interface Props {
   weakness: Weakness;
@@ -17,11 +19,6 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-const MoreIcon = () => (
-  <Icon viewBox="0 0 24 24" w="20px" h="20px" fill="gray.400">
-    <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-  </Icon>
-);
 
 export const WeaknessItem = ({
   weakness, isEditing, onEditMode, onCancel, onSave, onDelete
@@ -78,36 +75,41 @@ export const WeaknessItem = ({
 
         <Box flex={1}>
           {isEditing ? (
-            <Flex direction="row" gap={3}>
+            <Flex direction="row" gap={3} justify={'space-between'}>
               <Textarea
                 value={title}
+                p={0}
+                maxW={'454px'}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="보완점 내용을 입력해주세요."
-                size="sm"
+                border={'none'}
+                borderBottom="1px solid #9B9BA4"
+                borderRadius={'none'}
+                size="md"
                 resize="none"
-                borderRadius="md"
-                bg="white"
-                rows={2}
+                rows={1}
                 autoFocus
+                _focus={{ 
+                  border: 'none', 
+                  borderBottom: '1px solid #000', 
+                  boxShadow: 'none' 
+                }}
               />
 
               <Flex align="center" gap={2}>
                 {fileName ? (
                   <Flex
                     align="center"
-                    bg="gray.100"
                     px={3}
                     py={1}
-                    borderRadius="full"
                     gap={2}
                   >
-                    <AttachmentIcon w={3} h={3} color="gray.500" />
                     <Text fontSize="xs" color="gray.600" noOfLines={1} maxW="200px">
                       {fileName}
                     </Text>
                     <Icon
-                      as={SmallCloseIcon}
-                      w={4} h={4}
+                      as={CloseIcon}
+                      w={'14px'} h={'14px'}
                       color="gray.500"
                       cursor="pointer"
                       onClick={handleRemoveFile}
@@ -115,15 +117,21 @@ export const WeaknessItem = ({
                     />
                   </Flex>
                 ) : (
-                  <Button
-                    size="xs"
-                    leftIcon={<AttachmentIcon />}
-                    variant="outline"
-                    colorScheme="gray"
-                    onClick={() => fileInputRef.current?.click()}
+                  <Flex
+                    align="center"
+                    gap={1}
+                    mr={2}
+                    cursor="pointer"
+                    color="#A0A5B1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                    _hover={{ color: '#53A8FE' }}
                   >
-                    자료 첨부
-                  </Button>
+                    <AddIcon w={3} h={3}/>
+                    <Text fontSize="14px" fontWeight="500">파일 추가</Text>
+                  </Flex>
                 )}
 
               </Flex>
@@ -157,8 +165,8 @@ export const WeaknessItem = ({
                   }}
                   _hover={{ color: '#53A8FE' }}
                 >
+                  <AddIcon w={3} h={3}/>
                   <Text fontSize="14px" fontWeight="500">파일 추가</Text>
-                  <AddIcon w={3} h={3} />
                 </Flex>
               )}
             </Flex>
@@ -201,12 +209,14 @@ export const WeaknessItem = ({
                 size="sm"
                 aria-label="더보기"
               />
-              <MenuList minW="120px" fontSize="sm">
-                <MenuItem icon={<EditIcon />} onClick={onEditMode}>
+              <MenuList minW="98px" fontSize="md" borderRadius={22} pl={1}>
+                <MenuItem gap={2} onClick={onEditMode} color="#373E56" _hover={{ color: "#53A8FE" }} w={"fit-content"}>
                   수정
+                  <ModifyIcon />
                 </MenuItem>
-                <MenuItem icon={<DeleteIcon />} onClick={() => onDelete(weakness.id)} color="red.500">
+                <MenuItem gap={2} onClick={() => onDelete(weakness.id)}  color="#373E56" _hover={{ color: "#53A8FE" }} w={"fit-content"}>
                   삭제
+                  <DeleteIcon />
                 </MenuItem>
               </MenuList>
             </Menu>

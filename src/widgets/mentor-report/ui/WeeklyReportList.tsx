@@ -159,7 +159,7 @@ export const WeeklyReportList = () => {
         </HStack>
       </Flex>
 
-      <VStack spacing={3} align="stretch">
+      <VStack spacing={3} align="stretch"  borderRadius={22} bg={'#F9F9FB'} p={4}>
         {weeksInMonth.map((week) => {
           const status = getWeekStatus(week.startDate, week.endDate);
           const hasReport = MOCK_WEEKLY_REPORTS.some(r => r.startDate === week.startDate);
