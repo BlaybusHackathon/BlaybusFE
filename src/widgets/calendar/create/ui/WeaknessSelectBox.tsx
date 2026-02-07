@@ -1,38 +1,70 @@
-import { Box, Select, Text } from '@chakra-ui/react';
+import { Box, Text, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useScheduleCreateStore } from '../model/store';
 import { MOCK_WEAKNESSES } from '../model/mockData';
 
 export const WeaknessSelectBox = () => {
-    const { subject, isWeaknessSelected, selectedWeaknessId, setSelectedWeaknessId } = useScheduleCreateStore();
-
-    // Always show, filter by subject if selected
-    // if (!subject) return null; // Or keep it hidden if no subject? User flow usually starts with subject.
-    // User said "Basic is No Weakness, then select".
+    const { subject, selectedWeaknessId, setSelectedWeaknessId } = useScheduleCreateStore();
 
     const filteredWeaknesses = subject ? MOCK_WEAKNESSES.filter((w) => w.subject === subject) : [];
+
+    // Find selected label for display
+    const selectedLabel = selectedWeaknessId
+        ? filteredWeaknesses.find(w => w.id === selectedWeaknessId)?.label || '보완점 강의/오답노트 선택'
+        : '보완점 없음';
 
     return (
         <Box animation="fadeIn 0.3s">
             <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>보완점</Text>
             <Box w="full">
-                <Select
-                    value={selectedWeaknessId || ''}
-                    onChange={(e) => setSelectedWeaknessId(e.target.value === '' ? null : e.target.value)}
-                    placeholder="보완점 없음"
-                    bg="white"
-                    borderColor="#FFB5E8"
-                    focusBorderColor="#FF88D0"
-                    size="lg"
-                    height="50px"
-                    borderRadius="lg"
-                    _hover={{ borderColor: '#FF88D0' }}
-                >
-                    {filteredWeaknesses.map((w) => (
-                        <option key={w.id} value={w.id}>
-                            {w.label}
-                        </option>
-                    ))}
-                </Select>
+                <Menu matchWidth>
+                    <MenuButton
+                        as={Button}
+                        rightIcon={<ChevronDownIcon color="#FF88D0" />}
+                        bg="white"
+                        border="1px solid"
+                        borderColor="#FFB5E8"
+                        borderRadius="lg"
+                        w="full"
+                        height="50px"
+                        textAlign="left"
+                        fontWeight="normal"
+                        fontSize="md"
+                        color={selectedWeaknessId ? 'gray.900' : 'gray.500'}
+                        _hover={{ borderColor: '#FF88D0' }}
+                        _active={{ bg: 'white', borderColor: '#FF88D0' }}
+                    >
+                        {selectedLabel}
+                    </MenuButton>
+                    <MenuList
+                        bg="white"
+                        borderColor="#FFB5E8"
+                        borderRadius="lg"
+                        boxShadow="md"
+                        zIndex={10}
+                        maxH="300px" // Scroll if too many
+                        overflowY="auto"
+                    >
+                        <MenuItem
+                            onClick={() => setSelectedWeaknessId(null)}
+                            _hover={{ bg: 'pink.50' }}
+                            color="gray.500"
+                        >
+                            보완점 없음
+                        </MenuItem>
+                        {filteredWeaknesses.map((w) => (
+                            <MenuItem
+                                key={w.id}
+                                onClick={() => setSelectedWeaknessId(w.id)}
+                                _hover={{ bg: 'pink.50' }}
+                                _focus={{ bg: 'pink.50' }}
+                            >
+                                {w.label}
+                            </MenuItem>
+                        ))}
+                    </MenuList>
+                </Menu>
+
                 {filteredWeaknesses.length === 0 && (
                     <Text fontSize="sm" color="gray.500" mt={2}>해당 과목에 등록된 보완점 자료가 없습니다.</Text>
                 )}

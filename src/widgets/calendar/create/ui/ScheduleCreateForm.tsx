@@ -17,8 +17,8 @@ export const ScheduleCreateForm = () => {
 
             <Box flex={1} bg="white" borderRadius="lg" p={0}>
                 <VStack spacing={8} align="stretch">
-                    {/* Top Row: Subject and Days */}
-                    <Flex gap={10} wrap="wrap">
+                    {/* Top Row: Subject and Global Days */}
+                    <Flex gap={10} align="flex-start">
                         <Box flex={1}>
                             <SubjectSection />
                         </Box>
@@ -27,24 +27,35 @@ export const ScheduleCreateForm = () => {
                         </Box>
                     </Flex>
 
-                    <Box>
-                        <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>제목</Text>
-                        <Input
-                            placeholder="제목을 입력하세요 (예: 독서 2지문 (2))"
-                            size="lg"
-                            fontSize="md"
-                            bg="white"
-                            borderColor="blue.200"
-                            borderRadius="lg"
-                            focusBorderColor="blue.400"
-                            _placeholder={{ color: 'gray.400' }}
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </Box>
+                    {/* Title Row - Left Column Only */}
+                    <Flex gap={10}>
+                        <Box flex={1}>
+                            <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>제목</Text>
+                            <Input
+                                placeholder="제목을 입력하세요 (예: 독서 2지문 (2))"
+                                size="lg"
+                                fontSize="md"
+                                bg="white"
+                                borderColor="blue.200"
+                                borderRadius="lg"
+                                focusBorderColor="blue.400"
+                                _placeholder={{ color: 'gray.400' }}
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </Box>
+                        <Box flex={1} /> {/* Spacer for connection */}
+                    </Flex>
 
-                    <WeaknessSelectBox />
+                    {/* Weakness Row - Left Column Only */}
+                    <Flex gap={10}>
+                        <Box flex={1}>
+                            <WeaknessSelectBox />
+                        </Box>
+                        <Box flex={1} /> {/* Spacer for connection */}
+                    </Flex>
 
+                    {/* Worksheets Section - Handles its own split */}
                     <LearningMaterialSection />
 
                     <Flex justify="flex-end" gap={3} mt={4}>
