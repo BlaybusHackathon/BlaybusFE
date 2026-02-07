@@ -1,6 +1,6 @@
 // src/widgets/main-layout/desktop/components/SidebarMenuItem.tsx
 
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Box } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface Props {
@@ -34,12 +34,16 @@ export const SidebarMenuItem = ({ label, path, icon, isCollapsed }: Props) => {
       }}
       justify={isCollapsed ? 'center' : 'flex-start'}
     >
-      {icon}
-      {!isCollapsed && (
-        <Text ml="14px" fontSize="16px" fontWeight="600">
-          {label}
-        </Text>
-      )}
+      <Flex align="center" width="100%">
+        <Box w="24px" display="flex" justifyContent="center" alignItems="center">
+          {icon}
+        </Box>
+        {!isCollapsed && (
+          <Text ml="14px" fontSize="18px" fontWeight="700">
+            {label}
+          </Text>
+        )}
+      </Flex>
     </Flex>
   );
 };

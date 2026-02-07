@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { 
-  Box, Heading, Button, useToast, Container, Flex, VStack 
+import {
+  Box, Heading, Button, useToast, Container, Flex, VStack
 } from '@chakra-ui/react';
 import { ZoomFeedbackDetailWidget } from '@/widgets/mentor-zoom/detail/ZoomFeedbackDetailWidget';
-import { ZoomFeedbackData, MOCK_ZOOM_FEEDBACK_DATA } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
-import { getZoomFeedbackById } from '@/features/report/model/mockReportData';
+import { ZoomFeedbackData, MOCK_ZOOM_FEEDBACK_DATA, getZoomFeedbackById } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
 
 const ZoomFeedbackPage = () => {
   const { menteeId, zoomId } = useParams();

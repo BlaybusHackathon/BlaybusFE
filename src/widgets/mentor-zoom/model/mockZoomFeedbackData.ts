@@ -18,3 +18,26 @@ export const MOCK_ZOOM_FEEDBACK_DATA: ZoomFeedbackData = {
     },
     operation: '다음 주 수요일 저녁 8시로 시간 변경 요청함. 학원 스케줄 조정 필요.',
 };
+
+export const MOCK_ZOOM_FEEDBACKS = [
+    {
+        id: '1',
+        meetingDate: '2026-02-05',
+        summary: '수학 문제 풀이 방식에 대한 피드백 진행함. 전반적으로 이해도가 높으나 계산 실수가 잦음.'
+    },
+    {
+        id: '2',
+        meetingDate: '2026-01-29',
+        summary: '영어 단어 암기 상태 점검. 꾸준히 하고 있으나 독해 속도가 느림.'
+    }
+];
+
+export const getZoomFeedbackById = (id: string): ZoomFeedbackData | undefined => {
+    // In a real app, you would fetch by ID. 
+    // For mock, we just return the single mock data object if ID exists in the list.
+    const exists = MOCK_ZOOM_FEEDBACKS.some(item => item.id === id);
+    if (exists) {
+        return { ...MOCK_ZOOM_FEEDBACK_DATA, id };
+    }
+    return undefined;
+};
