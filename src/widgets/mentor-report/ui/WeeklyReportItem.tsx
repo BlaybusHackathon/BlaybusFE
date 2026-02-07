@@ -1,5 +1,5 @@
-import { Flex, Box, Text, Icon } from '@chakra-ui/react';
-import { ChevronRightIcon, AddIcon } from '@chakra-ui/icons';
+import { Flex, Text, Icon } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
 
 interface Props {
   weekNumber: number;
@@ -12,15 +12,11 @@ interface Props {
 
 export const WeeklyReportItem = ({
   weekNumber,
-  displayMonth,
   displayRange,
   status,
-  hasReport,
   onClick,
 }: Props) => {
-  const isCurrent = status === 'CURRENT';
   const isFuture = status === 'FUTURE';
-  const isPast = status === 'PAST';
 
   return (
     <Flex

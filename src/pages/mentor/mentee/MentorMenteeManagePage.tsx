@@ -8,7 +8,7 @@ import { MOCK_MENTEE_PROFILE } from './model/mockData';
 
 const MentorMenteeManagePage = () => {
     return (
-        <Box maxW="1200px" mx="auto" py={6} px={{ base: 4, md: 0 }}>
+        <Box maxW="1200px" mx="auto" p={8}>
             <Text fontSize="2xl" fontWeight="bold" mb={6}>담당 멘티</Text>
 
             <MenteeProfileSection profile={MOCK_MENTEE_PROFILE} userRole='MENTOR' />

@@ -7,7 +7,6 @@ import {
     MenteeIcon
 } from '@/shared/ui/icons';
 import { UserRole } from '@/shared/constants/enums';
-import { UserProfileIcon } from '@/shared/ui/UserProfileIcon';
 
 export interface NavItem {
   label: string;

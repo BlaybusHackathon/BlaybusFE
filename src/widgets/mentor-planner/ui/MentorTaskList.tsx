@@ -49,7 +49,7 @@ export const MentorTaskList = ({ tasks, logs, onHoverSubject }: Props) => {
             <MentorTaskItem
               key={task.id}
               task={task}
-              durationMinutes={getTaskDurationMinutes(task.id, logs)}
+              durationMinutes={getTaskDurationMinutes(logs)}
               onHover={onHoverSubject}
             />
           ))}

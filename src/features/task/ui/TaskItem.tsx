@@ -1,14 +1,15 @@
-import { HStack, Checkbox, Text, IconButton, Badge, Box, Icon, VStack } from '@chakra-ui/react';
+import { HStack, Checkbox, Text, IconButton, Badge, Box, VStack } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import { Task } from '@/entities/task/types';
-import { SUBJECT_LABELS } from '@/shared/constants/subjects';
-import { TaskTimer } from '@/features/timer';
+import { SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { TaskTimer } from '@/features/timer/ui/TaskTimer';
+import { PinOutlinedIcon } from '@/shared/ui/icons';
 
 interface TaskItemProps {
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
-  onClick: () => void;
+  onClick: () => void; 
   isTimerEnabled: boolean;
   isEditable: boolean;
 }
@@ -24,9 +25,11 @@ export const TaskItem = ({
   const isCompleted = task.status === 'COMPLETED';
   const canDelete = isEditable && !task.isMandatory;
   
+  const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
+  
   return (
     <HStack
-     onClick={onClick}
+      onClick={onClick} 
       w="full"
       p={2}
       px={6}
@@ -35,24 +38,22 @@ export const TaskItem = ({
       justify="space-between"
       _hover={{ boxShadow: 'md' }}
       align="center"
+      bg="white"
+      cursor="pointer"
     >
       <VStack justify="flex-start" align="stretch" spacing={4} flex={1} minW={0}>
-        <HStack spacing={3} flex={1} overflow="hidden">
+        <HStack spacing={1} flex={1} overflow="hidden">
           {task.isMandatory && (
-            <Box mr={3} flexShrink={0}>
-              <Icon viewBox="0 0 24 24" w="20px" h="20px" color="#373E56">
-                <path
-                  fill="currentColor"
-                  d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z"
-                />
-              </Icon>
+            <Box mr={1} flexShrink={0}>
+              <PinOutlinedIcon 
+                style={{ color: isCompleted ? '#A6A6A6' : '#373E56' }} 
+              />
             </Box>
           )}
-          <Box flex={1} cursor="pointer" minW={0}>
+          <Box flex={1} minW={0}>
             <Text
-              fontWeight="medium"
-              textDecoration={isCompleted ? 'line-through' : 'none'}
-              color={isCompleted ? 'gray.400' : 'gray.800'}
+              fontWeight="semibold"
+              color={isCompleted ? '#A6A6A6' : '#373E56'}
               isTruncated
             >
               {task.title}
@@ -63,16 +64,14 @@ export const TaskItem = ({
           {isTimerEnabled && (
             <TaskTimer 
               taskId={task.id} 
+              subject={task.subject}
               isDisabled={isCompleted} 
             />
           )}
         </HStack>
       </VStack>
 
-
       <HStack spacing={2} flexShrink={0}>
-
-        
         {canDelete && (
           <IconButton
             aria-label="Delete task"
@@ -81,38 +80,74 @@ export const TaskItem = ({
             variant="ghost"
             colorScheme="red"
             onClick={(e) => {
-              e.stopPropagation();
+              e.stopPropagation(); 
               onDelete();
             }}
           />
         )}
         <HStack spacing={6} flex={1}>
-          <Badge colorScheme={task.isMandatory ? 'purple' : 'gray'} color={'white'} fontSize="0.6rem" borderRadius={'full'} px={3} py={1}>
+          <Badge 
+            bg={subjectColor} 
+            color={'white'} 
+            fontSize="0.6rem" 
+            borderRadius={'full'} 
+            px={3} 
+            py={1}
+            border="1px solid"
+            borderColor={subjectColor}
+          >
             {SUBJECT_LABELS[task.subject]}
           </Badge>
 
-          <Checkbox
-            isChecked={isCompleted}
-            onChange={(e) => {
+          <Box
+            onClick={(e) => {
               e.stopPropagation();
-              onToggle();
             }}
-            size="md"
-            colorScheme="blue"
-            sx={{
-              '& > input:checked + span': {
-                borderRadius: 'full',
-                width: '24px',
-                height: '24px',
-              },
-              '& > input + span': {
-                borderRadius: 'full',
-                width: '24px',
-                height: '24px',
-                bgColor: 'gray.300',
-              }
+            _hover={{ 
+              transform: 'scale(1.1)', 
+              transition: 'transform 0.2s',
+              cursor: 'pointer'
             }}
-          />
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Checkbox
+              isChecked={isCompleted}
+              onChange={() => {
+                onToggle();
+              }}
+              size="md"
+              sx={{
+                '[data-checked]': {
+                  borderColor: `${subjectColor} !important`,
+                  background: `${subjectColor} !important`,
+                },
+                '.chakra-checkbox__control': {
+                  borderRadius: 'full',
+                  width: '24px',
+                  height: '24px',
+                  borderColor: 'gray.300',
+                  borderWidth: '2px',
+                  _hover: {
+                    borderColor: subjectColor, 
+                    bg: 'gray.50'
+                  },
+                  _checked: {
+                    borderColor: `${subjectColor} !important`,
+                    bg: `${subjectColor} !important`,
+                    _hover: {
+                      borderColor: `${subjectColor} !important`,
+                      bg: `${subjectColor} !important`,
+                    }
+                  }
+                },
+                '.chakra-checkbox__control svg': {
+                    fontSize: '0.8em',
+                }
+              }}
+            />
+          </Box>
         </HStack>
       </HStack>
     </HStack>
