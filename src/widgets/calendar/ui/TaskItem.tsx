@@ -29,10 +29,11 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
         <Box
             bg={bgColor}
             color="white"
-            fontSize={{ base: '12px', md: '14px' }}
-            px={{ base: 2, md: 3 }}
-            py={{ base: 0.5, md: 1 }}
-            borderRadius="full"
+            px={{ base: 2, md: 4 }}
+            py={{ base: "0.24369rem", md: 1 }} 
+            minH={{base:"10px", md:"30px"}}
+            mx={{base:0, md:2}}
+            borderRadius={{base:3, md:10}}
             cursor="pointer"
             onClick={(e) => {
                 e.stopPropagation();
@@ -45,7 +46,6 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            minH="26px"
         >
             <Text
                 noOfLines={1}
@@ -53,6 +53,7 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
                 flex="1"
                 isTruncated
                 textAlign="center"
+                fontSize={{base:"6px", md:"20px"}}
             >
                 {task.title}
             </Text>
@@ -64,7 +65,7 @@ export const TaskItem = ({ task, onClick }: TaskItemProps) => {
                     bg="#FF99CC"
                     borderRadius="full"
                     flexShrink={0}
-                    title="보완점 있음"
+                    title="리뷰 있음"
                 />
             )}
         </Box>
