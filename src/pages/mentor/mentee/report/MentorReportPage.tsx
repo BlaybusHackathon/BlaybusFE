@@ -125,54 +125,38 @@ const MentorReportPage = () => {
         {formatDateRange()}
       </Text>
 
-      <Box mb={20}>
+      <Box mb="80px">
         <ReportDetailWidget data={reportData} onChange={handleInputChange} />
       </Box>
 
-      <Box
-        position="fixed"
-        bottom={0}
-        left={0}
-        right={0}
-        p={4}
-        bg="white"
-        borderTop="1px solid"
-        borderColor="gray.200"
-        zIndex={10}
-      >
-        <Container maxW="container.lg">
-          <Flex justify="flex-end" gap={4}>
-            <Button
-              variant="outline"
-              size="lg"
-              minW="100px"
-              onClick={handleCancel}
-              borderColor="#E2E4E8"
-              color="#7E7E7E"
-              fontSize="16px"
-              fontWeight="600"
-              _hover={{ bg: '#F9F9FB' }}
-            >
-              취소
-            </Button>
-            <Button
-              bg="#53A8FE"
-              color="white"
-              size="lg"
-              minW="100px"
-              onClick={handleSave}
-              isLoading={loading}
-              fontSize="16px"
-              fontWeight="600"
-              _hover={{ bg: '#4297ED' }}
-            >
-              저장
-            </Button>
-          </Flex>
-        </Container>
-      </Box>
-
-      <Box h="100px" />
+      <Flex justify="flex-end" gap={4} mb={20}>
+        <Button
+          variant="outline"
+          size="lg"
+          minW="100px"
+          onClick={handleCancel}
+          borderColor="#E2E4E8"
+          color="#7E7E7E"
+          fontSize="16px"
+          fontWeight="600"
+          _hover={{ bg: '#F9F9FB' }}
+        >
+          취소
+        </Button>
+        <Button
+          bg="#53A8FE"
+          color="white"
+          size="lg"
+          minW="100px"
+          onClick={handleSave}
+          isLoading={loading}
+          fontSize="16px"
+          fontWeight="600"
+          _hover={{ bg: '#4297ED' }}
+        >
+          저장
+        </Button>
+      </Flex>
     </Container>
   );
 };

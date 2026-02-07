@@ -23,7 +23,7 @@ export const ReportDetailWidget = ({ data, onChange }: Props) => {
                 onChangeWeek={(w) => setDate((prev) => ({ ...prev, week: w }))}
             />
 
-            <VStack spacing={10} align="stretch" mt={10}>
+            <VStack spacing={8} align="stretch" mt={10}>
                 <ReportSection
                     title="멘토 총평"
                     value={data.totalReview}
