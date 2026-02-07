@@ -21,7 +21,7 @@ export const ReportSection = ({ title, value, onChange, placeholder, minH = "150
                 minH={minH}
                 bg="#F9F9FB"
                 border="none"
-                borderRadius="12px"
+                borderRadius="22"
                 p={6}
                 fontSize="16px"
                 color="#7E7E7E"

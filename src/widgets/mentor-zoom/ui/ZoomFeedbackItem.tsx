@@ -1,4 +1,4 @@
-import { Flex, Text, Icon, Box } from '@chakra-ui/react';
+import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
 interface Props {
@@ -17,8 +17,6 @@ const getOrdinal = (n: number) => {
 
 export const ZoomFeedbackItem = ({
   countNumber,
-  summary,
-  meetingDate,
   onClick,
   menteeName = "최연준" // Default for now if not passed
 }: Props) => {

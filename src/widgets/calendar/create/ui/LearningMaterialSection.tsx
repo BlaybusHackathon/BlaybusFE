@@ -1,8 +1,8 @@
-import { Box, Button, Flex, Icon, Input, Text, VStack, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Input, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { useScheduleCreateStore } from '../model/store';
 import { DAYS } from '../model/mockData';
-import { CheckCircleIcon, SmallCloseIcon, AttachmentIcon, AddIcon } from '@chakra-ui/icons';
+import {  SmallCloseIcon, AddIcon } from '@chakra-ui/icons';
 
 export const LearningMaterialSection = () => {
     const { selectedDays, materialsByDay, setMaterialForDay } = useScheduleCreateStore();

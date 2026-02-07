@@ -1,95 +1,53 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getCurrentTimeISO } from '@/shared/lib/date';
-
-interface TaskTimerData {
-  elapsedTime: number;             
-  timerStartedAt: number | null;    
-  startTimeISO: string | null;      
-}
-
-interface StopTimerResult {
-  startAt: string;
-  endAt: string;
-  duration: number;
-}
 
 interface TimerState {
-  activeTaskId: string | null;
-  taskTimers: Record<string, TaskTimerData>;
+  activeTaskId: string | null;      // 현재 실행 중인 과제 ID
+  timerStartedAt: number | null;    // 시작된 시간 (Timestamp)
   
   startTimer: (taskId: string) => void;
-  stopTimer: (taskId: string) => StopTimerResult | null;
-  getTimerData: (taskId: string) => TaskTimerData;
+  stopTimer: () => number;          // 정지 시 이번 세션 시간(초) 반환
+  cancelTimer: () => void;          // 저장 없이 취소 (필요 시)
 }
-
-const DEFAULT_TIMER: TaskTimerData = {
-  elapsedTime: 0,
-  timerStartedAt: null,
-  startTimeISO: null,
-};
 
 export const useTimerStore = create<TimerState>()(
   persist(
     (set, get) => ({
       activeTaskId: null,
-      taskTimers: {},
+      timerStartedAt: null,
 
       startTimer: (taskId) => {
-        const { activeTaskId, taskTimers, stopTimer } = get();
-        
-        // 다른 타이머 실행 중이면 정지
-        if (activeTaskId && activeTaskId !== taskId) {
-          stopTimer(activeTaskId);
+        const { activeTaskId, stopTimer } = get();
+        // 이미 다른 게 돌고 있으면 정지시키고 시작 (자동 저장 로직은 훅에서 처리 권장, 여기선 강제 종료)
+        if (activeTaskId) {
+          stopTimer(); 
         }
-        
-        const now = Date.now();
-        const nowISO = getCurrentTimeISO();
-        const current = taskTimers[taskId] || DEFAULT_TIMER;
         
         set({
           activeTaskId: taskId,
-          taskTimers: {
-            ...taskTimers,
-            [taskId]: {
-              ...current,
-              timerStartedAt: now,
-              startTimeISO: current.startTimeISO || nowISO,
-            },
-          },
+          timerStartedAt: Date.now(),
         });
       },
 
-      stopTimer: (taskId) => {
-        const { taskTimers, activeTaskId } = get();
-        const timer = taskTimers[taskId];
-        
-        if (!timer?.timerStartedAt || !timer?.startTimeISO) return null;
-        
+      stopTimer: () => {
+        const { timerStartedAt } = get();
+        if (!timerStartedAt) return 0;
+
         const now = Date.now();
-        const endISO = getCurrentTimeISO();
-        const sessionElapsed = now - timer.timerStartedAt;
-        const totalElapsed = timer.elapsedTime + sessionElapsed;
-        
-        const result: StopTimerResult = {
-          startAt: timer.startTimeISO,
-          endAt: endISO,
-          duration: Math.floor(totalElapsed / 1000),
-        };
-        
-        // 타이머 리셋
+        const sessionDuration = Math.floor((now - timerStartedAt) / 1000); // 초 단위 변환
+
+        // 상태 초기화
         set({
-          activeTaskId: activeTaskId === taskId ? null : activeTaskId,
-          taskTimers: {
-            ...taskTimers,
-            [taskId]: DEFAULT_TIMER,
-          },
+          activeTaskId: null,
+          timerStartedAt: null,
         });
-        
-        return result;
+
+        return sessionDuration; // 이번에 공부한 시간 반환
       },
 
-      getTimerData: (taskId) => get().taskTimers[taskId] || DEFAULT_TIMER,
+      cancelTimer: () => {
+        set({ activeTaskId: null, timerStartedAt: null });
+      }
     }),
     {
       name: 'timer-storage',

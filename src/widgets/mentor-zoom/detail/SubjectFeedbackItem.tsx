@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Textarea } from '@chakra-ui/react';
+import { Box, Flex, Textarea } from '@chakra-ui/react';
 
 export type SubjectType = 'korean' | 'english' | 'math';
 

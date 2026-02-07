@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Box, Text, Flex, Button, Textarea } from '@chakra-ui/react';
-import { EditIcon, CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { ModifyIcon } from '@/shared/ui/icons';
+import TextareaAutosize from 'react-textarea-autosize';
+
 
 interface Props {
   feedback: string | null;
@@ -40,7 +43,8 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
           <Button
             variant="ghost"
             colorScheme="#373E56"
-            leftIcon={<EditIcon />}
+            color={"#9B9BA4"}
+            leftIcon={<ModifyIcon />}
             onClick={() => setIsEditing(true)}
             fontSize="18px"
           >
@@ -50,14 +54,17 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
       </Flex>
 
       {isEditing ? (
-        <Box>
+        <Box h={'fit-content'}>
           <Textarea
+            as={TextareaAutosize}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="오늘 하루에 대한 피드백을 남겨주세요."
             borderRadius="22px"
-            bg="white"
-            p="32px 34px"
+            minH={'8.3125rem'}
+            bg="#F9F9FB"
+            p={4}
+            resize="none" 
             mb={4}
             fontSize="18px"
           />
