@@ -16,8 +16,9 @@ export const FeedbackMemo = ({ value, onChange }: FeedbackMemoProps) => {
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="미팅 중 발생한 특이사항이나 자유로운 기록을 남겨주세요."
                 minH="120px"
-                bg="gray.50"
+                bg="#F9F9FB"
                 border="none"
+                borderRadius={"22"}
                 resize="none"
                 _focus={{ bg: 'white', border: '1px solid', borderColor: 'blue.400' }}
                 p={6}

@@ -1,4 +1,4 @@
-import { Box, Flex, CircularProgress, CircularProgressLabel, chakra, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Flex, CircularProgress, CircularProgressLabel, chakra } from '@chakra-ui/react';
 
 interface Props {
   label: string;

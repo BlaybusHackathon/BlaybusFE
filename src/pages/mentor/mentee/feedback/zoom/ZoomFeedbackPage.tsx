@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  Box, Heading, Button, useToast, Container, Text, Flex, VStack 
+  Box, Heading, Button, useToast, Container, Flex, VStack 
 } from '@chakra-ui/react';
 import { FeedbackMemo } from './ui/FeedbackMemo';
 import { SubjectFeedback } from './ui/SubjectFeedback';
@@ -91,9 +91,6 @@ const ZoomFeedbackPage = () => {
           <Heading as="h1" size="lg" color="gray.800">
             줌 미팅 피드백
           </Heading>
-          <Text fontSize="sm" color="gray.500">
-            {isNewMode ? '새 피드백 작성' : '피드백 수정'}
-          </Text>
         </VStack>
       </Flex>
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Button, Flex, Heading, Input, Text, VStack } from '@chakra-ui/react';
 import { SubjectSection } from './SubjectSection';
 import { WeaknessSelectBox } from './WeaknessSelectBox';

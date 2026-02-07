@@ -17,6 +17,7 @@ export const OperationalFeedback = ({ value, onChange }: OperationalFeedbackProp
                 placeholder="스케줄 관리, 태도, 약속 이행 등 학습 외적인 피드백을 입력해주세요."
                 minH="80px"
                 bg="gray.50"
+                borderRadius={'22'}
                 border="none"
                 resize="none"
                 _focus={{ bg: 'white', border: '1px solid', borderColor: 'blue.400' }}
