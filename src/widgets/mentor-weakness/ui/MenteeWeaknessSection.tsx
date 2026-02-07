@@ -10,7 +10,6 @@ const SUBJECT_TABS: { value: Subject; label: string }[] = [
   { value: 'KOREAN', label: '국어' },
   { value: 'ENGLISH', label: '영어' },
   { value: 'MATH', label: '수학' },
-  { value: 'OTHER', label: '기타' },
 ];
 
 export const MenteeWeaknessSection = () => {
