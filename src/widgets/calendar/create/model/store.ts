@@ -45,10 +45,29 @@ export const useScheduleCreateStore = create<ScheduleCreateState & ScheduleCreat
             ? state.selectedDays.filter((d) => d !== day)
             : [...state.selectedDays, day];
 
-        // If a day is removed globally, remove it from all worksheets
-        const newWorksheets = state.worksheets.map((ws) => ({
+        // Sync worksheets count with selected days count
+        let newWorksheets = [...state.worksheets];
+        const diff = newGlobalDays.length - newWorksheets.length;
+
+        if (diff > 0) {
+            // Add new worksheets
+            for (let i = 0; i < diff; i++) {
+                newWorksheets.push({
+                    id: crypto.randomUUID(),
+                    file: null,
+                    selectedDays: [], // User will select which specific days
+                });
+            }
+        } else if (diff < 0) {
+            // Remove worksheets from the end (simple approach) or filtering could be complex
+            // User request implies simple "2 lines appear".
+            newWorksheets = newWorksheets.slice(0, newGlobalDays.length);
+        }
+
+        // Also ensure that for remaining worksheets, we remove any selectedDays that are no longer in global scope
+        newWorksheets = newWorksheets.map(ws => ({
             ...ws,
-            selectedDays: ws.selectedDays.filter((d) => newGlobalDays.includes(d)),
+            selectedDays: ws.selectedDays.filter(d => newGlobalDays.includes(d))
         }));
 
         return { selectedDays: newGlobalDays, worksheets: newWorksheets };
