@@ -116,8 +116,8 @@ const MentorReportPage = () => {
   };
 
   return (
-    <Container maxW="container.lg" py={10}>
-      <Heading as="h1" size="lg" mb={4} color="gray.800">
+    <Container maxW="1200px" py={10}>
+      <Heading as="h1" size="lg" mb={4} color="#373E56">
         주간 학습 리포트
       </Heading>
 
