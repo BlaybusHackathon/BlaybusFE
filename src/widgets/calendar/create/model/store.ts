@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ScheduleCreateState, Subject, LearningMaterial } from './types';
+import { ScheduleCreateState, Subject } from './types';
 
 interface ScheduleCreateActions {
     setSubject: (subject: Subject | null) => void;
@@ -11,7 +11,11 @@ interface ScheduleCreateActions {
 
     setTitle: (title: string) => void;
 
-    setMaterialForDay: (day: string, material: LearningMaterial | null) => void;
+    addWorksheet: () => void;
+    removeWorksheet: (id: string) => void;
+    updateWorksheetFile: (id: string, file: { name: string; size?: number; fullPath: string }) => void;
+    toggleWorksheetDay: (id: string, day: string) => void;
+
     reset: () => void;
 }
 
@@ -22,7 +26,7 @@ const initialState: ScheduleCreateState = {
     selectedWeek: '1주차',
     selectedDays: [],
     title: '',
-    materialsByDay: {},
+    worksheets: [],
 };
 
 export const useScheduleCreateStore = create<ScheduleCreateState & ScheduleCreateActions>((set) => ({
@@ -33,28 +37,59 @@ export const useScheduleCreateStore = create<ScheduleCreateState & ScheduleCreat
     setSelectedWeaknessId: (id) => set({ selectedWeaknessId: id }),
 
     setSelectedWeek: (week) => set({ selectedWeek: week }),
+
+    // Global Day Toggle
     toggleDay: (day) => set((state) => {
         const isSelected = state.selectedDays.includes(day);
-        const newDays = isSelected
+        const newGlobalDays = isSelected
             ? state.selectedDays.filter((d) => d !== day)
             : [...state.selectedDays, day];
 
-        // Remove material if day is deselected
-        const newMaterials = { ...state.materialsByDay };
-        if (isSelected) {
-            delete newMaterials[day];
-        }
+        // If a day is removed globally, remove it from all worksheets
+        const newWorksheets = state.worksheets.map((ws) => ({
+            ...ws,
+            selectedDays: ws.selectedDays.filter((d) => newGlobalDays.includes(d)),
+        }));
 
-        return { selectedDays: newDays, materialsByDay: newMaterials };
+        return { selectedDays: newGlobalDays, worksheets: newWorksheets };
     }),
 
     setTitle: (title) => set({ title }),
 
-    setMaterialForDay: (day, material) => set((state) => ({
-        materialsByDay: {
-            ...state.materialsByDay,
-            [day]: material,
-        },
+    // Worksheet Actions
+    addWorksheet: () => set((state) => ({
+        worksheets: [
+            ...state.worksheets,
+            {
+                id: crypto.randomUUID(),
+                file: null,
+                selectedDays: [], // Initially no days selected
+            },
+        ],
+    })),
+
+    removeWorksheet: (id) => set((state) => ({
+        worksheets: state.worksheets.filter((ws) => ws.id !== id),
+    })),
+
+    updateWorksheetFile: (id, file) => set((state) => ({
+        worksheets: state.worksheets.map((ws) =>
+            ws.id === id ? { ...ws, file } : ws
+        ),
+    })),
+
+    toggleWorksheetDay: (id, day) => set((state) => ({
+        worksheets: state.worksheets.map((ws) => {
+            if (ws.id !== id) return ws;
+
+            const isDaySelected = ws.selectedDays.includes(day);
+            return {
+                ...ws,
+                selectedDays: isDaySelected
+                    ? ws.selectedDays.filter((d) => d !== day)
+                    : [...ws.selectedDays, day],
+            };
+        }),
     })),
 
     reset: () => set(initialState),

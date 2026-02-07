@@ -1,99 +1,148 @@
-import { Box, Button, Flex, Icon, Input, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Input, Text, VStack, HStack, IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useScheduleCreateStore } from '../model/store';
 import { DAYS } from '../model/mockData';
-import {  SmallCloseIcon, AddIcon } from '@chakra-ui/icons';
+import { SmallCloseIcon, AddIcon } from '@chakra-ui/icons';
 
 export const LearningMaterialSection = () => {
-    const { selectedDays, materialsByDay, setMaterialForDay } = useScheduleCreateStore();
+    const {
+        selectedDays: globalSelectedDays,
+        worksheets,
+        addWorksheet,
+        removeWorksheet,
+        updateWorksheetFile,
+        toggleWorksheetDay
+    } = useScheduleCreateStore();
 
-    // Sort selected days to match the order in DAYS (e.g., Mon -> Sun)
-    const sortedSelectedDays = DAYS.filter((day) => selectedDays.includes(day.value));
+    // Sort global selected days to match the order in DAYS (e.g., Mon -> Sun)
+    const sortedGlobalDays = DAYS.filter((day) => globalSelectedDays.includes(day.value));
 
-    const handleFileChange = (dayValue: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    // Handler for file input change
+    const handleFileChange = (worksheetId: string, e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            setMaterialForDay(dayValue, {
-                fullPath: '', // In a real scenario, this would be a URL
+            updateWorksheetFile(worksheetId, {
+                fullPath: '', // In a real scenario, this would be a URL or Blob URL
                 name: file.name,
                 size: file.size,
             });
         }
     };
 
-    const handleRemoveFile = (dayValue: string) => {
-        setMaterialForDay(dayValue, null);
-    };
-
-    if (sortedSelectedDays.length === 0) {
+    if (sortedGlobalDays.length === 0) {
         return null;
     }
 
     return (
         <Box animation="fadeIn 0.3s">
             <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>학습지</Text>
-            <VStack spacing={3} align="stretch">
-                {sortedSelectedDays.map((day) => {
-                    const material = materialsByDay[day.value];
 
-                    return (
-                        <Box key={day.value}>
-                            {material ? (
-                                <Flex
-                                    align="center"
-                                    justify="space-between"
-                                    px={4}
-                                    py={3}
-                                    bg="white"
-                                    border="1px solid"
-                                    borderColor="#53A8FE"
-                                    borderRadius="lg"
-                                    height="50px"
-                                >
-                                    <Text color="gray.900" isTruncated fontSize="md">{material.name}</Text>
-                                    <Button
-                                        size="sm"
+            <VStack spacing={3} align="stretch">
+                {worksheets.map((worksheet, index) => (
+                    <Box
+                        key={worksheet.id}
+                        p={4}
+                        border="1px solid"
+                        borderColor="gray.200"
+                        borderRadius="lg"
+                        bg="white"
+                    >
+                        <Flex justify="space-between" align="center" mb={3}>
+                            {worksheet.file ? (
+                                <Flex align="center" gap={2}>
+                                    <Text fontSize="md" fontWeight="medium" color="gray.900">
+                                        {worksheet.file.name}
+                                    </Text>
+                                    <IconButton
+                                        aria-label="Remove file"
+                                        icon={<SmallCloseIcon />}
+                                        size="xs"
                                         variant="ghost"
-                                        onClick={() => handleRemoveFile(day.value)}
-                                        minW="auto"
-                                        p={1}
                                         color="gray.400"
-                                    >
-                                        <Icon as={SmallCloseIcon} w={5} h={5} />
-                                    </Button>
+                                        onClick={() => updateWorksheetFile(worksheet.id, null as any)} // Cast to any to allow null if strict null checks are on, or logic needs adjustment based on store type
+                                    />
                                 </Flex>
                             ) : (
-                                <Box position="relative" width="full">
+                                <Box>
                                     <Input
                                         type="file"
-                                        id={`file-${day.value}`}
+                                        id={`file-${worksheet.id}`}
                                         display="none"
-                                        onChange={(e) => handleFileChange(day.value, e)}
+                                        onChange={(e) => handleFileChange(worksheet.id, e)}
                                     />
-                                    <label htmlFor={`file-${day.value}`} style={{ width: '100%' }}>
-                                        <Flex
-                                            align="center"
-                                            justify="center"
-                                            w="full"
-                                            height="50px"
-                                            bg="white"
-                                            border="1px solid"
-                                            borderColor="#53A8FE"
-                                            borderRadius="lg"
-                                            color="#53A8FE"
+                                    <label htmlFor={`file-${worksheet.id}`}>
+                                        <Button
+                                            as="span"
+                                            size="sm"
+                                            variant="outline"
+                                            colorScheme="blue"
                                             cursor="pointer"
-                                            transition="all 0.2s"
-                                            _hover={{ bg: 'blue.50' }}
+                                            leftIcon={<AddIcon w={3} h={3} />}
+                                            fontWeight="normal"
                                         >
-                                            <Icon as={AddIcon} w={3} h={3} mr={2} />
-                                            <Text fontSize="md" fontWeight="medium">{day.label}요일 학습지 추가</Text>
-                                        </Flex>
+                                            파일 업로드
+                                        </Button>
                                     </label>
                                 </Box>
                             )}
-                        </Box>
-                    );
-                })}
+
+                            <IconButton
+                                aria-label="Remove worksheet"
+                                icon={<SmallCloseIcon />}
+                                size="sm"
+                                variant="ghost"
+                                color="gray.400"
+                                onClick={() => removeWorksheet(worksheet.id)}
+                            />
+                        </Flex>
+
+                        {/* Day Distribution Grid */}
+                        <HStack spacing={2} wrap="wrap">
+                            {sortedGlobalDays.map((day) => {
+                                const isSelected = worksheet.selectedDays.includes(day.value);
+                                return (
+                                    <Button
+                                        key={day.value}
+                                        size="sm"
+                                        onClick={() => toggleWorksheetDay(worksheet.id, day.value)}
+                                        w="40px"
+                                        h="40px"
+                                        borderRadius="md"
+                                        p={0}
+                                        variant="unstyled"
+                                        bg={isSelected ? '#53A8FE' : 'gray.50'}
+                                        color={isSelected ? 'white' : 'gray.500'}
+                                        border="1px solid"
+                                        borderColor={isSelected ? '#53A8FE' : 'gray.200'}
+                                        _hover={{
+                                            bg: isSelected ? '#4293E3' : 'gray.100',
+                                        }}
+                                        fontWeight="medium"
+                                        fontSize="sm"
+                                    >
+                                        {day.label}
+                                    </Button>
+                                );
+                            })}
+                        </HStack>
+                    </Box>
+                ))}
+
+                {/* Add Worksheet Button */}
+                <Button
+                    onClick={addWorksheet}
+                    variant="outline"
+                    colorScheme="blue"
+                    w="full"
+                    h="50px"
+                    borderStyle="dashed"
+                    borderColor="#53A8FE"
+                    color="#53A8FE"
+                    leftIcon={<AddIcon />}
+                    _hover={{ bg: 'blue.50' }}
+                >
+                    학습지 추가
+                </Button>
             </VStack>
         </Box>
     );
