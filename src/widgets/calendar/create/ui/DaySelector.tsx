@@ -1,4 +1,5 @@
-import { Box, Button, HStack, Select, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Text, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useScheduleCreateStore } from '../model/store';
 import { DAYS, WEEKS } from '../model/mockData';
 
@@ -9,23 +10,46 @@ export const DaySelector = () => {
         <Box>
             <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>요일 선택</Text>
             <HStack spacing={2} align="center">
-                {/* Week Selector */}
+                {/* Week Selector - Custom Menu */}
                 <Box>
-                    <Select
-                        value={selectedWeek}
-                        onChange={(e) => setSelectedWeek(e.target.value)}
-                        bg="white"
-                        borderColor="blue.200"
-                        focusBorderColor="blue.400"
-                        width="100px"
-                        height="45px"
-                        borderRadius="md"
-                        iconColor="blue.400"
-                    >
-                        {WEEKS.map((week) => (
-                            <option key={week} value={week}>{week}</option>
-                        ))}
-                    </Select>
+                    <Menu matchWidth>
+                        <MenuButton
+                            as={Button}
+                            rightIcon={<ChevronDownIcon color="blue.400" />}
+                            bg="white"
+                            border="1px solid"
+                            borderColor="blue.200"
+                            borderRadius="md"
+                            width="100px"
+                            height="45px"
+                            textAlign="left"
+                            fontWeight="normal"
+                            fontSize="md"
+                            _hover={{ borderColor: 'blue.400' }}
+                            _active={{ bg: 'white', borderColor: 'blue.400' }}
+                        >
+                            {selectedWeek}
+                        </MenuButton>
+                        <MenuList
+                            bg="white"
+                            borderColor="blue.100"
+                            borderRadius="md"
+                            boxShadow="md"
+                            zIndex={10}
+                            minW="100px"
+                        >
+                            {WEEKS.map((week) => (
+                                <MenuItem
+                                    key={week}
+                                    onClick={() => setSelectedWeek(week)}
+                                    _hover={{ bg: 'blue.50' }}
+                                    _focus={{ bg: 'blue.50' }}
+                                >
+                                    {week}
+                                </MenuItem>
+                            ))}
+                        </MenuList>
+                    </Menu>
                 </Box>
 
                 {/* Day Toggles */}
