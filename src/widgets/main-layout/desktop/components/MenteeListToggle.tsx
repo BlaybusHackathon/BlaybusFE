@@ -44,7 +44,9 @@ export const MenteeListToggle = ({ mentees, isCollapsed }: Props) => {
         ) : (
           <>
             <Flex align="center">
-              <MenteeIcon w={5} h={5} />
+              <Box w="24px" display="flex" justifyContent="center" alignItems="center">
+                <MenteeIcon w={5} h={5} />
+              </Box>
               <Text ml="14px" fontSize="18px" fontWeight="700">
                 담당멘티
               </Text>
