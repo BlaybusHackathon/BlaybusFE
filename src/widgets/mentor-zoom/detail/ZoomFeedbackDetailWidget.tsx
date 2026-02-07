@@ -1,7 +1,7 @@
 import { VStack, Textarea } from '@chakra-ui/react';
 import { ZoomFeedbackSection } from './ZoomFeedbackSection';
 import { SubjectFeedbackItem, SubjectType } from './SubjectFeedbackItem';
-import { ZoomFeedbackData } from '@/pages/mentor/mentee/feedback/zoom/mockZoomFeedbackData';
+import { ZoomFeedbackData } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
 
 interface Props {
     data: ZoomFeedbackData;
