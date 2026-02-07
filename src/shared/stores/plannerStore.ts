@@ -9,6 +9,7 @@ import {
   MOCK_TASK_LOGS, 
   MOCK_DAILY_PLANNERS 
 } from '@/features/planner/model/mockPlannerData';
+import { getAuthorizedUser } from './authStore'; 
 
 const getDateFromISO = (isoString: string): string => {
   return isoString.split('T')[0];
@@ -115,26 +116,36 @@ export const usePlannerStore = create<PlannerState>((set, get) => ({
     };
   }),
 
-  updateDailyMemo: (memo) => set((state) => {
-    const current = state.currentDailyPlanner;
-    
-    if (!current) {
-      const newPlanner: DailyPlanner = {
-        id: Date.now().toString(),
-        planDate: state.selectedDate,
-        totalStudyTime: 0,
-        dailyMemo: memo,
-        createdAt: new Date().toISOString(),
-        mentorFeedback: null,
-        menteeId: 'mentee1', 
-      };
-      return { currentDailyPlanner: newPlanner };
+  updateDailyMemo: (memo) => {
+    let user;
+    try {
+      user = getAuthorizedUser();
+    } catch (e) {
+      console.error("Failed to update daily memo:", e);
+      return; 
     }
-    
-    return {
-      currentDailyPlanner: { ...current, dailyMemo: memo }
-    };
-  }),
+
+    set((state) => {
+      const current = state.currentDailyPlanner;
+      
+      if (!current) {
+        const newPlanner: DailyPlanner = {
+          id: Date.now().toString(),
+          planDate: state.selectedDate,
+          totalStudyTime: 0,
+          dailyMemo: memo,
+          createdAt: new Date().toISOString(),
+          mentorFeedback: null,
+          menteeId: user.id, 
+        };
+        return { currentDailyPlanner: newPlanner };
+      }
+      
+      return {
+        currentDailyPlanner: { ...current, dailyMemo: memo }
+      };
+    });
+  },
   
   getTaskById: (taskId) => get().tasks.find((t) => t.id === taskId),
   

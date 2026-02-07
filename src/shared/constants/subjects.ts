@@ -6,3 +6,10 @@ export const SUBJECT_LABELS: Record<Subject, string> = {
   MATH: '수학',
   OTHER: '기타',
 };
+
+export const SUBJECT_COLORS: Record<Subject, string> = {
+  KOREAN: '#35CE9D',
+  MATH: '#A16AFF',
+  ENGLISH: '#53A8FE', 
+  OTHER: 'gray',
+};

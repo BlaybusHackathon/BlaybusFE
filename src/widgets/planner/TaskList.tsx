@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { Task } from '@/entities/task/types';
 import { canAddTask, canUseTimer } from '@/shared/lib/date';
 import { isBefore, startOfDay } from 'date-fns';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 export const TaskList = () => {
   const { tasks, selectedDate, updateTaskStatus, deleteTask, addTask } = usePlannerStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   const isEditable = canAddTask(selectedDate);
@@ -31,6 +33,12 @@ export const TaskList = () => {
   };
 
   const handleAddTask = (data: { title: string; subject: any }) => {
+    // [수정] 유저가 없으면 중단 (안전장치)
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
+
     const newTask: Task = {
       id: `new-${Date.now()}`,
       title: data.title,
@@ -39,7 +47,7 @@ export const TaskList = () => {
       status: 'PENDING',
       isMandatory: false,
       isMentorChecked: false,
-      menteeId: 'mentee-1',
+      menteeId: user.id, // [수정] 'mentee-1' -> user.id 동적 할당
       recurringGroupId: null,
       contentId: null,
       weaknessId: null,
@@ -49,8 +57,6 @@ export const TaskList = () => {
 
   return (
     <VStack spacing={3} justify={'center'} align="stretch" p={2}>
-
-
       {tasks.length === 0 ? (
         <Text textAlign="center" color="gray.500" py={10}>
           등록된 할 일이 없습니다.
@@ -63,7 +69,7 @@ export const TaskList = () => {
             onToggle={() => handleToggle(task)}
             onDelete={() => deleteTask(task.id)}
             onClick={() => handleTaskClick(task.id)}
-            isTimerEnabled={isTimerEnabled}
+            isTimerEnabled={isTimerEnabled} 
             isEditable={isEditable}
           />
         ))

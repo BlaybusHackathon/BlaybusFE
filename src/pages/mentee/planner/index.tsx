@@ -1,11 +1,18 @@
-import { Box, Flex, Container, Text } from '@chakra-ui/react';
+import { Box, Flex, Container, Text, HStack } from '@chakra-ui/react';
 import { TaskList } from '@/widgets/planner/TaskList';
 import { StudyTimeChart } from '@/widgets/planner/StudyTimeChart';
 import { DailyMemoWidget } from '@/widgets/planner/ui/DailyMemoWidget';
 import { MentorFeedbackWidget } from '@/widgets/planner/ui/MentorFeedbackWidget';
 import { CalendarWidget } from '@/widgets/planner/ui/CalendarWidget';
+import { usePlannerStore } from '@/shared/stores/plannerStore';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 const MenteePlannerPage = () => {
+  const { selectedDate } = usePlannerStore();
+  
+  const dateText = format(new Date(selectedDate), 'M월 d일 EEEE', { locale: ko });
+
   return (
     <Box w="100%" minH="100vh">
       <Container maxW="1200px" p={0}>
@@ -18,7 +25,12 @@ const MenteePlannerPage = () => {
 
           <Flex direction={{ base: 'column', md: 'row' }} p={{ base: 4, md: 6 }} gap={{ base: 8, lg: 12 }}>
             <Box flex={1} w="full" minW={0} p={2}>
-              <Text fontSize="xl" fontWeight="semibold">오늘 할 일</Text>
+              <HStack align="baseline" spacing={2} mb={4}>
+                <Text fontSize="xl" fontWeight="semibold">오늘 할 일</Text>
+                <Text fontSize="md" color="gray.500" fontWeight="medium">
+                  {dateText}
+                </Text>
+              </HStack>
                <TaskList />
             </Box>
             <Box w={{ base: 'auto', md: '24vw' }} flexShrink={0}>
