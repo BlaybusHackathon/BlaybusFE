@@ -7,16 +7,24 @@ import { ZoomFeedbackItem } from './ZoomFeedbackItem';
 
 const ITEMS_PER_PAGE = 4;
 
-export const ZoomFeedbackList = () => {
+interface ZoomFeedbackListProps {
+  menteeId?: string; 
+  onItemClick?: (feedbackId: string) => void; 
+}
+
+export const ZoomFeedbackList = ({ menteeId: propMenteeId, onItemClick }: ZoomFeedbackListProps) => {
   const navigate = useNavigate();
-  const { menteeId } = useParams();
+  const { menteeId: paramMenteeId } = useParams();
+  
+  const menteeId = propMenteeId || paramMenteeId; 
+
   const [page, setPage] = useState(0);
 
   const sortedFeedbacks = useMemo(() => {
     return [...MOCK_ZOOM_FEEDBACKS].sort((a, b) =>
       new Date(b.meetingDate).getTime() - new Date(a.meetingDate).getTime()
     );
-  }, []);
+  }, [menteeId]);
 
   const totalItems = sortedFeedbacks.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -25,11 +33,20 @@ export const ZoomFeedbackList = () => {
     (page + 1) * ITEMS_PER_PAGE
   );
 
-  return (
-    <Box bg="white">
-      <Flex justify="space-between" align="center" mb={6}>
-        <Text fontSize="xl" fontWeight="bold">줌 미팅 피드백</Text>
+  const handleItemClick = (id: string) => {
+    if (onItemClick) {
+        onItemClick(id); 
+    } else {
+        navigate(`/mentor/mentee/${menteeId}/zoom/${id}`); 
+    }
+  };
 
+  const isMentorMode = !onItemClick;
+
+  return (
+    <Box bg={{base:"none",md:"white"}}>
+      <Flex justify="space-between" align="center" mb={6}>
+        <Text fontSize={{base:"md", md:"xl"}} fontWeight="bold">줌 미팅 피드백</Text>
         <HStack spacing={2}>
           <IconButton
             aria-label="Previous page"
@@ -60,7 +77,7 @@ export const ZoomFeedbackList = () => {
         </HStack>
       </Flex>
 
-      <VStack spacing={3} align="stretch" borderRadius={22} bg={'#F9F9FB'} p={4}>
+      <VStack spacing={3} align="stretch" borderRadius={{base:10, md:22}} bg={{base:'white',md:'#F9F9FB'}} p={{base:2,md:4}}>
         {currentItems.length === 0 ? (
           <Flex justify="center" align="center" h="200px" color="gray.400">
             등록된 피드백이 없습니다.
@@ -70,32 +87,30 @@ export const ZoomFeedbackList = () => {
             <ZoomFeedbackItem
               key={item.id}
               countNumber={totalItems - (page * ITEMS_PER_PAGE + index)}
-              summary={item.summary}
               meetingDate={item.meetingDate}
-              onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/${item.id}`)}
-              menteeName="최연준" // Mock Data or Prop
+              onClick={() => handleItemClick(item.id)}
             />
           ))
         )}
 
-        <Box
-          as="button"
-          w="full"
-          p={2}
-          bg="#EDEDF1"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          borderRadius="7px"
-          transition="all 0.2s"
-          _hover={{ bg: 'gray.100' }}
-          onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
-        >
-          <AddIcon color="gray.400" boxSize={4} />
-        </Box>
+        {isMentorMode && (
+          <Box
+            as="button"
+            w="full"
+            p={2}
+            bg="#EDEDF1"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="7px"
+            transition="all 0.2s"
+            _hover={{ bg: 'gray.100' }}
+            onClick={() => navigate(`/mentor/mentee/${menteeId}/zoom/new`)}
+          >
+            <AddIcon color="gray.400" boxSize={4} />
+          </Box>
+        )}
       </VStack>
-
-
     </Box>
   );
 };

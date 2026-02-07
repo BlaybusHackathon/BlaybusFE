@@ -93,6 +93,7 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
                         flexShrink={0}
                         mx={{ base: 'auto', md: 0 }}
                         w={{ base: '100%', md: '24vw' }}
+                        maxW={"450px"}
                         overflowX={{ base: 'auto', md: 'visible' }}
                         display="flex"
                         justifyContent="center"

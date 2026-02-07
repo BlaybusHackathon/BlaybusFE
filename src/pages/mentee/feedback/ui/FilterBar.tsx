@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import { HStack, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
+import { HStack, Menu, MenuButton, MenuList, MenuItem, Button, Box, Text} from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { getWeeksInMonth } from 'date-fns';
 
@@ -45,7 +45,6 @@ const CustomFilterMenu = <T extends string | number>({
     <Menu>
       <MenuButton
         as={Button}
-        rightIcon={<ChevronDownIcon />}
         size="sm"
         w={width}
         py={4}
@@ -55,7 +54,7 @@ const CustomFilterMenu = <T extends string | number>({
         borderWidth="2px"
         bg="white"
         fontWeight="normal"
-        fontSize="sm"
+        fontSize={{base:"xs",md:"sm"}}
         textAlign="left"
         _hover={{
           borderColor: 'blue.500',
@@ -65,12 +64,17 @@ const CustomFilterMenu = <T extends string | number>({
           borderColor: 'blue.600',
           bg: 'white'
         }}
-        sx={{
-            span: { flex: 1, textAlign: 'center' }
-        }}
       >
-        {currentLabel}
+        <HStack w="100%" justifyContent="space-between" spacing={0}>
+           <Box flex={1} textAlign="center">
+             <Text as="span" isTruncated> 
+               {currentLabel}
+             </Text>
+           </Box>
+           <ChevronDownIcon ml={1} />
+        </HStack>
       </MenuButton>
+      
       <MenuList
         borderRadius="2xl"
         borderColor="blue.400"
@@ -90,7 +94,7 @@ const CustomFilterMenu = <T extends string | number>({
             w={typeof width === 'number' ? width : '100%'}
             minW={width}
             py={2}
-            fontSize="sm"
+            fontSize={{base:"xs",md:"sm"}}
             fontWeight="normal"
             minH="auto"
             _hover={{
@@ -104,7 +108,6 @@ const CustomFilterMenu = <T extends string | number>({
     </Menu>
   );
 };
-
 export const FilterBar = ({ filters, setters }: FilterBarProps) => {
   
   const currentMonthWeeks = useMemo(() => {

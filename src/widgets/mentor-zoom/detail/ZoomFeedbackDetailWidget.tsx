@@ -6,9 +6,10 @@ import { ZoomFeedbackData } from '@/widgets/mentor-zoom/model/mockZoomFeedbackDa
 interface Props {
     data: ZoomFeedbackData;
     onChange: (field: string, value: any) => void;
+    readOnly?: boolean;
 }
 
-export const ZoomFeedbackDetailWidget = ({ data, onChange }: Props) => {
+export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: Props) => {
     const handleSubjectChange = (subject: SubjectType, value: string) => {
         onChange('subjects', { ...data.subjects, [subject]: value });
     };
@@ -18,11 +19,13 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange }: Props) => {
             <ZoomFeedbackSection title="메모장">
                 <Textarea
                     value={data.memo}
-                    onChange={(e) => onChange('memo', e.target.value)}
-                    placeholder="자유롭게 메모를 남겨주세요."
+                    onChange={(e) => !readOnly && onChange('memo', e.target.value)}
+                    isReadOnly={readOnly}
+                    placeholder={readOnly ? "" : "자유롭게 메모를 남겨주세요."}
                     minH="150px"
-                    bg="#F9F9FB"
-                    border="none"
+                    bg={readOnly ? "white" : "#F9F9FB"}
+                    border={readOnly ? "1px solid" : "none"}
+                    borderColor={readOnly ? "#E2E4E8" : "transparent"}
                     borderRadius="12px"
                     p={6}
                     fontSize="16px"
@@ -34,37 +37,46 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange }: Props) => {
                         borderColor: '#53A8FE',
                         boxShadow: 'none'
                     }}
+                    sx={{
+                        fieldSizing: 'content',
+                        height: 'initial',
+                    }}
                     resize="none"
                     lineHeight="1.6"
                 />
             </ZoomFeedbackSection>
 
-            <ZoomFeedbackSection title="줌 미팅 피드백 작성">
+            <ZoomFeedbackSection title="과목별 피드백">
                 <SubjectFeedbackItem
                     subject="korean"
                     value={data.subjects.korean}
                     onChange={(val) => handleSubjectChange('korean', val)}
+                    readOnly={readOnly} // [전달]
                 />
                 <SubjectFeedbackItem
                     subject="english"
                     value={data.subjects.english}
                     onChange={(val) => handleSubjectChange('english', val)}
+                    readOnly={readOnly} // [전달]
                 />
                 <SubjectFeedbackItem
                     subject="math"
                     value={data.subjects.math}
                     onChange={(val) => handleSubjectChange('math', val)}
+                    readOnly={readOnly} // [전달]
                 />
             </ZoomFeedbackSection>
 
             <ZoomFeedbackSection title="운영 피드백">
                 <Textarea
                     value={data.operation}
-                    onChange={(e) => onChange('operation', e.target.value)}
-                    placeholder="운영 관련 피드백을 작성해주세요."
+                    onChange={(e) => !readOnly && onChange('operation', e.target.value)}
+                    isReadOnly={readOnly}
+                    placeholder={readOnly ? "" : "운영 관련 피드백을 작성해주세요."}
                     minH="150px"
-                    bg="#F9F9FB"
-                    border="none"
+                    bg={readOnly ? "white" : "#F9F9FB"}
+                    border={readOnly ? "1px solid" : "none"}
+                    borderColor={readOnly ? "#E2E4E8" : "transparent"}
                     borderRadius="12px"
                     p={6}
                     fontSize="16px"
@@ -75,6 +87,10 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange }: Props) => {
                         border: '1px solid',
                         borderColor: '#53A8FE',
                         boxShadow: 'none'
+                    }}
+                    sx={{
+                        fieldSizing: 'content',
+                        height: 'initial',
                     }}
                     resize="none"
                     lineHeight="1.6"

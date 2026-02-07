@@ -31,13 +31,15 @@ export const useTaskSubmission = (taskId: string, initialMemo: string = '') => {
       memo,
       images: images.map(i => i.file.name)
     });
-    alert('과제가 제출되었습니다.');
+    // 실제로는 여기서 API 호출
+    // alert('과제가 제출되었습니다.'); // UI에서 처리하므로 제거하거나 유지
   };
 
   return {
     memo,
     setMemo,
     images,
+    setImages, // [수정] 외부에서 이미지 상태를 제어할 수 있도록 노출
     handleAddImages,
     handleRemoveImage,
     handleSubmit

@@ -12,7 +12,7 @@ export const MentorFeedbackWidget = () => {
     >
       <Flex align="center" mb={2} gap={2}>
         <Text 
-          fontSize="md" 
+          fontSize="lg" 
           fontWeight="bold" 
         >
           멘토 피드백
@@ -22,9 +22,9 @@ export const MentorFeedbackWidget = () => {
       <Flex gap={3} align="flex-start">
         <Box 
           flex={1}
-          p={3} 
+          p={6} 
           bg="white" 
-          borderRadius="lg" 
+          borderRadius="10" 
           borderTopLeftRadius="0" 
           boxShadow="sm"
         >

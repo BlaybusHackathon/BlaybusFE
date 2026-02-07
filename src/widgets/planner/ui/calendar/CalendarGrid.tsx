@@ -40,9 +40,9 @@ export const CalendarGrid = ({
           <Text
             fontSize="sm"
             fontWeight="medium"
-            color={isSelected ? 'blue.500' : isSunday ? 'red.400' : 'gray.400'}
+            color={isSelected ? '#53A8FE' : isSunday ? '#53A8FE' : '53A8FE'}
             mb={2}
-            _groupHover={{ color: !isSelected ? 'gray.600' : undefined }}
+            _groupHover={{ color: !isSelected ? '#53A8FE' : undefined }}
           >
             {dayName}
           </Text>
@@ -54,7 +54,7 @@ export const CalendarGrid = ({
           align="center"
           justify="center"
           borderRadius="12px"
-          bg={isSelected ? 'blue.500' : 'transparent'}
+          bg={isSelected ? '#53A8FE' : 'transparent'}
           transition="all 0.2s"
           _groupHover={{ bg: !isSelected ? 'gray.100' : undefined }}
         >

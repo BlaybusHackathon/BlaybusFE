@@ -20,8 +20,11 @@ export const CalendarWidget = () => {
 
   return (
     <Box 
+      pt={{base:4, md: 0}}
       w="full" 
       bg="white"
+      borderBottomRadius={22}
+      shadow={'sm'}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

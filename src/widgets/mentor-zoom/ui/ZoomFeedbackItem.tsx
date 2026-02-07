@@ -1,12 +1,11 @@
 import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
+import { format } from 'date-fns';
 
 interface Props {
   countNumber: number;
-  summary: string;
   meetingDate: string;
   onClick: () => void;
-  menteeName?: string; // Add optional prop
 }
 
 const getOrdinal = (n: number) => {
@@ -17,16 +16,16 @@ const getOrdinal = (n: number) => {
 
 export const ZoomFeedbackItem = ({
   countNumber,
+  meetingDate,
   onClick,
-  menteeName = "최연준" // Default for now if not passed
 }: Props) => {
   return (
     <Flex
       align="center"
       justify="space-between"
-      p="12px 16px"
+      py={{base:"1", md:"4"}}
+      px={{base:"4", md:"6"}}
       borderRadius="7"
-      bg="#F7F8FA"
       cursor="pointer"
       transition="all 0.2s"
       role="group"
@@ -35,22 +34,22 @@ export const ZoomFeedbackItem = ({
         bg: '#EDF3FF',
       }}
     >
-    <Text
-      fontSize="16px"
-      fontWeight="600"
-      color="gray.700"
-    >
-      {menteeName}
-    </Text>
-
-      <Text fontSize="16px" fontWeight="600" color="gray.700">
+      <Text
+        fontSize={{base:"0.875rem", md:"1.25rem"}}
+        fontWeight="600"
+        color="gray.800"
+      >
         {getOrdinal(countNumber)}
       </Text>
 
+      <Text fontSize={{base:"0.875rem", md:"1.25rem"}} color="gray.500" fontWeight="500">
+        {format(new Date(meetingDate), 'yyyy.MM.dd')}
+      </Text>
       <Icon
         as={ChevronRightIcon}
         w={5} h={5}
         color="gray.400"
+        _groupHover={{ color: '#373E56' }}
       />
     </Flex>
   );

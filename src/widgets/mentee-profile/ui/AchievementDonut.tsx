@@ -33,7 +33,7 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
         borderRadius="md"
         mb={3}
         position="relative"
-        fontSize={{ base: "12px", md: "sm" }}
+        fontSize={{ base: "xs", md: "sm" }}
         fontWeight="bold"
         _after={{
           content: '""',
@@ -51,19 +51,20 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
 
       <CircularProgress
         trackColor="#EEEEEE"
+        thickness={14}
         value={value}
-        size={{ base: "122px", md: "122px" }}
+        size={{ base: "100px", md: "122px" }}
         textAlign="center"
         color={colorCode}
         capIsRound
       >
         <CircularProgressLabel
-          fontSize={{ base: "34px", md: "34px" }}
+          fontSize={{ base: "30px", md: "34px" }}
           fontWeight="600"
           color={colorCode}
         >
           {value}
-          <chakra.span fontSize={{ base: "18px", md: "18px" }} ml={0.5}>
+          <chakra.span fontSize={{ base: "10px", md: "18px" }} ml={0.5}>
             %
           </chakra.span>
         </CircularProgressLabel>

@@ -6,6 +6,7 @@ interface Props {
     subject: SubjectType;
     value: string;
     onChange: (value: string) => void;
+    readOnly?: boolean;
 }
 
 const SUBJECT_CONFIG = {
@@ -14,7 +15,7 @@ const SUBJECT_CONFIG = {
     math: { label: '수학', color: '#A16AFF' },
 };
 
-export const SubjectFeedbackItem = ({ subject, value, onChange }: Props) => {
+export const SubjectFeedbackItem = ({ subject, value, onChange, readOnly = false }: Props) => {
     const config = SUBJECT_CONFIG[subject];
 
     return (
@@ -36,11 +37,13 @@ export const SubjectFeedbackItem = ({ subject, value, onChange }: Props) => {
             </Flex>
             <Textarea
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={`${config.label} 과목의 줌 미팅 피드백을 작성해주세요.`}
+                onChange={(e) => !readOnly && onChange(e.target.value)}
+                isReadOnly={readOnly}
+                placeholder={readOnly ? "" : `${config.label} 과목의 줌 미팅 피드백을 작성해주세요.`}
                 minH="100px"
-                bg="#F9F9FB"
-                border="none"
+                bg={readOnly ? "white" : "#F9F9FB"}
+                border={readOnly ? "1px solid" : "none"}
+                borderColor={readOnly ? "#E2E4E8" : "transparent"}
                 borderRadius="12px"
                 p={6}
                 fontSize="16px"
@@ -51,6 +54,10 @@ export const SubjectFeedbackItem = ({ subject, value, onChange }: Props) => {
                     border: '1px solid',
                     borderColor: config.color,
                     boxShadow: 'none'
+                }}
+                sx={{
+                    fieldSizing: 'content',
+                    height: 'initial',
                 }}
                 resize="none"
                 lineHeight="1.6"

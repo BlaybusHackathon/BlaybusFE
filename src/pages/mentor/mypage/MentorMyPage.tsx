@@ -1,6 +1,6 @@
 import { Box, SimpleGrid, GridItem, Text, Divider } from '@chakra-ui/react';
 import { StatCard } from '../../../widgets/mentor/ui/StatCard';
-import { MenteeList } from '../../../widgets/mentor/ui/MenteeList'; // [New] 새로 만든 컴포넌트 import
+import { MenteeList } from '../../../widgets/mentor/ui/MenteeList';
 import { RecentTaskList } from '../../../widgets/mentor/ui/RecentTaskList';
 import { CommentList } from '../../../widgets/mentor/ui/CommentList';
 import {

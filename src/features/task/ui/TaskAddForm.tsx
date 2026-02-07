@@ -20,7 +20,7 @@ export const TaskAddForm = ({ onSubmit }: TaskAddFormProps) => {
   };
 
   return (
-    <HStack justify={'space-between'} gap={2} p={4} bg="white" borderRadius="lg" boxShadow="md" border="1px solid" borderColor="gray.100">
+    <HStack justify={'space-between'} gap={2} p={4} bg="white" borderRadius="lg" boxShadow="sm" border="1px solid" borderColor="gray.100">
       <Input
         flex={1}
         fontSize={'sm'}
@@ -71,7 +71,7 @@ export const TaskAddForm = ({ onSubmit }: TaskAddFormProps) => {
             borderRadius="2xl"
             borderColor="blue.400"
             borderWidth="2px"
-            boxShadow="lg"
+            boxShadow="sm"
             py={0}
             px={0}
             overflow="hidden"

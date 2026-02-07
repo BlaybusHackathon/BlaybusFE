@@ -18,7 +18,7 @@ export const SimpleFeedbackCard = ({ feedback }: Props) => {
     <Box 
       bg="white" 
       p={5} 
-      borderRadius="xl" 
+      borderRadius="10" 
       boxShadow="sm" 
       border="1px solid" 
       borderColor="gray.100"
@@ -29,8 +29,8 @@ export const SimpleFeedbackCard = ({ feedback }: Props) => {
     >
       <Flex justify="space-between" align="center">
         <Text 
-            fontSize="lg" 
-            fontWeight="800" 
+            fontSize="0.875rem" 
+            fontWeight="600" 
             color="gray.800" 
             lineHeight="1.3"
         >

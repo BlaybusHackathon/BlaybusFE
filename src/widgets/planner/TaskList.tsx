@@ -55,7 +55,7 @@ export const TaskList = () => {
   };
 
   return (
-    <VStack spacing={3} justify={'center'} align="stretch" p={2}>
+    <VStack spacing={3} justify={'center'} align="stretch">
       {tasks.length === 0 ? (
         <Text textAlign="center" color="gray.500" py={10}>
           등록된 할 일이 없습니다.
@@ -75,7 +75,7 @@ export const TaskList = () => {
       )}
 
       {isEditable && (
-        <Box mt={2}>
+        <Box>
           <TaskAddForm 
             onSubmit={handleAddTask} 
             onCancel={() => {}} 

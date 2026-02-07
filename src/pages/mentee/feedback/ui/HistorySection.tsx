@@ -14,7 +14,7 @@ export const HistorySection = () => {
 
       <Box >
         {data.length > 0 ? (
-          <VStack spacing={4} align="stretch">
+          <VStack spacing={2} align="stretch">
             {data.map(fb => (
               <SimpleFeedbackCard key={fb.id} feedback={fb} />
             ))}
