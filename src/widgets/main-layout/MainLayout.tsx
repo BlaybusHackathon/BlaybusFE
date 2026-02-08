@@ -21,14 +21,18 @@ export const MainLayout = () => {
   const navItems = getNavItems(user.role);
   const sidebarWidth = isCollapsed ? '80px' : '280px';
 
+  const handleToggleSidebar = () => setIsCollapsed(!isCollapsed);
+
   return (
     <Box minH="100vh">
       <Box display={{ base: 'none', md: 'block' }}>
-        <DesktopHeader
-          onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
-          isCollapsed={isCollapsed}
+        <DesktopHeader isCollapsed={isCollapsed} />
+        
+        <DesktopSidebar 
+          isCollapsed={isCollapsed} 
+          onToggleSidebar={handleToggleSidebar} 
         />
-        <DesktopSidebar isCollapsed={isCollapsed} />
+        
         <Box
           ml={sidebarWidth}
           mt="0"
@@ -42,7 +46,7 @@ export const MainLayout = () => {
 
       <Box display={{ base: 'block', md: 'none' }}>
         <MobileHeader />
-        <Box pt="4.5rem" pb="64px" px={0} minH="100vh" bg={{base:"#F9F9FB", md:"white"}}>
+        <Box pt="4.5rem" pb="64px" px={0} minH="100vh" bg="#F9F9FB">
           <Outlet />
         </Box>
 

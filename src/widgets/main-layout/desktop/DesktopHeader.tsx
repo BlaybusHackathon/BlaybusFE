@@ -1,13 +1,11 @@
-import { Flex, IconButton, Text } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+import { Flex, Text } from '@chakra-ui/react';
 import { useAuthStore } from '@/shared/stores/authStore';
 
 interface Props {
-  onToggleSidebar: () => void;
   isCollapsed: boolean;
 }
 
-export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
+export const DesktopHeader = ({ isCollapsed }: Props) => {
   const { user } = useAuthStore();
   const sidebarWidth = isCollapsed ? '80px' : '280px';
 
@@ -16,16 +14,15 @@ export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
       as="header"
       h="80px"
       bg="#fff"
-      pl={`calc(${sidebarWidth} + 28px)`}
+      pl={`calc(${sidebarWidth} + 28px)`} // 사이드바 너비에 맞춰 유동적으로 변화
       transition="padding-left 0.3s ease"
       alignItems="center"
-      justifyContent="space-between"
+      justifyContent="flex-start"
       position="fixed"
       top={0}
       left={0}
       right={0}
       zIndex={1000}
-      pointerEvents="none"
     >
       <Text
         fontFamily="Pretendard"
@@ -33,23 +30,10 @@ export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
         fontWeight="600"
         color="#394250"
         lineHeight="normal"
-        pointerEvents="auto"
       >
         어서오세요, <Text as="span" color="#52A8FE">{user?.name}</Text>
         {user?.role === 'MENTOR' ? '멘토님!' : '님!'}
       </Text>
-      <IconButton
-        icon={<HamburgerIcon w={6} h={6} />}
-        mr="24px"
-        aria-label="Toggle Sidebar"
-        onClick={onToggleSidebar}
-        bg="white"
-        boxShadow="0px 2px 5px rgba(0,0,0,0.1)"
-        borderRadius="full"
-        size="lg"
-        _hover={{ bg: 'gray.50' }}
-        pointerEvents="auto"
-      />
     </Flex>
   );
 };
