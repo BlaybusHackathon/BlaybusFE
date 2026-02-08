@@ -40,7 +40,7 @@ export const MentorMenteeCalendarPage = () => {
                 px={{base:0, md:6}}
             >
                 <Box>
-                    <Heading size="lg" mb={2}>{menteeId}ë ìê° ê³íí</Heading>
+                    <Heading size="lg" mb={2}>{menteeId}님의 월간 계획표</Heading>
                 </Box>
                 
                 <Box display={{ base: 'none', md: 'block' }}>

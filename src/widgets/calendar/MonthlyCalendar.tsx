@@ -22,34 +22,30 @@ import type { CalendarTaskData } from '@/features/planner/api/planApi';
 
 interface MonthlyCalendarProps {
   onTaskClickOverride?: (taskId: string) => void;
-  // [추가] 외부에서 날짜를 제어하기 위한 선택적 Props
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
 }
 
 export const MonthlyCalendar = ({
   onTaskClickOverride,
-  selectedDate, // Optional
-  onDateChange, // Optional
+  selectedDate, 
+  onDateChange, 
 }: MonthlyCalendarProps) => {
   const { menteeId } = useParams();
   
-  // 내부 상태 (외부 props가 없을 때 사용됨)
   const [internalDate, setInternalDate] = useState(new Date());
   const [showCompletedOnly, setShowCompletedOnly] = useState(false);
   const [calendarTasks, setCalendarTasks] = useState<CalendarTaskData[]>([]);
   const navigate = useNavigate();
 
-  // [핵심] 제어/비제어 패턴: 외부 props가 있으면 그것을 사용, 없으면 내부 state 사용
   const currentDate = selectedDate ?? internalDate;
 
-  // 날짜 변경 핸들러
   const handlePrevMonth = () => {
     const newDate = subMonths(currentDate, 1);
     if (onDateChange) {
-      onDateChange(newDate); // 제어 컴포넌트 모드
+      onDateChange(newDate); 
     } else {
-      setInternalDate(newDate); // 비제어 컴포넌트 모드 (기존 유지)
+      setInternalDate(newDate); 
     }
   };
 
