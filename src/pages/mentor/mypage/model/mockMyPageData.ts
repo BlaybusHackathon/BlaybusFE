@@ -12,6 +12,11 @@ export const MOCK_MY_MENTEES: MenteeSummary[] = [
     school: '중앙중',
     grade: 2,
     profileImgUrl: 'https://bit.ly/ryan-florence',
+    achievement: {
+      korean: 78,
+      english: 64,
+      math: 82,
+    },
     lastActiveAt: '2026-02-07T12:00:00Z',
   },
   {
@@ -20,6 +25,11 @@ export const MOCK_MY_MENTEES: MenteeSummary[] = [
     school: '한빛중',
     grade: 1,
     profileImgUrl: null,
+    achievement: {
+      korean: 55,
+      english: 70,
+      math: 61,
+    },
     lastActiveAt: '2026-02-06T09:20:00Z',
   },
   {
@@ -28,6 +38,11 @@ export const MOCK_MY_MENTEES: MenteeSummary[] = [
     school: '새빛중',
     grade: 3,
     profileImgUrl: 'https://bit.ly/code-beast',
+    achievement: {
+      korean: 66,
+      english: 58,
+      math: 73,
+    },
     lastActiveAt: '2026-02-05T16:45:00Z',
   },
 ];

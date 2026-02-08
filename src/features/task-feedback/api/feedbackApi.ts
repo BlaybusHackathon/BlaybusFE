@@ -161,7 +161,7 @@ export const feedbackApi = {
     return normalizeAnswer(data, { feedbackId });
   },
 
-  updateComment: async (_feedbackId: string, commentId: string, comment: string): Promise<Answer> => {
+  updateComment: async (_feedbackId: string, commentId: string, comment: string): Promise<Answer | null> => {
     if (USE_MOCK) return mockApi.feedback.updateComment(_feedbackId, commentId, comment);
     const data = await apiClient.put(`/feedback/comments/${commentId}`, { comment });
     return normalizeAnswer(data, { feedbackId: _feedbackId });

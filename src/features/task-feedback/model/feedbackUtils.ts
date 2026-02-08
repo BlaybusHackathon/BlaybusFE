@@ -116,7 +116,7 @@ export const getPinPositionStyles = (xPos: number, yPos: number) => {
     transform: 'translateY(-50%) rotate(45deg)',
   };
 
-  const flexDirection = isRightSide ? 'row-reverse' : 'row';
+  const flexDirection: CSSProperties['flexDirection'] = isRightSide ? 'row-reverse' : 'row';
   const transformOrigin = isRightSide ? 'right center' : 'left center';
 
   return { containerStyle, visualStyle, pointerStyle, flexDirection, transformOrigin };

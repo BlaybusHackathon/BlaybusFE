@@ -1,5 +1,4 @@
-import { HStack, Checkbox, Text, IconButton, Badge, Box, VStack } from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons';
+import { HStack, Checkbox, Text, Badge, Box, VStack } from '@chakra-ui/react';
 import { Task } from '@/entities/task/types';
 import { SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
 import { TaskTimer } from '@/features/timer/ui/TaskTimer';
@@ -22,8 +21,9 @@ export const TaskItem = ({
   isTimerEnabled,
   isEditable
 }: TaskItemProps) => {
+  void onDelete;
+  void isEditable;
   const isCompleted = task.status === 'DONE';
-  const canDelete = isEditable && !task.isMandatory;
   
   const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
   

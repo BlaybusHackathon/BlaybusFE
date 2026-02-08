@@ -157,7 +157,7 @@ export const planApi = {
   },
 
   updatePlan: async (planId: string | number, payload: { dailyMemo: string | null }): Promise<DailyPlanner> => {
-    if (USE_MOCK) return mockApi.plan.updatePlan(planId, payload);
+    if (USE_MOCK) return mockApi.plan.updatePlan(String(planId), payload);
     const data = await apiClient.put(`/plans/${planId}`, payload);
     return normalizePlanner(data);
   },

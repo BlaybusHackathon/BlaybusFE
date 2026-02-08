@@ -9,7 +9,7 @@ import { USE_MOCK } from '@/shared/mocks/mockEnv';
 import { mockApi } from '@/shared/mocks/mockApi';
 import { asRecord, asString, asNumber, asOptionalString, asOptionalBoolean, asOptionalNumber, pick } from '@/shared/api/parse';
 
-interface MentorDashboardData {
+export interface MentorDashboardData {
   stats: DashboardStats;
   mentees: MenteeSummary[];
   recentTasks: RecentSubmittedTask[];
