@@ -1,14 +1,11 @@
-import { useEffect, useState, useMemo } from 'react';
+﻿import { useEffect, useState, useMemo } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, Heading, Button, useToast, Container, Text, Flex } from '@chakra-ui/react';
 import { format, parseISO, getMonth, getWeekOfMonth, getYear } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ReportDetailWidget } from '@/widgets/mentor-report/detail/ReportDetailWidget';
-import { ReportData } from '@/widgets/mentor-report/model/mockReportData';
-import {
-  getWeeklyReportById,
-  getWeeklyReportByStartDate
-} from '@/features/report/model/mockReportData';
+import { ReportData } from '@/features/report/model/types';
+import { weeklyReportApi } from '@/features/report/api/weeklyReportApi';
 
 const MentorReportPage = () => {
   const { menteeId, reportId } = useParams();
@@ -61,9 +58,8 @@ const MentorReportPage = () => {
       try {
         if (isNewMode && startDate && endDate) {
           setDateRange({ start: startDate, end: endDate });
-          
-          const existingReport = getWeeklyReportByStartDate(startDate, menteeId);
-          
+
+          const existingReport = await weeklyReportApi.getByStartDate(startDate, menteeId);
           if (existingReport) {
             setReportData(existingReport);
           } else {
@@ -77,11 +73,9 @@ const MentorReportPage = () => {
             });
           }
         } else if (reportId && reportId !== 'new') {
-          const report = getWeeklyReportById(reportId);
-          if (report) {
-            setDateRange({ start: report.startDate, end: report.endDate });
-            setReportData(report);
-          }
+          const report = await weeklyReportApi.getById(reportId);
+          setDateRange({ start: report.startDate, end: report.endDate });
+          setReportData(report);
         }
       } finally {
         setLoading(false);
@@ -108,7 +102,7 @@ const MentorReportPage = () => {
   const handleSave = async () => {
     if (!reportData.totalReview || !reportData.wellDone || !reportData.improvements) {
       toast({
-        title: '모든 항목을 입력해주세요.',
+        title: '모든 항목을 입력해 주세요.',
         status: 'warning',
         duration: 3000,
         isClosable: true,
@@ -118,9 +112,11 @@ const MentorReportPage = () => {
 
     setLoading(true);
     try {
-      console.log('Saving report:', reportData); 
-      
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (reportData.id) {
+        await weeklyReportApi.update(reportData.id, reportData);
+      } else {
+        await weeklyReportApi.create(reportData);
+      }
       
       toast({
         title: '저장되었습니다.',

@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { Box, Flex, Text, Button, HStack, VStack } from '@chakra-ui/react';
 import { Subject } from '@/shared/constants/subjects';
-import { Weakness } from '@/entities/weakness/types';
-import { MOCK_WEAKNESSES } from '@/features/weakness/model/mockWeaknessData';
 import { WeaknessItem } from './WeaknessItem';
 import { AddWeaknessButton } from './AddWeaknessButton';
+import { useParams } from 'react-router-dom';
+import { useMenteeWeaknesses } from '@/features/weakness/model/useMenteeWeaknesses';
+import { useWeaknessMutations } from '@/features/weakness/model/useWeaknessMutations';
 
 const SUBJECT_TABS: { value: Subject; label: string }[] = [
   { value: 'KOREAN', label: '국어' },
@@ -13,16 +14,20 @@ const SUBJECT_TABS: { value: Subject; label: string }[] = [
 ];
 
 export const MenteeWeaknessSection = () => {
-  const [selectedSubject, setSelectedSubject] = useState<Subject | 'ALL'>('ALL');
-  const [weaknesses, setWeaknesses] = useState(MOCK_WEAKNESSES);
+  const { menteeId } = useParams();
+  const { data: weaknesses, setData: setWeaknesses } = useMenteeWeaknesses(menteeId);
+  const { create, update, remove } = useWeaknessMutations();
 
+  const [selectedSubject, setSelectedSubject] = useState<Subject | 'ALL'>('ALL');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
+  const list = useMemo(() => weaknesses ?? [], [weaknesses]);
+
   const filteredList = useMemo(() => {
-    if (selectedSubject === 'ALL') return weaknesses;
-    return weaknesses.filter((w) => w.subject === selectedSubject);
-  }, [weaknesses, selectedSubject]);
+    if (selectedSubject === 'ALL') return list;
+    return list.filter((w) => w.subject === selectedSubject);
+  }, [list, selectedSubject]);
 
   const handleAddClick = () => {
     setEditingId(null);
@@ -39,35 +44,50 @@ export const MenteeWeaknessSection = () => {
     setIsAdding(false);
   };
 
-  const handleSave = (id: string, title: string, fileName?: string) => {
+  const handleSave = async (id: string, title: string, _fileName?: string) => {
+    void _fileName;
+    if (!menteeId) return;
+
     if (isAdding) {
-      const newWeakness: Weakness = {
-        id: `new-${Date.now()}`,
+      const subject = selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject;
+      const created = await create.mutate({
+        menteeId,
+        subject,
         title,
-        fileName,
-        subject: selectedSubject === 'ALL' ? 'OTHER' : selectedSubject,
-        menteeId: 'mentee-1',
-        inforId: 'info-1',
-        contentId: 'content-new',
-      };
-      setWeaknesses((prev) => [...prev, newWeakness]);
+      });
+      if (created) {
+        setWeaknesses((prev) => ([...(prev ?? []), created]));
+      }
       setIsAdding(false);
-    } else {
-      setWeaknesses((prev) =>
-        prev.map((w) => (w.id === id ? { ...w, title, fileName } : w))
-      );
-      setEditingId(null);
+      return;
     }
+
+    const target = list.find((w) => w.id === id);
+    const updated = await update.mutate({
+      weaknessId: id,
+      payload: {
+        menteeId,
+        subject: target?.subject ?? (selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject),
+        title,
+        contentId: target?.contentId || undefined,
+      },
+    });
+
+    if (updated) {
+      setWeaknesses((prev) => (prev ?? []).map((w) => (w.id === id ? updated : w)));
+    }
+    setEditingId(null);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      setWeaknesses((prev) => prev.filter((w) => w.id !== id));
-      if (editingId === id) setEditingId(null);
-    }
+  const handleDelete = async (id: string) => {
+    if (!confirm('정말 삭제하시겠습니까?')) return;
+
+    await remove.mutate(id);
+    setWeaknesses((prev) => (prev ?? []).filter((w) => w.id !== id));
+    if (editingId === id) setEditingId(null);
   };
 
-  const handleTabChange = (subject: Subject) => {
+  const handleTabChange = (subject: Subject | 'ALL') => {
     setSelectedSubject(subject);
     handleCancel();
   };
@@ -84,8 +104,8 @@ export const MenteeWeaknessSection = () => {
 
         <HStack spacing={2} overflowX="auto">
           <Button
-            variant={selectedSubject === 'ALL' ? 'solid' : 'outline'} // 'ALL' if supported, logic adjustment needed below
-            onClick={() => handleTabChange('ALL' as any)} // Temporary cast, handle logic below
+            variant={selectedSubject === 'ALL' ? 'solid' : 'outline'}
+            onClick={() => handleTabChange('ALL')}
             borderRadius="18px"
             p="4px 16px"
             bg={selectedSubject === 'ALL' ? '#53A8FE' : 'white'}
@@ -152,7 +172,7 @@ export const MenteeWeaknessSection = () => {
             weakness={{
               id: 'temp-new',
               title: '',
-              subject: selectedSubject === 'ALL' ? 'OTHER' : selectedSubject,
+              subject: selectedSubject === 'ALL' ? 'KOREAN' : selectedSubject,
               menteeId: '',
               inforId: '',
               contentId: '',

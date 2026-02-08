@@ -9,6 +9,7 @@ interface FeedbackPinProps {
   containerRef: RefObject<HTMLDivElement | null>;
   isDraggable: boolean;
   isDimmed: boolean;
+  isHidden?: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
   onPositionChange: (id: string, x: number, y: number) => void;
@@ -21,7 +22,8 @@ export const FeedbackPin = ({
   feedback, 
   containerRef,
   isDraggable,
-  isDimmed,    
+  isDimmed,
+  isHidden = false,
   onMouseEnter, 
   onMouseLeave, 
   onPositionChange,
@@ -39,17 +41,18 @@ export const FeedbackPin = ({
   );
 
   useEffect(() => {
+    const targetOpacity = isHidden ? 0 : (isDimmed ? 0.4 : 1);
     controls.start({
       x: 0, 
       y: 0, 
       scale: 1,
-      opacity: isDimmed ? 0.4 : 1, 
+      opacity: targetOpacity,
       filter: isDimmed ? 'grayscale(80%)' : 'grayscale(0%)', 
       transition: { duration: 0.2 }
     });
-  }, [feedback.xPos, feedback.yPos, isDimmed, controls]);
+  }, [feedback.xPos, feedback.yPos, isDimmed, isHidden, controls]);
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     if (!containerRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -72,17 +75,18 @@ export const FeedbackPin = ({
 
   return (
     <MotionBox
-      layoutId={`feedback-${feedback.id}`}
+      layoutId={`pin-${feedback.id}`}
       style={containerStyle} 
       
       animate={controls}
       
       zIndex={isDimmed ? 5 : 50} 
+      pointerEvents={isHidden ? 'none' : 'auto'}
       
       drag={isDraggable}
       dragMomentum={false}
       dragElastic={0}
-      dragConstraints={containerRef as any} 
+      dragConstraints={containerRef as RefObject<HTMLElement>} 
       
       onPointerDown={() => { isMovedRef.current = false; }}
       onDragStart={() => { isMovedRef.current = true; }}
@@ -121,7 +125,7 @@ export const FeedbackPin = ({
           alignItems="center" 
           gap={2} 
           maxW="200px"
-          flexDirection={flexDirection as any} 
+          flexDirection={flexDirection} 
           userSelect="none"
         >
           <Box color={isDimmed ? "gray.400" : "blue.500"} minW="16px" transition="color 0.2s">

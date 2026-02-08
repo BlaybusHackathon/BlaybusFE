@@ -1,6 +1,7 @@
-import { Flex, Text, Icon } from '@chakra-ui/react';
+﻿import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 interface Props {
   countNumber: number;
@@ -14,16 +15,27 @@ const getOrdinal = (n: number) => {
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 };
 
+const parseDateOnly = (value?: string) => {
+  const datePart = value?.split('T')[0];
+  if (datePart && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+    return parse(datePart, 'yyyy-MM-dd', new Date());
+  }
+  const parsed = value ? new Date(value) : new Date();
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+};
+
 export const ZoomFeedbackItem = ({
   countNumber,
   meetingDate,
   onClick,
 }: Props) => {
+  const date = parseDateOnly(meetingDate);
+
   return (
     <Flex
       align="center"
       justify="space-between"
-      py={{base:"1", md:"4"}}
+      py={{base:"1", md:"2"}}
       px={{base:"4", md:"6"}}
       borderRadius="7"
       cursor="pointer"
@@ -43,7 +55,7 @@ export const ZoomFeedbackItem = ({
       </Text>
 
       <Text fontSize={{base:"0.875rem", md:"1.25rem"}} color="gray.500" fontWeight="500">
-        {format(new Date(meetingDate), 'yyyy.MM.dd')}
+        {format(date, 'yy.MM.dd', { locale: ko })}
       </Text>
       <Icon
         as={ChevronRightIcon}

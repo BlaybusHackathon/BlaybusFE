@@ -1,21 +1,25 @@
 import { Box, Text, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useScheduleCreateStore } from '../model/store';
-import { MOCK_WEAKNESSES } from '../model/mockData';
+import { useParams } from 'react-router-dom';
+import { useMenteeWeaknesses } from '@/features/weakness/model/useMenteeWeaknesses';
 
 export const WeaknessSelectBox = () => {
     const { subject, selectedWeaknessId, setSelectedWeaknessId } = useScheduleCreateStore();
+    const { menteeId } = useParams();
+    const { data: weaknesses } = useMenteeWeaknesses(menteeId);
 
-    const filteredWeaknesses = subject ? MOCK_WEAKNESSES.filter((w) => w.subject === subject) : [];
+    const list = weaknesses ?? [];
+    const filteredWeaknesses = subject ? list.filter((w) => w.subject === subject) : [];
 
     // Find selected label for display
     const selectedLabel = selectedWeaknessId
-        ? filteredWeaknesses.find(w => w.id === selectedWeaknessId)?.label || 'λ³΄μ™„μ  κ°•μ/μ¤λ‹µλ…ΈνΈ μ„ νƒ'
-        : 'λ³΄μ™„μ  μ—†μ';
+        ? filteredWeaknesses.find(w => w.id === selectedWeaknessId)?.title || 'λ³΄μ™„  κ°•μ/¤‹µ…ΈΈ „ ƒ'
+        : 'λ³΄μ™„  —†';
 
     return (
         <Box animation="fadeIn 0.3s">
-            <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>λ³΄μ™„μ </Text>
+            <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>λ³΄μ™„ </Text>
             <Box w="full">
                 <Menu matchWidth>
                     <MenuButton
@@ -50,7 +54,7 @@ export const WeaknessSelectBox = () => {
                             _hover={{ bg: 'pink.50' }}
                             color="gray.500"
                         >
-                            λ³΄μ™„μ  μ—†μ
+                            λ³΄μ™„  —†
                         </MenuItem>
                         {filteredWeaknesses.map((w) => (
                             <MenuItem
@@ -59,14 +63,14 @@ export const WeaknessSelectBox = () => {
                                 _hover={{ bg: 'pink.50' }}
                                 _focus={{ bg: 'pink.50' }}
                             >
-                                {w.label}
+                                {w.title}
                             </MenuItem>
                         ))}
                     </MenuList>
                 </Menu>
 
                 {filteredWeaknesses.length === 0 && (
-                    <Text fontSize="sm" color="gray.500" mt={2}>ν•΄λ‹Ή κ³Όλª©μ— λ“±λ΅λ λ³΄μ™„μ  μλ£κ°€ μ—†μµλ‹λ‹¤.</Text>
+                    <Text fontSize="sm" color="gray.500" mt={2}>•΄‹Ή κ³Όλª©— “±λ΅λ λ³΄μ™„  λ£κ —†µ‹‹¤.</Text>
                 )}
             </Box>
         </Box>

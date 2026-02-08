@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, Flex, IconButton, Image, Text } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon , ChatIcon} from '@chakra-ui/icons'; 
 import { motion, PanInfo } from 'framer-motion';
@@ -21,37 +21,56 @@ interface ImageSliderProps {
 }
 
 export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete }: ImageSliderProps) => {
+  const DEBUG_FEEDBACK = import.meta.env.DEV;
   const [currentIndex, setCurrentIndex] = useState(0);
   const store = useTaskFeedbackStore();
   
   const isSubmissionMode = !!onDelete;
   const isCreateMode = !isSubmissionMode && store.commentMode === 'create';
 
-  useEffect(() => {
-    if (currentIndex >= images.length && images.length > 0) {
-      setCurrentIndex(images.length - 1);
-    }
-  }, [images.length, currentIndex]);
+  const safeIndex = images.length === 0 ? 0 : Math.min(currentIndex, images.length - 1);
 
-  const handlePrev = (e?: React.MouseEvent | any) => {
+  const handlePrev = (e?: React.MouseEvent) => {
     e?.stopPropagation?.();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentIndex((prev) => {
+      const base = images.length === 0 ? 0 : Math.min(prev, images.length - 1);
+      const next = base === 0 ? images.length - 1 : base - 1;
+      if (DEBUG_FEEDBACK) {
+        console.debug('[feedback-slider] prev', { prev, next, imageId: images[next]?.id, imageIds: images.map((i) => i.id) });
+      }
+      return next;
+    });
     if (!isSubmissionMode) resetMode();
   };
 
-  const handleNext = (e?: React.MouseEvent | any) => {
+  const handleNext = (e?: React.MouseEvent) => {
     e?.stopPropagation?.();
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => {
+      const base = images.length === 0 ? 0 : Math.min(prev, images.length - 1);
+      const next = base === images.length - 1 ? 0 : base + 1;
+      if (DEBUG_FEEDBACK) {
+        console.debug('[feedback-slider] next', { prev, next, imageId: images[next]?.id, imageIds: images.map((i) => i.id) });
+      }
+      return next;
+    });
     if (!isSubmissionMode) resetMode();
   };
 
   const resetMode = () => {
     store.setCommentMode('view');
     store.setPendingPosition(null);
+    store.setActiveFeedback(null);
   };
 
   const toggleFeedbackMode = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (DEBUG_FEEDBACK) {
+      console.debug('[feedback-slider] toggle', {
+        from: isCreateMode ? 'create' : 'view',
+        to: isCreateMode ? 'view' : 'create',
+        imageId: images[safeIndex]?.id,
+      });
+    }
     if (isCreateMode) {
       store.setCommentMode('view');
       store.setPendingPosition(null);
@@ -60,7 +79,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
     }
   };
 
-  const onDragEnd = (_: any, info: PanInfo) => {
+  const onDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const SWIPE_THRESHOLD = 50;
     if (info.offset.x < -SWIPE_THRESHOLD) {
       handleNext();
@@ -77,7 +96,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
     );
   }
 
-  const currentImage = images[currentIndex];
+  const currentImage = images[safeIndex];
 
   return (
     <Box 
@@ -116,6 +135,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
         {!isSubmissionMode && (
           <Box position="absolute" top={0} left={0} right={0} bottom={0} zIndex={10}>
               <FeedbackOverlay 
+                  key={currentImage.id}
                   taskId={taskId}
                   imageId={currentImage.id}
                   currentUserId={currentUserId}
@@ -218,7 +238,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete 
       >
         <Box bg="blackAlpha.600" px={3} py={1} borderRadius="full" backdropFilter="blur(4px)">
           <Text color="white" fontSize="sm" fontWeight="medium">
-            {currentIndex + 1} / {images.length}
+            {safeIndex + 1} / {images.length}
           </Text>
         </Box>
       </Flex>

@@ -13,7 +13,7 @@ interface ScheduleCreateActions {
 
     addWorksheet: () => void;
     removeWorksheet: (id: string) => void;
-    updateWorksheetFile: (id: string, file: { name: string; size?: number; fullPath: string }) => void;
+    updateWorksheetFile: (id: string, file: { name: string; size?: number; fullPath: string; rawFile?: File }) => void;
     toggleWorksheetDay: (id: string, day: string) => void;
 
     reset: () => void;

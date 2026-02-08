@@ -9,7 +9,7 @@ export interface MenteeProfileData {
     todaySubmitted: number;
     todayRemaining: number;
     todayFeedbackComments: number;
-    totalPlanners: number;
+    todayTasksCount: number;
   };
   
   achievement: {

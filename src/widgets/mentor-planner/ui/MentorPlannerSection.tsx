@@ -1,13 +1,13 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useParams } from 'react-router-dom';
 import { Subject } from '@/shared/constants/subjects';
 import { logsToGridState, StudyTimeGridView } from '@/features/study-time';
-import {
-    MOCK_TASKS,
-    MOCK_TASK_LOGS,
-    MOCK_DAILY_PLANNERS
-} from '@/features/planner/model/mockPlannerData';
+import { planApi } from '@/features/planner/api/planApi';
+import type { Task } from '@/entities/task/types';
+import type { TaskLog } from '@/entities/task-log/types';
+import type { DailyPlanner } from '@/entities/daily-plan/types';
 
 import { DateController } from './DateController';
 import { MentorTaskList } from './MentorTaskList';
@@ -19,49 +19,61 @@ interface Props {
 }
 
 export const MentorPlannerSection = ({ menteeName }: Props) => {
+    const { menteeId } = useParams();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [highlightSubject, setHighlightSubject] = useState<Subject | null>(null);
 
-    const [dailyPlanners, setDailyPlanners] = useState(MOCK_DAILY_PLANNERS);
+    const [planner, setPlanner] = useState<DailyPlanner | null>(null);
+    const [dailyTasks, setDailyTasks] = useState<Task[]>([]);
+    const [dailyLogs, setDailyLogs] = useState<TaskLog[]>([]);
 
     const dateKey = format(currentDate, 'yyyy-MM-dd');
 
-    const currentPlanner = useMemo(() => {
-        return dailyPlanners.find(p => p.planDate === dateKey);
-    }, [dailyPlanners, dateKey]);
+    useEffect(() => {
+        let active = true;
+        const load = async () => {
+            if (!menteeId) return;
+            const [year, month, day] = dateKey.split('-').map(Number);
+            try {
+                const result = await planApi.getDailyPlan({ year, month, day, menteeId });
+                if (!active) return;
+                setPlanner(result.planner);
+                setDailyTasks(result.tasks);
+                setDailyLogs(result.taskLogs);
+            } catch (error) {
+                console.error('Failed to load mentor daily plan', error);
+            }
+        };
 
-    const dailyTasks = useMemo(() => {
-        return MOCK_TASKS.filter((task) => task.taskDate === dateKey);
-    }, [dateKey]);
-
-    const dailyLogs = useMemo(() => {
-        return MOCK_TASK_LOGS.filter((log) => log.startAt.startsWith(dateKey));
-    }, [dateKey]);
+        load();
+        return () => {
+            active = false;
+        };
+    }, [menteeId, dateKey]);
 
     const gridState = useMemo(() => {
         return logsToGridState(dailyLogs, dailyTasks);
     }, [dailyLogs, dailyTasks]);
 
-    const handleSaveFeedback = (newFeedback: string) => {
-        setDailyPlanners(prev => {
-            const exists = prev.some(p => p.planDate === dateKey);
-            if (exists) {
-                return prev.map(planner => {
-                    if (planner.planDate === dateKey) {
-                        return { ...planner, mentorFeedback: newFeedback };
-                    }
-                    return planner;
-                });
+    const handleSaveFeedback = async (newFeedback: string) => {
+        if (!planner?.id) return;
+
+        try {
+            if (planner.mentorFeedback) {
+                await planApi.updateFeedback(planner.id, newFeedback);
             } else {
-                return prev;
+                await planApi.createFeedback(planner.id, newFeedback);
             }
-        });
+            setPlanner((prev) => (prev ? { ...prev, mentorFeedback: newFeedback } : prev));
+        } catch (error) {
+            console.error('Failed to save mentor feedback', error);
+        }
     };
 
     return (
         <Box>
             <Box>
-                <Text fontSize="20px" fontWeight="bold" mb={6}>{menteeName}님 플래너</Text>
+                <Text fontSize="20px" fontWeight="bold" mb={6}>{menteeName}???뚮옒??</Text>
 
                 <DateController
                     currentDate={currentDate}
@@ -107,13 +119,13 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
 
                 <Box mb={8}>
                     <MenteeCommentCard
-                        memo={currentPlanner?.dailyMemo ?? null}
+                        memo={planner?.dailyMemo ?? null}
                     />
                 </Box>
 
                 <Box mb={8}>
                     <MentorFeedbackCard
-                        feedback={currentPlanner?.mentorFeedback ?? null}
+                        feedback={planner?.mentorFeedback ?? null}
                         onSave={handleSaveFeedback}
                     />
                 </Box>

@@ -1,11 +1,14 @@
-import { VStack, Textarea } from '@chakra-ui/react';
+﻿import { VStack, Textarea } from '@chakra-ui/react';
 import { ZoomFeedbackSection } from './ZoomFeedbackSection';
 import { SubjectFeedbackItem, SubjectType } from './SubjectFeedbackItem';
-import { ZoomFeedbackData } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
+import { ZoomFeedbackData } from '@/features/zoom-feedback/model/types';
+
+type ZoomFeedbackField = 'memo' | 'operation' | 'subjects';
+type ZoomFeedbackValue = string | ZoomFeedbackData['subjects'];
 
 interface Props {
     data: ZoomFeedbackData;
-    onChange: (field: string, value: any) => void;
+    onChange: (field: ZoomFeedbackField, value: ZoomFeedbackValue) => void;
     readOnly?: boolean;
 }
 
@@ -16,7 +19,7 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
 
     return (
         <VStack spacing={8} align="stretch">
-            <ZoomFeedbackSection title="메모장">
+            <ZoomFeedbackSection title="메모">
                 <Textarea
                     value={data.memo}
                     onChange={(e) => !readOnly && onChange('memo', e.target.value)}
@@ -51,19 +54,19 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
                     subject="korean"
                     value={data.subjects.korean}
                     onChange={(val) => handleSubjectChange('korean', val)}
-                    readOnly={readOnly} // [전달]
+                    readOnly={readOnly}
                 />
                 <SubjectFeedbackItem
                     subject="english"
                     value={data.subjects.english}
                     onChange={(val) => handleSubjectChange('english', val)}
-                    readOnly={readOnly} // [전달]
+                    readOnly={readOnly}
                 />
                 <SubjectFeedbackItem
                     subject="math"
                     value={data.subjects.math}
                     onChange={(val) => handleSubjectChange('math', val)}
-                    readOnly={readOnly} // [전달]
+                    readOnly={readOnly}
                 />
             </ZoomFeedbackSection>
 
@@ -72,7 +75,7 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
                     value={data.operation}
                     onChange={(e) => !readOnly && onChange('operation', e.target.value)}
                     isReadOnly={readOnly}
-                    placeholder={readOnly ? "" : "운영 관련 피드백을 작성해주세요."}
+                    placeholder={readOnly ? "" : "운영 관련 피드백을 작성해 주세요."}
                     minH="150px"
                     bg={readOnly ? "white" : "#F9F9FB"}
                     border={readOnly ? "1px solid" : "none"}

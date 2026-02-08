@@ -1,38 +1,57 @@
-import { useState } from 'react';
-import { Box, Textarea, Flex, IconButton, Image, Text, useToast } from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
+import { Box, Textarea, Flex, IconButton, Image, Text } from '@chakra-ui/react';
 import { AttachmentIcon, CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 
 interface FeedbackInputFormProps {
   initialContent?: string;
   initialImageUrl?: string | null;
-  onSave: (content: string, imageUrl: string | null) => void;
+  onSave: (content: string, payload: { imageUrl: string | null; file?: File | null }) => void;
   onCancel: () => void;
+  allowFile?: boolean;
 }
 
 export const FeedbackInputForm = ({ 
   initialContent = '', 
   initialImageUrl = null, 
   onSave, 
+  allowFile = true,
 }: FeedbackInputFormProps) => {
   const [content, setContent] = useState(initialContent);
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isBoldMode, setIsBoldMode] = useState(false);
-  const toast = useToast();
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
   const toggleEmphasis = () => {
     setIsBoldMode(!isBoldMode);
     setContent(prev => prev + ' **강조** ');
   };
 
+  useEffect(() => {
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [objectUrl]);
+
   const handleImageUpload = () => {
-    const mockUrl = 'https://via.placeholder.com/200x150?text=Uploaded+Image';
-    setImageUrl(mockUrl);
-    toast({ status: 'info', title: '이미지가 첨부되었습니다 (Mock)', duration: 1000 });
+    if (!allowFile) return;
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const selected = e.target.files[0];
+    const nextUrl = URL.createObjectURL(selected);
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    setObjectUrl(nextUrl);
+    setFile(selected);
+    setImageUrl(nextUrl);
   };
 
   const handleSave = () => {
     if (!content.trim()) return;
-    onSave(content, imageUrl);
+    onSave(content, { imageUrl, file });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -88,7 +107,12 @@ export const FeedbackInputForm = ({
               right={1}
               colorScheme="blackAlpha"
               isRound
-              onClick={() => setImageUrl(null)}
+              onClick={() => {
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                setObjectUrl(null);
+                setFile(null);
+                setImageUrl(null);
+              }}
             />
           </Box>
         )}
@@ -103,6 +127,13 @@ export const FeedbackInputForm = ({
         borderColor="gray.50"
         bg="gray.50"
       >
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
         <Flex gap={1}>
           <IconButton
             aria-label="Upload Image"
@@ -112,7 +143,7 @@ export const FeedbackInputForm = ({
             color="gray.500"
             _hover={{ bg: 'white', color: 'blue.500', boxShadow: 'sm' }}
             onClick={handleImageUpload}
-            isDisabled={!!imageUrl}
+            isDisabled={!!imageUrl || !allowFile}
           />
           <IconButton
             aria-label="Bold"

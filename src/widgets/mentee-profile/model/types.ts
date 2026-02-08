@@ -1,6 +1,6 @@
 export interface MenteeProfileStats {
   todaySubmitted: number;
-  totalPlanners: number;
+  todayTasksCount: number;
   todayRemaining: number;
   todayFeedbackComments: number;
 }

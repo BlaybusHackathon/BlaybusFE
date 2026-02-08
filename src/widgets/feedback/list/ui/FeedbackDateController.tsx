@@ -1,5 +1,26 @@
-import { Button, HStack, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+﻿import { Button, HStack, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
+
+const DropdownButton = ({ label }: { label: string }) => (
+    <MenuButton
+        as={Button}
+        rightIcon={<ChevronDownIcon color="#373E56" boxSize="5" />}
+        bg="white"
+        border="1px solid"
+        borderColor="#53A8FE"
+        borderRadius="9px"
+        fontSize="14px"
+        fontWeight="500"
+        color="#373E56"
+        h="40px"
+        gap="8px"
+        textAlign="left"
+        _hover={{ bg: '#F9F9FB' }}
+        _active={{ bg: '#F0F2F5' }}
+    >
+        <Text as="span">{label}</Text>
+    </MenuButton>
+);
 
 interface Props {
     year: number;
@@ -22,57 +43,36 @@ export const FeedbackDateController = ({
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const weeks = [1, 2, 3, 4, 5, 6];
 
-    const DropdownButton = ({ label }: { label: string }) => (
-        <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon color="#373E56" boxSize="5" />}
-            bg="white"
-            border="1px solid"
-            borderColor="#53A8FE"
-            borderRadius="9px"
-            fontSize="14px"
-            fontWeight="500"
-            color="#373E56"
-            h="40px"
-            gap="8px"
-            textAlign="left"
-            _hover={{ bg: '#F9F9FB' }}
-            _active={{ bg: '#F0F2F5' }}
-        >
-            <Text as="span">{label}</Text>
-        </MenuButton>
-    );
-
     return (
         <HStack spacing={2}>
             <Menu>
-                <DropdownButton label={`${year}년`} />
+                <DropdownButton label={`${year} Year`} />
                 <MenuList>
                     {years.map((y) => (
                         <MenuItem key={y} onClick={() => onChangeYear(y)}>
-                            {y}년
+                            {y} Year
                         </MenuItem>
                     ))}
                 </MenuList>
             </Menu>
 
             <Menu>
-                <DropdownButton label={`${month}월`} />
+                <DropdownButton label={`${month} Month`} />
                 <MenuList maxH="200px" overflowY="auto">
                     {months.map((m) => (
                         <MenuItem key={m} onClick={() => onChangeMonth(m)}>
-                            {m}월
+                            {m} Month
                         </MenuItem>
                     ))}
                 </MenuList>
             </Menu>
 
             <Menu>
-                <DropdownButton label={`${week}주차`} />
+                <DropdownButton label={`${week} Week`} />
                 <MenuList>
                     {weeks.map((w) => (
                         <MenuItem key={w} onClick={() => onChangeWeek(w)}>
-                            {w}주차
+                            {w} Week
                         </MenuItem>
                     ))}
                 </MenuList>

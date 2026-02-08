@@ -1,3 +1,4 @@
+import type { ComponentType, SVGProps } from 'react';
 
 import {
   HomeIcon,
@@ -10,7 +11,7 @@ import { UserRole } from '@/shared/constants/enums';
 export interface NavItem {
   label: string;
   path: string;
-  icon: any;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
 }
 
 export const getNavItems = (role: UserRole): NavItem[] => {

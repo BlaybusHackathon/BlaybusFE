@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
+import type { ComponentType, LazyExoticComponent } from 'react';
 import { PublicRoute } from './PublicRoute';
 import { RootRedirect } from './RootRedirect';
 import { MainLayout } from '@/widgets/main-layout/MainLayout';
@@ -16,6 +17,7 @@ const MenteeCalendarPage = lazy(() => import('@/pages/mentee/calendar'));
 const MenteeTaskDetailPage = lazy(() => import('@/pages/mentee/task/[id]'));
 const MenteeTaskSubmissionPage = lazy(() => import('@/pages/mentee/task/submit'));
 const MenteeFeedbackPage = lazy(() => import('@/pages/mentee/feedback'));
+const MenteeNotificationsPage = lazy(() => import('@/pages/mentee/notifications'));
 // [추가] 멘티 줌 피드백 상세 페이지 Import
 const MenteeZoomFeedbackDetailPage = lazy(() => import('@/pages/mentee/feedback/zoom/MenteeZoomFeedbackDetailPage')); 
 const MenteeMyPage = lazy(() => import('@/pages/mentee/mypage'));
@@ -33,7 +35,7 @@ const MentorZoomFeedbackPage = lazy(() => import('@/pages/mentor/mentee/feedback
 const MentorTaskDetailPage = lazy(() => import('@/pages/mentor/task/detail'));
 const MentorReportPage = lazy(() => import('@/pages/mentor/mentee/report'));
 
-const withSuspense = (Component: React.LazyExoticComponent<any>) => (
+const withSuspense = (Component: LazyExoticComponent<ComponentType>) => (
   <Suspense fallback={<Loading />}>
     <Component />
   </Suspense>
@@ -63,6 +65,7 @@ export const router = createBrowserRouter([
       { path: '/mentee/task/:taskId/submit', element: withSuspense(MenteeTaskSubmissionPage) },
 
       { path: '/mentee/feedback', element: withSuspense(MenteeFeedbackPage) },
+      { path: '/mentee/notifications', element: withSuspense(MenteeNotificationsPage) },
       // [추가] 멘티 줌 피드백 상세 라우트 등록
       { path: '/mentee/feedback/zoom/:zoomId', element: withSuspense(MenteeZoomFeedbackDetailPage) },
       

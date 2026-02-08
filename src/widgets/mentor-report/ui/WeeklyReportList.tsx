@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { Box, Flex, Text, VStack, HStack, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -6,22 +6,48 @@ import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   eachWeekOfInterval, addDays, isSameMonth
 } from 'date-fns';
-import { MOCK_WEEKLY_REPORTS } from '@/widgets/mentor-report/model/mockWeeklyReports';
 import { WeeklyReportItem } from './WeeklyReportItem';
+import { weeklyReportApi } from '@/features/report/api/weeklyReportApi';
+import { ReportData } from '@/features/report/model/types';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 interface WeeklyReportListProps {
   externalDate?: Date;
-  onItemClick?: (startDate: string, endDate: string) => void;
+  onItemClick?: (args: { startDate: string; endDate: string; reportId?: string }) => void;
 }
 
 export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportListProps) => {
   const navigate = useNavigate();
   const { menteeId } = useParams();
+  const { user } = useAuthStore();
   
   const [internalDate, setInternalDate] = useState(new Date());
+  const [reports, setReports] = useState<ReportData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   const currentMonthDate = externalDate ?? internalDate;
   const isControlled = !!externalDate; 
+
+  const queryMenteeId = user?.role === 'MENTOR' ? menteeId : user?.id;
+
+  useEffect(() => {
+    const run = async () => {
+      setIsLoading(true);
+      try {
+        const year = currentMonthDate.getFullYear();
+        const month = currentMonthDate.getMonth() + 1;
+        const list = await weeklyReportApi.list({ year, month, menteeId: queryMenteeId });
+        setReports(list);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    run();
+  }, [currentMonthDate, queryMenteeId]);
+
+  const reportByStartDate = useMemo(() => {
+    return new Map(reports.map(r => [r.startDate, r]));
+  }, [reports]);
 
   const weeksInMonth = useMemo(() => {
     const monthStart = startOfMonth(currentMonthDate);
@@ -57,12 +83,13 @@ export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportList
   };
 
   const handleClick = (startDate: string, endDate: string) => {
+    const report = reportByStartDate.get(startDate);
+
     if (onItemClick) {
-        onItemClick(startDate, endDate);
+        onItemClick({ startDate, endDate, reportId: report?.id });
         return;
     }
 
-    const report = MOCK_WEEKLY_REPORTS.find(r => r.startDate === startDate);
     if (report) {
       navigate(`/mentor/mentee/${menteeId}/report/${report.id}`);
     } else {
@@ -75,7 +102,7 @@ export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportList
   return (
     <Box px={4} mb={20}>
       <Flex justify="space-between" align="center" mb={{base:1, md:6}}>
-        <Text my={2} fontSize={{base:"1rem", md:"xl"}} fontWeight="bold">주간 학습 리포트</Text>
+        <Text my={2} fontSize={{base:"1rem", md:"2xl"}} fontWeight="bold">주간 학습 리포트</Text>
         
         {!isControlled && (
           <HStack spacing={2}>
@@ -176,23 +203,30 @@ export const WeeklyReportList = ({ externalDate, onItemClick }: WeeklyReportList
         )}
       </Flex>
 
-      <VStack spacing={{base:2,md:3}} align="stretch"  borderRadius={22} bg={{base: "#fff", md:'#F9F9FB'}} px={4} py={3}>
-        {weeksInMonth.map((week) => {
-          const status = getWeekStatus(week.startDate, week.endDate);
-          const hasReport = MOCK_WEEKLY_REPORTS.some(r => r.startDate === week.startDate);
+      <VStack spacing={{base:2,md:3}} align="stretch" borderRadius={22} bg={{base: "#fff", md:'#F9F9FB'}} px={4} py={3}>
+        {isLoading ? (
+          <Flex justify="center" align="center" h="120px" color="gray.400">
+            <Text>로딩 중입니다.</Text>
+          </Flex>
+        ) : (
+          weeksInMonth.map((week) => {
+            const status = getWeekStatus(week.startDate, week.endDate);
+            const report = reportByStartDate.get(week.startDate);
+            const hasReport = !!report;
 
-          return (
-            <WeeklyReportItem
-              key={week.startDate}
-              weekNumber={week.weekNumber}
-              displayMonth={displayMonth}
-              displayRange={week.displayRange}
-              status={status}
-              hasReport={hasReport}
-              onClick={() => handleClick(week.startDate, week.endDate)}
-            />
-          );
-        })}
+            return (
+              <WeeklyReportItem
+                key={week.startDate}
+                weekNumber={week.weekNumber}
+                displayMonth={displayMonth}
+                displayRange={week.displayRange}
+                status={status}
+                hasReport={hasReport}
+                onClick={() => handleClick(week.startDate, week.endDate)}
+              />
+            );
+          })
+        )}
       </VStack>
     </Box>
   );

@@ -6,10 +6,15 @@ export interface ZoomFeedback {
   inforId: string;
 }
 
-export const mapZoomFeedbackFromApi = (raw: any): ZoomFeedback => ({
-  id: String(raw.id),
-  meetingDate: raw.meeting_date,
-  summary: raw.summary,
-  createdAt: raw.created_at,
-  inforId: String(raw.infor_id),
-});
+import { asRecord, asString, pick } from '@/shared/api/parse';
+
+export const mapZoomFeedbackFromApi = (raw: unknown): ZoomFeedback => {
+  const obj = asRecord(raw, 'ZoomFeedback');
+  return {
+    id: asString(pick(obj, ['id', 'feedbackId']), 'ZoomFeedback.id'),
+    meetingDate: asString(pick(obj, ['meetingDate', 'meeting_date']), 'ZoomFeedback.meetingDate'),
+    summary: asString(pick(obj, ['summary', 'title', 'memo', 'comment']), 'ZoomFeedback.summary'),
+    createdAt: asString(pick(obj, ['createdAt', 'created_at']), 'ZoomFeedback.createdAt'),
+    inforId: asString(pick(obj, ['inforId', 'infor_id']), 'ZoomFeedback.inforId'),
+  };
+};

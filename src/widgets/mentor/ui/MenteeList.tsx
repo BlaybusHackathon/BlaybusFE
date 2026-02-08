@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+﻿import { useRef } from 'react';
 import { Box, HStack, IconButton, Text } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { MenteeSummary } from '../../../pages/mentor/mypage/model/types';
@@ -25,7 +25,8 @@ export const MenteeList = ({ mentees }: Props) => {
 
     return (
         <Box>
-            <Text color="#394250"
+            <Text
+                color="#394250"
                 fontFamily="Pretendard"
                 fontSize="24px"
                 fontStyle="normal"

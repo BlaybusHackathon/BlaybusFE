@@ -7,6 +7,8 @@ import { Task } from '@/entities/task/types';
 import { canAddTask, canUseTimer } from '@/shared/lib/date';
 import { isBefore, startOfDay } from 'date-fns';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { taskApi } from '@/features/task/api/taskApi';
+import type { Subject } from '@/shared/constants/enums';
 
 export const TaskList = () => {
   const { tasks, selectedDate, updateTaskStatus, deleteTask, addTask } = usePlannerStore();
@@ -27,31 +29,41 @@ export const TaskList = () => {
     }
   };
 
-  const handleToggle = (task: Task) => {
-    const newStatus = task.status === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
-    updateTaskStatus(task.id, newStatus);
+  const handleToggle = async (task: Task) => {
+    const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
+    try {
+      const updated = await taskApi.updateTask(task.id, { status: newStatus });
+      updateTaskStatus(updated.id, updated.status);
+    } catch (e) {
+      console.error('Failed to update task status:', e);
+    }
   };
 
-  const handleAddTask = (data: { title: string; subject: any }) => {
+  const handleAddTask = async (data: { title: string; subject: Subject }) => {
     if (!user) {
       console.error("User not logged in");
       return;
     }
 
-    const newTask: Task = {
-      id: `new-${Date.now()}`,
-      title: data.title,
-      subject: data.subject,
-      taskDate: selectedDate,
-      status: 'PENDING',
-      isMandatory: false,
-      isMentorChecked: false,
-      menteeId: user.id,
-      recurringGroupId: null,
-      contentId: null,
-      weaknessId: null,
-    };
-    addTask(newTask);
+    try {
+      const created = await taskApi.createMenteeTask({
+        date: selectedDate,
+        title: data.title,
+        subject: data.subject,
+      });
+      addTask(created);
+    } catch (e) {
+      console.error('Failed to create task:', e);
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await taskApi.deleteTask(taskId);
+      deleteTask(taskId);
+    } catch (e) {
+      console.error('Failed to delete task:', e);
+    }
   };
 
   return (
@@ -65,8 +77,8 @@ export const TaskList = () => {
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={() => handleToggle(task)}
-            onDelete={() => deleteTask(task.id)}
+            onToggle={() => void handleToggle(task)}
+            onDelete={() => void handleDeleteTask(task.id)}
             onClick={() => handleTaskClick(task.id)}
             isTimerEnabled={isTimerEnabled} 
             isEditable={isEditable}

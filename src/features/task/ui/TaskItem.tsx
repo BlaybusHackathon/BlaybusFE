@@ -22,7 +22,7 @@ export const TaskItem = ({
   isTimerEnabled,
   isEditable
 }: TaskItemProps) => {
-  const isCompleted = task.status === 'COMPLETED';
+  const isCompleted = task.status === 'DONE';
   const canDelete = isEditable && !task.isMandatory;
   
   const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
@@ -60,9 +60,6 @@ export const TaskItem = ({
           </Box>
         </HStack>
         <HStack>
-          {/* [수정] 조건부 렌더링을 제거하고 항상 TaskTimer를 렌더링함 
-            대신 버튼 활성화 여부를 props로 전달함
-          */}
           <TaskTimer 
             taskId={task.id} 
             subject={task.subject}
@@ -73,7 +70,7 @@ export const TaskItem = ({
       </VStack>
 
       <HStack spacing={2} flexShrink={0}>
-        {canDelete && (
+        {/* {canDelete && (
           <IconButton
             aria-label="Delete task"
             icon={<CloseIcon />}
@@ -85,7 +82,7 @@ export const TaskItem = ({
               onDelete();
             }}
           />
-        )}
+        )} */}
         <HStack spacing={6} flex={1}>
           <Badge 
             bg={subjectColor} 

@@ -1,4 +1,5 @@
 import { Box, VStack, HStack, Text, Icon } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { SeolStudyLogo } from '@/shared/ui/SeolStudyLogo';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { SidebarMenuItem } from './components/SidebarMenuItem';
@@ -6,14 +7,10 @@ import { MenteeListToggle } from './components/MenteeListToggle';
 import { MenteeNavItem } from './components/MenteeMenuItem';
 import { getNavItems } from '../navConfig';
 import { FiLogOut } from 'react-icons/fi';
+import { mentoringApi } from '@/features/mentoring/api/mentoringApi';
 
 // [추가 1] 페이지 이동을 위한 훅 import
 import { useNavigate } from 'react-router-dom';
-
-const MOCK_MENTEES: MenteeNavItem[] = [
-  { id: 'mentee-1', name: '홍길동' },
-  { id: 'mentee-2', name: '김철수' },
-];
 
 interface Props {
   isCollapsed: boolean;
@@ -22,16 +19,35 @@ interface Props {
 export const DesktopSidebar = ({ isCollapsed }: Props) => {
   const { user, logout } = useAuthStore();
   const role = user?.role;
+  const [mentees, setMentees] = useState<MenteeNavItem[]>([]);
 
   // [추가 2] navigate 함수 생성
   const navigate = useNavigate();
 
   const menteeNavItems = getNavItems('MENTEE');
 
+  useEffect(() => {
+    if (role !== 'MENTOR') return;
+    let active = true;
+    mentoringApi
+      .listMentees({ page: 0, size: 200 })
+      .then((list) => {
+        if (!active) return;
+        setMentees(list);
+      })
+      .catch(() => {
+        if (!active) return;
+        setMentees([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [role]);
+
   const handleLogout = () => {
     if (confirm('정말 로그아웃 하시겠습니까?')) {
-      logout(); // 1. 스토어 상태 비우기
-      navigate('/login'); // [추가 3] 로그인 페이지로 강제 이동
+      logout(); 
+      navigate('/login'); 
     }
   };
 
@@ -77,11 +93,11 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
                   key={item.path}
                   label={item.label}
                   path={item.path}
-                  icon={<item.icon w={4} h={4} />}
+                  icon={<item.icon width={24} height={24} />}
                   isCollapsed={isCollapsed}
                 />
               ))}
-              <MenteeListToggle mentees={MOCK_MENTEES} isCollapsed={isCollapsed} />
+              <MenteeListToggle mentees={mentees} isCollapsed={isCollapsed} />
             </>
           )}
 
@@ -92,7 +108,7 @@ export const DesktopSidebar = ({ isCollapsed }: Props) => {
                   key={item.path}
                   label={item.label}
                   path={item.path}
-                  icon={<item.icon w={4} h={4} />}
+                  icon={<item.icon width={24} height={24}  />}
                   isCollapsed={isCollapsed}
                 />
               ))}

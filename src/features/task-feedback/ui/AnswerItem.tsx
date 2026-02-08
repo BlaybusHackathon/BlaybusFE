@@ -1,6 +1,8 @@
 import { Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import type { SVGProps } from 'react';
 import { AnswerWithAuthor } from '../model/types';
 import { formatRelativeTime } from '../model/feedbackUtils';
+import { CommentAvartarIcon, ModifyIcon, DeleteIcon } from '@/shared/ui/icons';
 
 interface AnswerItemProps {
   answer: AnswerWithAuthor;
@@ -9,7 +11,7 @@ interface AnswerItemProps {
   onDelete: (id: string) => void;
 }
 
-const MoreIcon = (props: any) => (
+const MoreIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg 
     width="16" 
     height="16" 
@@ -25,20 +27,21 @@ const MoreIcon = (props: any) => (
 );
 
 export const AnswerItem = ({ answer, currentUserId, onEdit, onDelete }: AnswerItemProps) => {
-  const isAuthor = answer.userId === currentUserId;
+  const isAuthor = Boolean(answer.userId) && answer.userId === currentUserId;
   const isMentor = answer.authorRole === "MENTOR";
 
   return (
     <Box mb={3}>
       <Flex justify="space-between" align="flex-start">
         <Flex gap={2} align="center" mb={1}>
-          <Text fontSize="xs" fontWeight="bold" color={isMentor ? 'blue.600' : 'gray.700'}>
+          <CommentAvartarIcon size={34} color='#AAD4FF'/>
+          <Text fontWeight="medium" fontSize={{base:"sm", md:"xl"}} color="#394250">
             {answer.authorName}
             {isMentor && <Text as="span" fontSize="10px" ml={1}>(멘토)</Text>}
           </Text>
-          <Text fontSize="10px" color="gray.400">· {formatRelativeTime(answer.createdAt)}</Text>
+          <Text fontSize={{base:"xs",md:"lg"}} color="#A29E9A">· {formatRelativeTime(answer.createdAt)}</Text>
         </Flex>
-        
+
         {isAuthor && (
           <Menu isLazy>
             <MenuButton 
@@ -52,17 +55,18 @@ export const AnswerItem = ({ answer, currentUserId, onEdit, onDelete }: AnswerIt
               color="gray.400"
               _hover={{ color: 'gray.600', bg: 'transparent' }}
             />
-            <MenuList minW="80px" fontSize="xs">
+            <MenuList minW="80px" fontSize={{base:"xs", md:"md"}}>
               <MenuItem onClick={() => {
                 const newText = prompt('댓글 수정', answer.comment);
                 if (newText) onEdit(answer.id, newText);
-              }}>수정</MenuItem>
-              <MenuItem color="red.500" onClick={() => onDelete(answer.id)}>삭제</MenuItem>
+              }}>수정 <ModifyIcon color='#394250'/></MenuItem>
+              <MenuItem color="#394250" onClick={() => onDelete(answer.id)}>삭제 <DeleteIcon/></MenuItem>
             </MenuList>
           </Menu>
         )}
       </Flex>
-      <Text fontSize="xs" color="gray.600" whiteSpace="pre-wrap" lineHeight="1.4">{answer.comment}</Text>
+                 
+      <Text fontSize={{base:"xs", md:"md"}} color="#394250" whiteSpace="pre-wrap" lineHeight="1.3">{answer.comment}</Text>
     </Box>
   );
 };

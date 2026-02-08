@@ -1,36 +1,15 @@
-import { Box, Button, Flex, Heading, Input, Text, VStack, useToast } from '@chakra-ui/react';
+﻿import { Box, Button, Flex, Heading, Input, Text, VStack, useToast } from '@chakra-ui/react';
 import { SubjectSection } from './SubjectSection';
 import { WeaknessSelectBox } from './WeaknessSelectBox';
 import { DaySelector } from './DaySelector';
 import { LearningMaterialSection } from './LearningMaterialSection';
 import { useScheduleCreateStore } from '../model/store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-// New Imports for Task Creation
-import { usePlannerStore } from '@/shared/stores/plannerStore';
-import { Task } from '@/entities/task/types';
 import { addDays, startOfWeek, addWeeks, format } from 'date-fns';
+import { taskApi } from '@/features/task/api/taskApi';
+import { studyContentApi } from '@/features/study-content/api/studyContentApi';
 
-// Helper to calculate date from "1주차" + "MONDAY"
-const calculateDate = (weekLabel: string, dayValue: string): string => {
-    const today = new Date();
-    // Assuming '1주차' is the current week of Today.
-    // '2주차' is next week, etc.
-    const weekIndex = parseInt(weekLabel.replace('주차', '')) - 1;
-
-    const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Monday start
-    const targetWeekStart = addWeeks(startOfCurrentWeek, weekIndex);
-
-    const dayMap: { [key: string]: number } = {
-        'MONDAY': 0, 'TUESDAY': 1, 'WEDNESDAY': 2, 'THURSDAY': 3,
-        'FRIDAY': 4, 'SATURDAY': 5, 'SUNDAY': 6
-    };
-
-    const dayOffset = dayMap[dayValue] || 0;
-    const targetDate = addDays(targetWeekStart, dayOffset);
-
-    return format(targetDate, 'yyyy-MM-dd');
-};
 
 export const ScheduleCreateForm = () => {
     const {
@@ -40,84 +19,107 @@ export const ScheduleCreateForm = () => {
         worksheets
     } = useScheduleCreateStore();
     const navigate = useNavigate();
+    const { menteeId } = useParams();
 
     const toast = useToast();
 
-    // Access Planner Store
-    const addTask = usePlannerStore((state) => state.addTask);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Validation
         if (!title.trim()) {
-            toast({ title: "제목을 입력해주세요.", status: "warning", duration: 2000, isClosable: true });
+            toast({ title: "Please enter a title.", status: "warning", duration: 2000, isClosable: true });
             return;
         }
 
         if (selectedDays.length === 0) {
-            toast({ title: "요일을 선택해주세요.", status: "warning", duration: 2000, isClosable: true });
+            toast({ title: "Please select at least one day.", status: "warning", duration: 2000, isClosable: true });
             return;
         }
 
-        const tasksToCreate: Task[] = [];
-        const daysCoveredWithWorksheets = new Set<string>();
+        if (!subject) {
+            return;
+        }
 
-        // 1. Create Tasks for Worksheets
-        worksheets.forEach((ws) => {
+        const weekNumber = Math.max(1, parseInt(selectedWeek, 10) || 1);
+        const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+        const targetWeekStart = addWeeks(weekStart, weekNumber - 1);
+        const startDate = format(targetWeekStart, 'yyyy-MM-dd');
+        const endDate = format(addDays(targetWeekStart, 6), 'yyyy-MM-dd');
+
+        const toBackendDay = (day: string) => {
+            const map: Record<string, string> = {
+                MONDAY: 'MON',
+                TUESDAY: 'TUE',
+                WEDNESDAY: 'WED',
+                THURSDAY: 'THU',
+                FRIDAY: 'FRI',
+                SATURDAY: 'SAT',
+                SUNDAY: 'SUN',
+            };
+            return map[day] ?? day;
+        };
+
+        const dayContentMap: Record<string, string | number | null> = {};
+        const dayContents: Array<{ day: string; contentId?: string | number | null }> = [];
+
+        for (const ws of worksheets) {
+            if (ws.selectedDays.length === 0) {
+                continue;
+            }
+
+            let worksheetContentId: string | number | null = null;
+            const rawFile = ws.file?.rawFile;
+            if (rawFile) {
+                try {
+                    const uploaded = await studyContentApi.upload(rawFile, {
+                        title: ws.file?.name ?? rawFile.name,
+                        subject,
+                    });
+                    worksheetContentId = uploaded?.id ?? null;
+                } catch (error) {
+                    console.error('Failed to upload study content', error);
+                }
+            }
+
             ws.selectedDays.forEach((day) => {
-                if (!subject) return;
+                if (dayContentMap[day] !== undefined) return;
+                dayContentMap[day] = worksheetContentId;
+            });
+        }
 
-                const taskDate = calculateDate(selectedWeek, day);
-                const newTask: Task = {
-                    id: crypto.randomUUID(),
-                    subject: subject,
-                    title: `${title} - ${ws.file?.name || '학습지'}`, // Append file name to title
-                    status: 'PENDING',
-                    taskDate: taskDate,
-                    recurringGroupId: null,
-                    isMentorChecked: false,
-                    isMandatory: true,
-                    contentId: ws.id, // Link to worksheet
-                    weaknessId: selectedWeaknessId,
-                    menteeId: 'mentee1', // Mock Mentee
-                };
-
-                tasksToCreate.push(newTask);
-                daysCoveredWithWorksheets.add(day);
+        const daysOfWeek = selectedDays.map(toBackendDay);
+        selectedDays.forEach((day) => {
+            dayContents.push({
+                day: toBackendDay(day),
+                contentId: dayContentMap[day] ?? null,
             });
         });
 
-        // 2. Create Tasks for Global Days NOT covered by any worksheet
-        selectedDays.forEach((day) => {
-            if (!daysCoveredWithWorksheets.has(day)) {
-                if (!subject) return;
-
-                const taskDate = calculateDate(selectedWeek, day);
-                const newTask: Task = {
-                    id: crypto.randomUUID(),
-                    subject: subject,
-                    title: title,
-                    status: 'PENDING',
-                    taskDate: taskDate,
-                    recurringGroupId: null,
-                    isMentorChecked: false,
-                    isMandatory: true,
-                    contentId: null,
-                    weaknessId: selectedWeaknessId,
-                    menteeId: 'mentee1',
-                };
-                tasksToCreate.push(newTask);
-            }
-        });
-
         // Dispatch Actions
-        tasksToCreate.forEach(task => addTask(task));
+        if (!menteeId) {
+            return;
+        }
+        try {
+            await taskApi.createMentorTask(menteeId, {
+                subject,
+                weekNumber,
+                startDate,
+                endDate,
+                daysOfWeek,
+                title,
+                weaknessId: selectedWeaknessId,
+                dayContents,
+            });
+        } catch (error) {
+            console.error('Failed to create tasks', error);
+            return;
+        }
 
-        console.log("Tasks Created:", tasksToCreate);
+        console.log("Tasks Created");
 
         toast({
-            title: "일정이 저장되었습니다.",
-            description: `${tasksToCreate.length}개의 과제가 생성되었습니다.`,
-            status: "success",
+            title: "Tasks created.",
+            description: `${dayContents.length} tasks created.`, 
             duration: 2000,
             isClosable: true,
         });
@@ -128,8 +130,8 @@ export const ScheduleCreateForm = () => {
 
     return (
         <Flex direction="column" w="full" h="full" p={8}>
-            <Heading size="lg" mb={4}>일정 만들기</Heading>
-            <Text color="gray.500" mb={8}>학생의 학습 성향에 맞는 과제를 설정해주세요.</Text>
+            <Heading size="lg" mb={4}>Create Schedule</Heading>
+            <Text color="gray.500" mb={8}>Create tasks that match the student needs.</Text>
 
             <Box flex={1} bg="white" borderRadius="lg" p={0}>
                 <VStack spacing={8} align="stretch">
@@ -146,9 +148,9 @@ export const ScheduleCreateForm = () => {
                     {/* Title Row - Left Column Only */}
                     <Flex gap={10}>
                         <Box flex={1}>
-                            <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>제목</Text>
+                            <Text fontSize="lg" fontWeight="bold" color="gray.900" mb={3}>Title</Text>
                             <Input
-                                placeholder="제목을 입력하세요 (예: 독서 2지문 (2))"
+                                placeholder="Enter a title (e.g. Worksheet 2-1)"
                                 size="lg"
                                 fontSize="md"
                                 bg="white"
@@ -184,7 +186,7 @@ export const ScheduleCreateForm = () => {
                             h="50px"
                             bg="white"
                         >
-                            취소
+                            Cancel
                         </Button>
                         <Button
                             size="lg"
@@ -196,7 +198,7 @@ export const ScheduleCreateForm = () => {
                             _hover={{ bg: 'blue.400' }}
                             onClick={handleSave}
                         >
-                            저장
+                            Save
                         </Button>
                     </Flex>
                 </VStack>

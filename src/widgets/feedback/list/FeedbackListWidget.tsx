@@ -1,18 +1,12 @@
 import { Box, VStack, Flex, Text } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FeedbackDateController } from './ui/FeedbackDateController';
 import { SubjectFilter, SubjectType } from './ui/SubjectFilter';
 import { FeedbackListItem } from './ui/FeedbackListItem';
 import { useNavigate, useParams } from 'react-router-dom';
-
-// TODO: Replace with actual API data
-const MOCK_FEEDBACK_LIST = [
-    { id: '1', menteeName: '최연준', title: '독서 1지문', date: '2026-02-03', subject: 'KOREAN' },
-    { id: '2', menteeName: '최연준', title: '문학 인강', date: '2026-02-03', subject: 'KOREAN' },
-    { id: '3', menteeName: '최연준', title: '문법 인강', date: '2026-02-03', subject: 'KOREAN' },
-    { id: '4', menteeName: '최연준', title: '영어 단어 암기', date: '2026-02-04', subject: 'ENGLISH' },
-    { id: '5', menteeName: '최연준', title: '수학 문제 풀이', date: '2026-02-04', subject: 'MATH' },
-];
+import { feedbackApi } from '@/features/task-feedback/api/feedbackApi';
+import { menteeDashboardApi } from '@/features/mentee-dashboard/api/menteeDashboardApi';
+import type { FeedbackWithTask } from '@/features/task-feedback/model/types';
 
 export const FeedbackListWidget = () => {
     const { menteeId } = useParams();
@@ -21,14 +15,62 @@ export const FeedbackListWidget = () => {
     const [date, setDate] = useState({ year: 2026, month: 2, week: 1 });
     const [selectedSubject, setSelectedSubject] = useState<SubjectType>('KOREAN');
 
-    const filteredList = MOCK_FEEDBACK_LIST.filter(
-        (item) => selectedSubject === 'ALL' || item.subject === selectedSubject
-    );
+    const [items, setItems] = useState<FeedbackWithTask[]>([]);
+    const [menteeName, setMenteeName] = useState('');
 
-    const handleItemClick = (id: string) => {
+    useEffect(() => {
+        if (!menteeId) return;
+        let active = true;
+        menteeDashboardApi.getByMenteeId(menteeId)
+            .then((profile) => {
+                if (!active) return;
+                setMenteeName(profile?.name ?? '');
+            })
+            .catch(() => {});
+        return () => {
+            active = false;
+        };
+    }, [menteeId]);
+
+    useEffect(() => {
+        if (!menteeId) return;
+        let active = true;
+        const run = async () => {
+            try {
+                const data = await feedbackApi.getFeedbackHistory({
+                    menteeId,
+                    year: date.year,
+                    month: date.month,
+                    weekNumber: date.week,
+                    subject: selectedSubject,
+                });
+                if (!active) return;
+                setItems(data);
+            } catch {
+                if (!active) return;
+                setItems([]);
+            }
+        };
+        run();
+        return () => {
+            active = false;
+        };
+    }, [menteeId, date.year, date.month, date.week, selectedSubject]);
+
+    const filteredList = (menteeId ? items : [])
+        .filter((item) => selectedSubject === 'ALL' || item.subject === selectedSubject)
+        .map((item) => ({
+            id: item.taskId || item.id,
+            menteeName: item.menteeName || menteeName || '',
+            title: item.taskTitle || item.content || '',
+            date: (item.taskDate || item.createdAt || '').split('T')[0],
+            subject: item.subject || 'KOREAN',
+        }));
+
+const handleItemClick = (taskId: string) => {
         // Navigate to assignment detail page
         // Using current structure: /mentor/mentee/:menteeId/task/:taskId
-        navigate(`/mentor/mentee/${menteeId}/task/${id}`);
+        navigate(`/mentor/mentee/${menteeId}/task/${taskId}`);
     };
 
     return (

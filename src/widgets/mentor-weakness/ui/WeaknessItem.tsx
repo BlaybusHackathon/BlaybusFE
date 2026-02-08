@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import {
   Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem,
   Icon, Textarea,  Input
@@ -28,12 +28,11 @@ export const WeaknessItem = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isEditing) {
-      setTitle(weakness.title);
-      setFileName(weakness.fileName || '');
-    }
-  }, [isEditing, weakness]);
+  const handleEditMode = () => {
+    setTitle(weakness.title);
+    setFileName(weakness.fileName || '');
+    onEditMode();
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -210,7 +209,7 @@ export const WeaknessItem = ({
                 aria-label="더보기"
               />
               <MenuList minW="98px" fontSize="md" borderRadius={22} pl={1}>
-                <MenuItem gap={2} onClick={onEditMode} color="#373E56" _hover={{ color: "#53A8FE" }} w={"fit-content"}>
+                <MenuItem gap={2} onClick={handleEditMode} color="#373E56" _hover={{ color: "#53A8FE" }} w={"fit-content"}>
                   수정
                   <ModifyIcon />
                 </MenuItem>

@@ -1,4 +1,4 @@
-import { Box, Flex, Textarea } from '@chakra-ui/react';
+﻿import { Box, Flex, Textarea } from '@chakra-ui/react';
 
 export type SubjectType = 'korean' | 'english' | 'math';
 
@@ -39,7 +39,7 @@ export const SubjectFeedbackItem = ({ subject, value, onChange, readOnly = false
                 value={value}
                 onChange={(e) => !readOnly && onChange(e.target.value)}
                 isReadOnly={readOnly}
-                placeholder={readOnly ? "" : `${config.label} 과목의 줌 미팅 피드백을 작성해주세요.`}
+                placeholder={readOnly ? "" : `${config.label} 과목에 대한 줌 피드백을 작성해 주세요.`}
                 minH="100px"
                 bg={readOnly ? "white" : "#F9F9FB"}
                 border={readOnly ? "1px solid" : "none"}

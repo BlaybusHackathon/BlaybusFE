@@ -4,12 +4,8 @@ import { TaskStatus } from '@/shared/constants/enums';
 import { TaskLog } from '@/entities/task-log/types';
 import { DailyPlanner } from '@/entities/daily-plan/types'; 
 import { getAdjustedDate } from '@/shared/lib/date';
-import { 
-  MOCK_TASKS, 
-  MOCK_TASK_LOGS, 
-  MOCK_DAILY_PLANNERS 
-} from '@/features/planner/model/mockPlannerData';
 import { getAuthorizedUser } from './authStore'; 
+import { planApi } from '@/features/planner/api/planApi';
 
 const getDateFromISO = (isoString: string): string => {
   return isoString.split('T')[0];
@@ -40,8 +36,10 @@ interface PlannerState {
   setTaskLogs: (logs: TaskLog[]) => void;
   addTaskLog: (log: TaskLog) => void;
   
-  updateDailyMemo: (memo: string) => void; 
+  updateDailyMemo: (memo: string) => Promise<void>; 
   
+  loadDailyPlan: (date: string, menteeId?: string) => Promise<void>;
+
   getTaskById: (taskId: string) => Task | undefined;
   getLogsByTaskId: (taskId: string) => TaskLog[];
   getTotalDurationByTaskId: (taskId: string) => number;
@@ -52,30 +50,24 @@ const TODAY = getAdjustedDate();
 export const usePlannerStore = create<PlannerState>((set, get) => ({
   selectedDate: TODAY,
   
-  taskCache: MOCK_TASKS,
-  taskLogCache: MOCK_TASK_LOGS,
+  taskCache: [],
+  taskLogCache: [],
   
-  tasks: MOCK_TASKS.filter(t => normalizeTaskDate(t.taskDate) === TODAY),
-  taskLogs: MOCK_TASK_LOGS.filter(log => getDateFromISO(log.startAt) === TODAY),
+  tasks: [],
+  taskLogs: [],
   
-  currentDailyPlanner: MOCK_DAILY_PLANNERS.find(p => p.planDate === TODAY) || null,
+  currentDailyPlanner: null,
   
   isLoading: false,
 
-  setSelectedDate: (date) => {
-    const { taskCache, taskLogCache } = get();
-    
-    const targetPlanner = MOCK_DAILY_PLANNERS.find(p => p.planDate === date) || null;
-
-    set({
-      selectedDate: date,
-      tasks: taskCache.filter(t => normalizeTaskDate(t.taskDate) === date),
-      taskLogs: taskLogCache.filter(log => getDateFromISO(log.startAt) === date),
-      currentDailyPlanner: targetPlanner, 
-    });
-  },
+  setSelectedDate: (date) => set({
+    selectedDate: date,
+    tasks: [],
+    taskLogs: [],
+    currentDailyPlanner: null,
+  }),
   
-  setTasks: (tasks) => set({ tasks }),
+  setTasks: (tasks) => set({ tasks, taskCache: tasks }),
   
   addTask: (task) => set((state) => {
     const newTaskCache = [...state.taskCache, task];
@@ -103,7 +95,7 @@ export const usePlannerStore = create<PlannerState>((set, get) => ({
     taskLogs: state.taskLogs.filter(l => l.taskId !== taskId),
   })),
 
-  setTaskLogs: (logs) => set({ taskLogs: logs }),
+  setTaskLogs: (logs) => set({ taskLogs: logs, taskLogCache: logs }),
   
   addTaskLog: (log) => set((state) => {
     const newLogCache = [...state.taskLogCache, log];
@@ -116,35 +108,59 @@ export const usePlannerStore = create<PlannerState>((set, get) => ({
     };
   }),
 
-  updateDailyMemo: (memo) => {
-    let user;
+  updateDailyMemo: async (memo) => {
     try {
-      user = getAuthorizedUser();
+      getAuthorizedUser();
     } catch (e) {
       console.error("Failed to update daily memo:", e);
-      return; 
+      return;
     }
 
-    set((state) => {
-      const current = state.currentDailyPlanner;
-      
-      if (!current) {
-        const newPlanner: DailyPlanner = {
-          id: Date.now().toString(),
-          planDate: state.selectedDate,
-          totalStudyTime: 0,
+    const { currentDailyPlanner, selectedDate } = get();
+
+    try {
+      if (!currentDailyPlanner) {
+        const created = await planApi.createPlan({
+          planDate: selectedDate,
           dailyMemo: memo,
-          createdAt: new Date().toISOString(),
-          mentorFeedback: null,
-          menteeId: user.id, 
-        };
-        return { currentDailyPlanner: newPlanner };
+        });
+        set({ currentDailyPlanner: created });
+        return;
       }
-      
-      return {
-        currentDailyPlanner: { ...current, dailyMemo: memo }
-      };
-    });
+
+      const updated = await planApi.updatePlan(currentDailyPlanner.id, {
+        dailyMemo: memo,
+      });
+      set({ currentDailyPlanner: updated });
+    } catch (e) {
+      console.error('Failed to save daily memo:', e);
+    }
+  },
+
+  loadDailyPlan: async (date, menteeId) => {
+    set({ isLoading: true });
+    try {
+      const [year, month, day] = date.split('-').map(Number);
+      const data = await planApi.getDailyPlan({ year, month, day, menteeId });
+      set({
+        taskCache: data.tasks,
+        taskLogCache: data.taskLogs,
+        tasks: data.tasks,
+        taskLogs: data.taskLogs,
+        currentDailyPlanner: data.planner,
+        isLoading: false,
+      });
+    } catch (e) {
+      console.error('Failed to load daily plan:', e);
+      set({
+        taskCache: [],
+        taskLogCache: [],
+        tasks: [],
+        taskLogs: [],
+        currentDailyPlanner: null,
+        isLoading: false,
+      });
+    }
   },
   
   getTaskById: (taskId) => get().tasks.find((t) => t.id === taskId),

@@ -14,12 +14,24 @@ import {
     AlertDialogContent,
     AlertDialogOverlay,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react'; 
+import { useRef, useState } from 'react';
+import { format, parse } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MOCK_TASK_DETAIL_DATA } from './mockTaskDetail';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { ImageSlider, TaskDetailHeader } from '@/widgets/task-detail';
 import { Subject } from '@/widgets/task-detail/TaskDetailHeader';
+import { useTaskDetail } from '@/features/task/model/useTaskDetail';
+import { taskApi } from '@/features/task/api/taskApi';
+
+const formatTaskDate = (value?: string) => {
+    if (!value) return '';
+    const datePart = value.split('T')[0];
+    const parsed = /^\d{4}-\d{2}-\d{2}$/.test(datePart)
+        ? parse(datePart, 'yyyy-MM-dd', new Date())
+        : new Date(value);
+    return format(parsed, 'yyyy\ub144 M\uc6d4 d\uc77c');
+};
+
 
 const MentorTaskDetailPage = () => {
     const { id } = useParams(); 
@@ -31,13 +43,17 @@ const MentorTaskDetailPage = () => {
     const cancelRef = useRef<HTMLButtonElement>(null);
 
     const [isSaving, setIsSaving] = useState(false);
+    const { data, setData } = useTaskDetail(id);
+    const taskId = id ?? data?.id;
 
-    const data = MOCK_TASK_DETAIL_DATA;
-
-    const formattedImages = data.submissionImages.map((url, idx) => ({
-        id: `img-${idx}`,
+    const submissionImages = data?.submission?.images ?? [];
+    const submissionImageIds = data?.submission?.imageIds ?? [];
+    const formattedImages = submissionImages.map((url, idx) => ({
+        id: submissionImageIds[idx] ?? `img-${idx}`,
         imageUrl: url
     }));
+
+    const taskDateLabel = formatTaskDate(data?.taskDate);
 
     const handleExit = () => {
         onClose();
@@ -49,7 +65,9 @@ const MentorTaskDetailPage = () => {
         setIsSaving(true);
 
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            if (!taskId) return;
+            await taskApi.confirmMentorTask(taskId);
+            setData((prev) => (prev ? { ...prev, isMentorChecked: true } : prev));
 
             toast({
                 title: "저장되었습니다.",
@@ -82,11 +100,11 @@ const MentorTaskDetailPage = () => {
                 {/* Header Section */}
                 <Box>
                     <TaskDetailHeader
-                        subject={data.subject as Subject}
-                        date={data.date}
-                        isMentorChecked={data.isMentorChecked}
-                        title={data.title}
-                        supplement={data.description ? data.description.replace('보완점: ', '') : ''} 
+                        subject={(data?.subject ?? 'OTHER') as Subject}
+                        date={taskDateLabel}
+                        isMentorChecked={Boolean(data?.isMentorChecked)}
+                        title={data?.title ?? ''}
+                        supplement={data?.description ? data.description.replace('보완점: ', '') : ''} 
                     />
                 </Box>
 
@@ -95,7 +113,7 @@ const MentorTaskDetailPage = () => {
                     <Text fontSize="18px" fontWeight="bold" mb={6} color="#333333">학습 점검하기</Text>
                     <ImageSlider 
                         images={formattedImages} 
-                        taskId={id || 'temp-task-id'}
+                        taskId={taskId || 'temp-task-id'}
                         currentUserId={user.id} 
                         userRole={user.role}   
                     />
@@ -111,7 +129,7 @@ const MentorTaskDetailPage = () => {
                         minH="100px"
                     >
                         <Text color="#333333" fontSize="15px" lineHeight="1.6">
-                            {data.menteeComment}
+                            {data?.submission?.memo ?? ''}
                         </Text>
                     </Box>
                 </Box>

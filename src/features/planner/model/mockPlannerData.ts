@@ -12,7 +12,7 @@ export const MOCK_TASKS: Task[] = [
     title: '수능특강 국어 독서 3지문',
     subject: 'KOREAN',
     taskDate: TODAY,
-    status: 'PENDING',
+    status: 'TODO',
     isMandatory: true,
     isMentorChecked: false,
     menteeId: 'mentee1',
@@ -25,7 +25,7 @@ export const MOCK_TASKS: Task[] = [
     title: '수능특강 수학 10문제',
     subject: 'MATH',
     taskDate: TODAY,
-    status: 'PENDING',
+    status: 'TODO',
     isMandatory: true,
     isMentorChecked: false,
     menteeId: 'mentee1',
@@ -43,7 +43,7 @@ export const MOCK_TASK_LOGS: TaskLog[] = [
     startAt: `${TODAY}T09:00:00`,
     endAt: `${TODAY}T10:30:00`,
     duration: 5400, // 1시간 30분 (90분)
-    timerStatus: 'COMPLETED',
+    timerStatus: 'STOPPED',
   },
   // task-2에는 로그 없음 -> 00:00:00 시작
 ];

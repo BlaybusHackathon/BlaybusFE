@@ -25,6 +25,7 @@ export const LearningMaterialSection = () => {
                 fullPath: '', // In a real scenario, this would be a URL
                 name: file.name,
                 size: file.size,
+                rawFile: file,
             });
         }
     };
