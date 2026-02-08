@@ -10,14 +10,19 @@ export interface MenteeInfo {
   menteeId: string;
 }
 
-export const mapMenteeInfoFromApi = (raw: any): MenteeInfo => ({
-  id: String(raw.id),
-  schoolName: raw.school_name,
-  koreanGrade: raw.korean_grade,
-  mathGrade: raw.math_grade,
-  englishGrade: raw.english_grade,
-  createdAt: raw.created_at,
-  updatedAt: raw.updated_at,
-  mentorId: String(raw.mentor_id),
-  menteeId: String(raw.mentee_id),
-});
+import { asRecord, asString, asOptionalNumber, asOptionalString, pick } from '@/shared/api/parse';
+
+export const mapMenteeInfoFromApi = (raw: unknown): MenteeInfo => {
+  const obj = asRecord(raw, 'MenteeInfo');
+  return {
+    id: asString(pick(obj, ['id']), 'MenteeInfo.id'),
+    schoolName: asString(pick(obj, ['schoolName', 'school_name']), 'MenteeInfo.schoolName'),
+    koreanGrade: asOptionalNumber(pick(obj, ['koreanGrade', 'korean_grade']), 'MenteeInfo.koreanGrade') ?? null,
+    mathGrade: asOptionalNumber(pick(obj, ['mathGrade', 'math_grade']), 'MenteeInfo.mathGrade') ?? null,
+    englishGrade: asOptionalNumber(pick(obj, ['englishGrade', 'english_grade']), 'MenteeInfo.englishGrade') ?? null,
+    createdAt: asString(pick(obj, ['createdAt', 'created_at']), 'MenteeInfo.createdAt'),
+    updatedAt: asOptionalString(pick(obj, ['updatedAt', 'updated_at']), 'MenteeInfo.updatedAt') ?? null,
+    mentorId: asString(pick(obj, ['mentorId', 'mentor_id']), 'MenteeInfo.mentorId'),
+    menteeId: asString(pick(obj, ['menteeId', 'mentee_id']), 'MenteeInfo.menteeId'),
+  };
+};

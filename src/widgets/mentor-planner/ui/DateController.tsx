@@ -1,7 +1,29 @@
-import { Flex, Text, HStack, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
+﻿import { Flex, Text, HStack, Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { ko } from 'date-fns/locale';
+
+const DropdownButton = ({ label }: { label: string }) => (
+  <MenuButton
+    as={Button}
+    rightIcon={<ChevronDownIcon color="#373E56" boxSize="20px" />}
+    bg="white"
+    border="1px solid"
+    borderColor="#53A8FE"
+    borderRadius="9px"
+    fontFamily="Pretendard"
+    fontWeight="500"
+    fontSize="16px"
+    color="#373E56"
+    p="15px 15px"
+    lineHeight="normal"
+    textAlign="left"
+    _hover={{ bg: 'gray.50' }}
+    _active={{ bg: 'gray.100' }}
+  >
+    {label}
+  </MenuButton>
+);
 
 interface Props {
   currentDate: Date;
@@ -52,54 +74,32 @@ export const DateController = ({ currentDate, onChangeDate }: Props) => {
     onChangeDate(targetDate);
   };
 
-  const DropdownButton = ({ label }: { label: string }) => (
-    <MenuButton
-      as={Button}
-      rightIcon={<ChevronDownIcon color="#373E56" boxSize="20px" />}
-      bg="white"
-      border="1px solid"
-      borderColor="#53A8FE"
-      borderRadius="9px"
-      fontFamily="Pretendard"
-      fontWeight="500"
-      fontSize="16px"
-      color="#373E56"
-      p="15px 15px"
-      lineHeight="normal"
-      textAlign="left"
-      _hover={{ bg: 'gray.50' }}
-      _active={{ bg: 'gray.100' }}
-    >
-      {label}
-    </MenuButton>
-  );
-
   return (
     <Flex direction="column" align="flex-start" mb={8} w="full">
       <HStack spacing="10px" mb={6}>
         <Menu>
-          <DropdownButton label={`${year}년`} />
+          <DropdownButton label={`${year} Year`} />
           <MenuList>
             {years.map(y => (
-              <MenuItem key={y} onClick={() => handleYearChange(y)}>{y}년</MenuItem>
+              <MenuItem key={y} onClick={() => handleYearChange(y)}>{y} Year</MenuItem>
             ))}
           </MenuList>
         </Menu>
 
         <Menu>
-          <DropdownButton label={`${month}월`} />
+          <DropdownButton label={`${month} Month`} />
           <MenuList maxH="200px" overflowY="auto">
             {months.map(m => (
-              <MenuItem key={m} onClick={() => handleMonthChange(m)}>{m}월</MenuItem>
+              <MenuItem key={m} onClick={() => handleMonthChange(m)}>{m} Month</MenuItem>
             ))}
           </MenuList>
         </Menu>
 
         <Menu>
-          <DropdownButton label={`${weekNumber}주차`} />
+          <DropdownButton label={`${weekNumber} Week`} />
           <MenuList>
             {weeks.map(w => (
-              <MenuItem key={w} onClick={() => handleWeekChange(w)}>{w}주차</MenuItem>
+              <MenuItem key={w} onClick={() => handleWeekChange(w)}>{w} Week</MenuItem>
             ))}
           </MenuList>
         </Menu>

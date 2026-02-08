@@ -1,5 +1,5 @@
 import { Box, SimpleGrid, Text, Flex } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   startOfMonth,
   endOfMonth,
@@ -9,6 +9,7 @@ import {
   addMonths,
   subMonths,
   isSameMonth,
+  format,
 } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -16,7 +17,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CalendarHeader } from './ui/CalendarHeader';
 import { CalendarDay } from './ui/CalendarDay';
 import { CalendarLegend } from './ui/CalendarLegend';
-import { generateMockTasks } from './model/mockData';
+import { planApi } from '@/features/planner/api/planApi';
+import type { CalendarTaskData } from '@/features/planner/api/planApi';
 
 interface MonthlyCalendarProps {
   onTaskClickOverride?: (taskId: string) => void;
@@ -35,6 +37,7 @@ export const MonthlyCalendar = ({
   // 내부 상태 (외부 props가 없을 때 사용됨)
   const [internalDate, setInternalDate] = useState(new Date());
   const [showCompletedOnly, setShowCompletedOnly] = useState(false);
+  const [calendarTasks, setCalendarTasks] = useState<CalendarTaskData[]>([]);
   const navigate = useNavigate();
 
   // [핵심] 제어/비제어 패턴: 외부 props가 있으면 그것을 사용, 없으면 내부 state 사용
@@ -79,12 +82,34 @@ export const MonthlyCalendar = ({
     end: endDate,
   });
 
+  useEffect(() => {
+    let active = true;
+    const loadCalendar = async () => {
+      try {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1;
+        const list = await planApi.getCalendar({ menteeId, year, month });
+        if (!active) return;
+        setCalendarTasks(list);
+      } catch (error) {
+        console.error('Failed to load calendar tasks', error);
+        if (!active) return;
+        setCalendarTasks([]);
+      }
+    };
+    loadCalendar();
+    return () => {
+      active = false;
+    };
+  }, [menteeId, currentDate]);
+
   const getTasksForDay = (date: Date) => {
-    const allTasks = generateMockTasks(date);
+    const dateKey = format(date, 'yyyy-MM-dd');
+    const dayTasks = calendarTasks.filter((task) => task.date === dateKey);
     if (showCompletedOnly) {
-      return allTasks.filter(task => task.isCompleted);
+      return dayTasks.filter((task) => task.isCompleted);
     }
-    return allTasks;
+    return dayTasks;
   };
 
   return (

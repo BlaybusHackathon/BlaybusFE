@@ -1,4 +1,4 @@
-import { Box, Text, VStack, Badge, Flex, Avatar, Icon } from '@chakra-ui/react';
+﻿import { Box, Text, VStack, Badge, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { RecentSubmittedTask } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
@@ -26,20 +26,22 @@ export const RecentTaskList = ({ tasks }: Props) => {
 
   return (
     <Box>
-      <Text color="#373E56"
+      <Text
+        color="#373E56"
         fontFamily="Pretendard"
         fontSize="24px"
         fontStyle="normal"
         fontWeight="700"
         lineHeight="normal"
         mb="28px"
-      >최근 제출된 과제</Text>
+      >
+        최근 제출된 과제
+      </Text>
 
       <VStack spacing={3} align="stretch">
         {tasks.map((task) => (
           <Flex
             key={task.id}
-
             p="15px 32px"
             borderRadius="22px"
             border="1px solid"

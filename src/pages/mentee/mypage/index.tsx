@@ -3,26 +3,29 @@ import { MeetIcon } from '@/shared/ui/icons';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { MenteeProfileSection } from '@/widgets/mentee-profile/ui/MenteeProfileSection';
 import { MenteeProfileData } from '@/widgets/mentee-profile/model/types';
+import { useApiQuery } from '@/shared/hooks/useApiQuery';
+import { menteeDashboardApi } from '@/features/mentee-dashboard/api/menteeDashboardApi';
 
 const MenteeMyPage = () => {
   const { user } = useAuthStore();
+  const { data: dashboard } = useApiQuery(() => menteeDashboardApi.getMy(), [user?.id]);
 
-  const mockProfileData: MenteeProfileData = {
-    id: user?.id || 'mentee-1',
-    name: user?.name || '홍길동',
-    school: '서울고등학교',
-    grade: '2학년',
-    profileImgUrl: user?.profileImgUrl,
+  const profileData: MenteeProfileData = dashboard ?? {
+    id: user?.id ?? '',
+    name: user?.name ?? '',
+    school: '',
+    grade: '',
+    profileImgUrl: user?.profileImgUrl ?? null,
     stats: {
-      todaySubmitted: 142,
-      totalPlanners: 28,
-      todayRemaining: 3,
-      todayFeedbackComments: 12,
+      todaySubmitted: 0,
+      todayTasksCount: 0,
+      todayRemaining: 0,
+      todayFeedbackComments: 0,
     },
     achievement: {
-      korean: 85,
-      english: 92,
-      math: 78,
+      korean: 0,
+      english: 0,
+      math: 0,
     },
   };
 
@@ -31,7 +34,7 @@ const MenteeMyPage = () => {
   return (
     <Box minH="100vh" bg="gray.50" py={10} position="relative">
       <Container maxW="container.xl">
-        <MenteeProfileSection profile={mockProfileData} userRole='MENTEE'/>
+        <MenteeProfileSection profile={profileData} userRole='MENTEE'/>
 
         <Button
           as="a"

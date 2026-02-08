@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Avatar, VStack, Progress } from '@chakra-ui/react';
+﻿import { Box, Flex, Text, Avatar, VStack, Progress } from '@chakra-ui/react';
 import { MenteeSummary } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,8 +24,7 @@ export const MenteeCard = ({ mentee }: Props) => {
       bg="#ffffffff"
       cursor="pointer"
       transition="all 0.2s"
-      _hover={{ transform: 'translateY(-4px)', boxShadow: '3px 4px 4px 0 rgba(57, 83, 177, 0.16)' }
-      }
+      _hover={{ transform: 'translateY(-4px)', boxShadow: '3px 4px 4px 0 rgba(57, 83, 177, 0.16)' }}
       onClick={() => navigate(`/mentor/mentee/${mentee.id}`)}
     >
       <Flex display="flex" alignItems="center" gap="14px">
@@ -43,38 +42,42 @@ export const MenteeCard = ({ mentee }: Props) => {
           spacing="33px"
           justify="center"
         >
-          <Text color="#373E56"
+          <Text
+            color="#373E56"
             fontSize="18px"
             fontStyle="normal"
             fontWeight="600"
             lineHeight="normal"
           >
-            {mentee.name}님
+            {mentee.name} 멘티
           </Text>
 
-          <VStack display="flex"
+          <VStack
+            display="flex"
             flexDirection="column"
             alignItems="flex-start"
             gap="8px"
             alignSelf="stretch"
           >
-            <AchievementRow label="국" value={mentee.achievement.korean} colorScheme="#53A8FE" />
-            <AchievementRow label="영" value={mentee.achievement.english} colorScheme="#35CE9D" />
-            <AchievementRow label="수" value={mentee.achievement.math} colorScheme="#A16AFF" />
+            <AchievementRow label="국어" value={mentee.achievement.korean} colorScheme="#53A8FE" />
+            <AchievementRow label="영어" value={mentee.achievement.english} colorScheme="#35CE9D" />
+            <AchievementRow label="수학" value={mentee.achievement.math} colorScheme="#A16AFF" />
           </VStack>
         </VStack>
       </Flex>
-    </Box >
+    </Box>
   );
 };
 
 const AchievementRow = ({ label, value, colorScheme }: { label: string; value: number; colorScheme: string }) => (
-  <Flex display="flex"
+  <Flex
+    display="flex"
     alignItems="center"
     gap="9px"
     alignSelf="stretch"
   >
-    <Text color="#394250"
+    <Text
+      color="#394250"
       fontSize="13px"
       fontStyle="normal"
       fontWeight="400"

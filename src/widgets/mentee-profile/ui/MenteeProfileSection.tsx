@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import {
   Box, Flex, HStack, Text, Avatar, SimpleGrid,
   IconButton, Button, Heading
@@ -7,6 +7,9 @@ import { ModifyIcon } from '@/shared/ui/icons';
 import { MenteeProfileData } from '../model/types';
 import { StatBadge } from './StatBadge';
 import { AchievementDonut } from './AchievementDonut';
+import { useAuthStore } from '@/shared/stores/authStore';
+import { userApi } from '@/features/user/api/userApi';
+import { BasicAvartarIcon } from '@/shared/ui/icons';
 
 interface Props {
   profile: MenteeProfileData;
@@ -15,6 +18,48 @@ interface Props {
 
 export const MenteeProfileSection = ({ profile, userRole }: Props) => {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
+  const { user, setUser } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleProfileEdit = async () => {
+    if (!user) return;
+
+    const nextName = window.prompt('Edit name', user.name ?? profile.name);
+    const nextNickName = window.prompt('Edit nickname', user.nickName ?? '');
+    const shouldUpdate =
+      (nextName !== null && nextName !== user.name) ||
+      (nextNickName !== null && nextNickName !== user.nickName);
+
+    if (shouldUpdate) {
+      try {
+        const updated = await userApi.updateMe({
+          name: nextName ?? user.name,
+          nickName: nextNickName ?? user.nickName,
+        });
+        setUser(updated);
+      } catch (e) {
+        console.error('Failed to update profile:', e);
+      }
+    }
+
+    if (window.confirm('Change profile image?')) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleProfileImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    try {
+      await userApi.uploadProfile(file);
+      const refreshed = await userApi.getMe();
+      setUser(refreshed);
+    } catch (error) {
+      console.error('Failed to upload profile image:', error);
+    } finally {
+      e.target.value = '';
+    }
+  };
 
   return (
     <Box w="full">
@@ -28,16 +73,26 @@ export const MenteeProfileSection = ({ profile, userRole }: Props) => {
         mb={{ base: 8, md: 10 }}
       >
         {userRole === 'MENTEE' && (
-          <IconButton
-            aria-label="Edit Profile"
-            icon={<ModifyIcon />}
-            variant="ghost"
-            position="absolute"
-            top={{ base: 1, md: 6 }}
-            right={{ base: 2, md: 8 }}
-            color="gray.400"
-            size="sm"
-          />
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleProfileImageChange}
+              style={{display:'none'}}
+            />
+            <IconButton
+              aria-label="Edit Profile"
+              icon={<ModifyIcon />}
+              variant="ghost"
+              position="absolute"
+              top={{ base: 1, md: 6 }}
+              right={{ base: 2, md: 8 }}
+              color="gray.400"
+              size="sm"
+              onClick={handleProfileEdit}
+            />
+          </>
         )}
 
         <Flex
@@ -52,14 +107,24 @@ export const MenteeProfileSection = ({ profile, userRole }: Props) => {
             gap={{ base: "16px", md: "31px" }}
             display={{ base: 'inline-flex', md: 'inline-flex' }}
           >
+          {profile.profileImgUrl ? (
             <Avatar
               sx={{
                 w: { base: '86px', md: '144px' },
                 h: { base: '86px', md: '144px' }
               }}
               name={profile.name}
-              src={profile.profileImgUrl || undefined}
+              src={profile.profileImgUrl}
             />
+          ) : (
+            <Avatar
+              sx={{
+                w: { base: '86px', md: '144px' },
+                h: { base: '86px', md: '144px' }
+              }}
+              icon={<BasicAvartarIcon />}
+            />
+          )}
 
             <Flex
               display={{ base: 'inline-flex', md: 'inline-flex' }}
@@ -76,7 +141,7 @@ export const MenteeProfileSection = ({ profile, userRole }: Props) => {
 
               <SimpleGrid columns={2} spacingX={{base:0, md:4}} spacingY={{base:3, md:4}} maxW="400px">
                 <StatBadge label="과제 제출" value={profile.stats.todaySubmitted} />
-                <StatBadge label="플래너 제출" value={profile.stats.totalPlanners} />
+                <StatBadge label="오늘 과제" value={profile.stats.todayTasksCount} />
                 <StatBadge label="남은 과제" value={profile.stats.todayRemaining} />
                 <StatBadge label="피드백 질문" value={profile.stats.todayFeedbackComments} />
               </SimpleGrid>
@@ -141,3 +206,4 @@ export const MenteeProfileSection = ({ profile, userRole }: Props) => {
     </Box>
   );
 };
+

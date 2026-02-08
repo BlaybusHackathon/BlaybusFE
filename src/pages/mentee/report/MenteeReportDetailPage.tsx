@@ -1,11 +1,11 @@
-import { useEffect, useState, useMemo } from 'react';
+﻿import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Heading, Container, Text, Button, Flex } from '@chakra-ui/react';
 import { format, parseISO, getMonth, getWeekOfMonth, getYear } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ReportDetailWidget } from '@/widgets/mentor-report/detail/ReportDetailWidget';
-import { ReportData } from '@/widgets/mentor-report/model/mockReportData';
-import { getWeeklyReportById } from '@/features/report/model/mockReportData';
+import { ReportData } from '@/features/report/model/types';
+import { weeklyReportApi } from '@/features/report/api/weeklyReportApi';
 
 const MenteeReportDetailPage = () => {
   const { reportId } = useParams();
@@ -14,12 +14,12 @@ const MenteeReportDetailPage = () => {
   const [reportData, setReportData] = useState<ReportData | null>(null);
 
   useEffect(() => {
-    if (reportId) {
-      const report = getWeeklyReportById(reportId);
-      if (report) {
-        setReportData(report);
-      }
-    }
+    const load = async () => {
+      if (!reportId) return;
+      const report = await weeklyReportApi.getById(reportId);
+      setReportData(report);
+    };
+    load();
   }, [reportId]);
 
   const currentDateInfo = useMemo(() => {
@@ -45,7 +45,7 @@ const MenteeReportDetailPage = () => {
   };
 
   if (!reportData) {
-      return <Box p={10}>로딩중...</Box>;
+      return <Box p={10}>로딩 중입니다.</Box>;
   }
 
   return (

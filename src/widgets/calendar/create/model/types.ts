@@ -18,6 +18,7 @@ export interface Worksheet {
         name: string;
         size?: number;
         fullPath: string; // File path or URL
+        rawFile?: File;
     } | null;
     selectedDays: string[]; // Days assigned to this specific worksheet
 }

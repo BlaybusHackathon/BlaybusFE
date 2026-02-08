@@ -3,6 +3,7 @@ import { Box } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { getNavItems } from './navConfig';
+import { useFcmRegistration } from '@/features/notification/model/useFcmRegistration';
 
 // PC Widgets
 import { DesktopHeader } from './desktop/DesktopHeader';
@@ -15,6 +16,7 @@ import { MobileBottomNav } from './mobile/MobileBottomNav';
 export const MainLayout = () => {
   const { user } = useAuthStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  useFcmRegistration();
 
   if (!user) return null;
 

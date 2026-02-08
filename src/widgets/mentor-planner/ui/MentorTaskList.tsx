@@ -14,8 +14,8 @@ interface Props {
 export const MentorTaskList = ({ tasks, logs, onHoverSubject }: Props) => {
   const sortedTasks = [...tasks].sort((a, b) => {
     if (a.isMandatory !== b.isMandatory) return a.isMandatory ? -1 : 1;
-    if (a.status === 'COMPLETED' && b.status !== 'COMPLETED') return 1;
-    if (a.status !== 'COMPLETED' && b.status === 'COMPLETED') return -1;
+    if (a.status === 'DONE' && b.status !== 'DONE') return 1;
+    if (a.status !== 'DONE' && b.status === 'DONE') return -1;
     return 0;
   });
 

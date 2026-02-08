@@ -8,9 +8,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuthStore } from '@/shared/stores/authStore';
 import { useTaskSubmission } from '@/features/task-submission/model/useTaskSubmission';
-import { getTaskDetailById } from '@/shared/mocks/totalMockData';
+import { submissionApi } from '@/features/task-submission/api/submissionApi';
 import { TaskDetailHeader } from '@/widgets/task-detail/TaskDetailHeader';
 import { ImageSlider, SubmissionImageData } from '@/widgets/task-detail/ImageSlider';
+import { useTaskDetail } from '@/features/task/model/useTaskDetail';
 
 const MenteeTaskSubmissionPage = () => {
     const { taskId } = useParams(); 
@@ -18,11 +19,12 @@ const MenteeTaskSubmissionPage = () => {
     const { user } = useAuthStore();
     const toast = useToast();
 
-    const taskData = getTaskDetailById(taskId);
+    const { data: taskData, isLoading } = useTaskDetail(taskId);
 
     const { 
         memo, setMemo, images, setImages,
-        handleAddImages, handleRemoveImage, handleSubmit
+        handleAddImages, handleRemoveImage, handleSubmit,
+        isSubmitting
     } = useTaskSubmission(taskId || '', taskData?.submission?.memo || '');
 
     useEffect(() => {
@@ -30,12 +32,28 @@ const MenteeTaskSubmissionPage = () => {
             const initialImages = taskData.submission.images.map((url, idx) => ({
                 id: `existing-${idx}`,
                 file: new File([], "existing_image"),
-                previewUrl: url
+                previewUrl: url,
+                isExisting: true
             }));
             
             setImages(initialImages);
         }
     }, [taskData, setImages]);
+
+    const handleDeleteImage = async (imageId: string) => {
+        const target = images.find((img) => img.id === imageId);
+        if (target?.isExisting && taskData?.submission?.id) {
+            try {
+                await submissionApi.deleteSubmission(taskData.submission.id);
+                setImages([]);
+                setMemo('');
+            } catch (e) {
+                console.error('Failed to delete submission:', e);
+            }
+            return;
+        }
+        handleRemoveImage(imageId);
+    };
 
     const onAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -52,12 +70,17 @@ const MenteeTaskSubmissionPage = () => {
         }
     };
 
-    const onComplete = () => {
-        handleSubmit(); 
+    const onComplete = async () => {
+        try {
+            await handleSubmit();
         toast({ title: '제출이 완료되었습니다.', status: 'success' });
-        navigate(-1);
+            navigate(-1);
+        } catch {
+            toast({ title: '제출에 실패하였습니다.', status: 'error' });
+        }
     };
 
+    if (isLoading) return <Box p={10}>로딩중..</Box>;
     if (!user) return <Box p={10}>로그인이 필요합니다.</Box>;
     if (!taskData) return <Box p={10}>과제 정보가 없습니다.</Box>;
 
@@ -81,14 +104,13 @@ const MenteeTaskSubmissionPage = () => {
                 <Box>
                     <Flex justify="space-between" align="center" mb={4}>
                         <Text fontSize="lg" fontWeight="bold">
-                            업로드 <Text as="span" fontSize="md" fontWeight="normal" color="gray.500" ml={2}></Text>
+                            업로드<Text as="span" fontSize="md" fontWeight="normal" color="gray.500" ml={2}></Text>
                         </Text>
                         
                         {images.length < 20 && (
                             <Box as="label" cursor="pointer">
                                 <Input type="file" accept="image/*" display="none" multiple onChange={onAddImages} />
-                                <Button as="span" size="sm" leftIcon={<AddIcon />} bg={'#53A8FE'} color={'white'}>
-                                    추가
+                                <Button as="span" size="sm" leftIcon={<AddIcon />} bg={'none'}>
                                 </Button>
                             </Box>
                         )}
@@ -101,7 +123,7 @@ const MenteeTaskSubmissionPage = () => {
                                 taskId={taskId || ''}
                                 currentUserId={user.id}
                                 userRole={user.role}
-                                onDelete={handleRemoveImage}
+                                onDelete={handleDeleteImage}
                             />
                         ) : (
                             <Box 
@@ -118,7 +140,7 @@ const MenteeTaskSubmissionPage = () => {
                 </Box>
 
                 <Box>
-                    <Text fontSize="lg" fontWeight="bold" mb={{base:2, md:4}}>메모장</Text>
+                    <Text fontSize="lg" fontWeight="bold" mb={{base:2, md:4}}>메모</Text>
                     <Textarea 
                         value={memo}
                         onChange={(e) => setMemo(e.target.value)}
@@ -146,7 +168,7 @@ const MenteeTaskSubmissionPage = () => {
                     <Button 
                         size="sm" colorScheme="blue" py={6} px={8} fontSize="lg" borderRadius="xl"
                         onClick={onComplete}
-                        isDisabled={images.length === 0}
+                        isDisabled={images.length === 0 || isSubmitting}
                         bg={"#53A8FE"}
                         boxShadow="0 4px 14px 0 rgba(0,118,255,0.3)"
                     >

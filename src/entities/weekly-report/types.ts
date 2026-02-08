@@ -9,13 +9,18 @@ export interface WeeklyReport {
   inforId: string;
 }
 
-export const mapWeeklyReportFromApi = (raw: any): WeeklyReport => ({
-  id: String(raw.id),
-  weekName: raw.week_name,
-  startDate: raw.start_date,
-  endDate: raw.end_date,
-  overallFeedback: raw.overall_feedback,
-  strengths: raw.strengths,
-  weaknesses: raw.weaknesses,
-  inforId: String(raw.infor_id),
-});
+import { asRecord, asString, asOptionalString, pick } from '@/shared/api/parse';
+
+export const mapWeeklyReportFromApi = (raw: unknown): WeeklyReport => {
+  const obj = asRecord(raw, 'WeeklyReport');
+  return {
+    id: asString(pick(obj, ['id', 'reportId']), 'WeeklyReport.id'),
+    weekName: asString(pick(obj, ['weekName', 'week_name']), 'WeeklyReport.weekName'),
+    startDate: asString(pick(obj, ['startDate', 'start_date']), 'WeeklyReport.startDate'),
+    endDate: asString(pick(obj, ['endDate', 'end_date']), 'WeeklyReport.endDate'),
+    overallFeedback: asOptionalString(pick(obj, ['overallFeedback', 'overall_feedback']), 'WeeklyReport.overallFeedback') ?? null,
+    strengths: asOptionalString(pick(obj, ['strengths']), 'WeeklyReport.strengths') ?? null,
+    weaknesses: asOptionalString(pick(obj, ['weaknesses']), 'WeeklyReport.weaknesses') ?? null,
+    inforId: asString(pick(obj, ['inforId', 'infor_id']), 'WeeklyReport.inforId'),
+  };
+};

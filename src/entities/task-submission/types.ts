@@ -5,9 +5,14 @@ export interface TaskSubmission {
   taskId: string;
 }
 
-export const mapTaskSubmissionFromApi = (raw: any): TaskSubmission => ({
-  id: String(raw.id),
-  menteeComment: raw.mentee_comment,
-  createdAt: raw.created_at,
-  taskId: String(raw.task_id),
-});
+import { asRecord, asString, asOptionalString, pick } from '@/shared/api/parse';
+
+export const mapTaskSubmissionFromApi = (raw: unknown): TaskSubmission => {
+  const obj = asRecord(raw, 'TaskSubmission');
+  return {
+    id: asString(pick(obj, ['id']), 'TaskSubmission.id'),
+    menteeComment: asOptionalString(pick(obj, ['menteeComment', 'mentee_comment']), 'TaskSubmission.menteeComment') ?? null,
+    createdAt: asString(pick(obj, ['createdAt', 'created_at']), 'TaskSubmission.createdAt'),
+    taskId: asString(pick(obj, ['taskId', 'task_id']), 'TaskSubmission.taskId'),
+  };
+};

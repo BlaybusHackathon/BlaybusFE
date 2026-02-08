@@ -1,49 +1,64 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+﻿import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Heading, Button, Container, Flex, Text } from '@chakra-ui/react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { ZoomFeedbackDetailWidget } from '@/widgets/mentor-zoom/detail/ZoomFeedbackDetailWidget';
-import { ZoomFeedbackData, getZoomFeedbackById } from '@/widgets/mentor-zoom/model/mockZoomFeedbackData';
+import { useZoomFeedbackDetail } from '@/features/zoom-feedback/model/useZoomFeedbackDetail';
+
+const parseDateOnly = (value?: string) => {
+  const datePart = value?.split('T')[0];
+  if (datePart && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+    return parse(datePart, 'yyyy-MM-dd', new Date());
+  }
+  const parsed = value ? new Date(value) : new Date();
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+};
 
 const MenteeZoomFeedbackDetailPage = () => {
   const { zoomId } = useParams();
   const navigate = useNavigate();
+  const { data, isLoading, error } = useZoomFeedbackDetail(zoomId);
 
-  const [data, setData] = useState<ZoomFeedbackData | null>(null);
+  if (isLoading) {
+    return (
+      <Box p={10} color="gray.500">
+        로딩 중입니다.
+      </Box>
+    );
+  }
 
-  useEffect(() => {
-    if (zoomId) {
-      const feedback = getZoomFeedbackById(zoomId);
-      if (feedback) {
-        setData({
-             memo: feedback.memo || '',
-             subjects: feedback.subjects || { korean: '', english: '', math: '' },
-             operation: feedback.operation || ''
-        });
-      }
-    }
-  }, [zoomId]);
+  if (error) {
+    return (
+      <Box p={10} color="red.400">
+        줌 피드백을 불러오지 못했습니다.
+      </Box>
+    );
+  }
 
-  if (!data) return <Box p={10}>로딩중...</Box>;
+  if (!data) {
+    return (
+      <Box p={10} color="gray.500">
+        줌 피드백이 없습니다.
+      </Box>
+    );
+  }
+
+  const meetingDate = parseDateOnly(data.meetingDate);
+  const dateLabel = format(meetingDate, 'yyyy년 MM월 dd일 (EEE)', { locale: ko });
 
   return (
     <Container maxW="container.md" py={8}>
       <Flex justify="space-between" align="center" mb={6}>
         <Box>
-          <Heading size="lg" mb={1} color="#373E56">줌 미팅 피드백</Heading>
-          <Text color="gray.500">
-             {format(new Date(), 'yyyy년 MM월 dd일 (eee)', { locale: ko })} 
-          </Text>
+          <Heading size="lg" mb={1} color="#373E56">
+            줌 피드백
+          </Heading>
+          <Text color="gray.500">{dateLabel}</Text>
         </Box>
       </Flex>
 
       <Box bg="white" mb={10}>
-        <ZoomFeedbackDetailWidget 
-            data={data} 
-            onChange={() => {}} 
-            readOnly={true}     
-        />
+        <ZoomFeedbackDetailWidget data={data} onChange={() => {}} readOnly />
       </Box>
 
       <Button

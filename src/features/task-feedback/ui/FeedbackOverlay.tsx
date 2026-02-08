@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState, useEffect } from 'react';
 import { 
   Box, 
   useToast, 
@@ -15,6 +15,7 @@ import { FeedbackPin } from './FeedbackPin';
 import { FeedbackCard } from './FeedbackCard';
 import { FeedbackInputForm } from './FeedbackInputForm';
 import { UserRole } from '@/shared/constants/enums';
+import { feedbackApi } from '../api/feedbackApi';
 
 interface FeedbackOverlayProps {
   taskId: string;
@@ -24,11 +25,18 @@ interface FeedbackOverlayProps {
 }
 
 export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: FeedbackOverlayProps) => {
+  const DEBUG_FEEDBACK = import.meta.env.DEV;
+  void taskId;
   const toast = useToast();
   const store = useTaskFeedbackStore();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [hoveredPinId, setHoveredPinId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setHoveredPinId(null);
+  }, [imageId]);
+  
   
   const feedbacks = store.getFeedbacksForImage(imageId);
   const isCreating = !!store.pendingPosition;
@@ -41,34 +49,48 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
       const pos = calculatePercentPosition(e.clientX, e.clientY, rect);
       store.setPendingPosition(pos);
     } else {
+      if (DEBUG_FEEDBACK) {
+        console.debug('[feedback-overlay] overlay reset', {
+          imageId,
+          activeFeedbackId: store.activeFeedbackId,
+          feedbackCount: feedbacks.length,
+        });
+      }
       store.setActiveFeedback(null);
       store.setPendingPosition(null);
       store.setCommentMode('view');
     }
   };
 
-  const handleCreateFeedback = (content: string, imageUrl: string | null) => {
+  const handleCreateFeedback = async (
+    content: string,
+    payload: { imageUrl: string | null; file?: File | null }
+  ) => {
     if (!store.pendingPosition) return;
-    
-    const newFeedback = {
-      id: Date.now().toString(),
-      content,
-      imageUrl,
-      createdAt: new Date().toISOString(),
-      xPos: store.pendingPosition.x,
-      yPos: store.pendingPosition.y,
-      taskId,
-      mentorId: currentUserId,
-      imageId,
-    };
 
-    store.addFeedback(newFeedback);
-    store.setPendingPosition(null);
-    toast({ status: 'success', title: '피드백이 등록되었습니다.' });
+    try {
+      const created = await feedbackApi.createFeedback(imageId, {
+        content,
+        xPos: store.pendingPosition.x,
+        yPos: store.pendingPosition.y,
+        file: payload.file ?? null,
+      });
+
+      store.addFeedback(created);
+      store.setPendingPosition(null);
+      toast({ status: 'success', title: '??쒕갚???濡??????' });
+    } catch {
+      toast({ status: 'error', title: '??쒕갚??????????' });
+    }
   };
 
-  const handlePositionChange = (id: string, newX: number, newY: number) => {
+  const handlePositionChange = async (id: string, newX: number, newY: number) => {
     store.updateFeedbackPosition(id, newX, newY);
+    try {
+      await feedbackApi.updateFeedback(id, { xPos: newX, yPos: newY });
+    } catch {
+      // revert not handled yet
+    }
   };
 
   const activeFeedbackData = feedbacks.find(fb => fb.id === store.activeFeedbackId);
@@ -91,8 +113,6 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
             const isActive = store.activeFeedbackId === fb.id;
             const isDimmed = (!!hoveredPinId && hoveredPinId !== fb.id) || isCreating;
 
-            if (isActive && !isMobile) return null;
-
             return (
               <FeedbackPin
                 key={fb.id}
@@ -100,6 +120,7 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
                 containerRef={containerRef}
                 isDraggable={userRole === "MENTOR" && fb.mentorId === currentUserId && !isCreating}
                 isDimmed={isDimmed}
+                isHidden={isActive && !isMobile}
                 onMouseEnter={() => !isCreating && setHoveredPinId(fb.id)}
                 onMouseLeave={() => setHoveredPinId(null)}
                 onPositionChange={handlePositionChange}
@@ -117,16 +138,42 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
         {!isMobile && activeFeedbackData && (
              <FeedbackCard
                 key={activeFeedbackData.id}
-                feedback={{ ...activeFeedbackData, authorName: '김멘토', authorProfileUrl: null }}
+                feedback={{ ...activeFeedbackData, authorName: '멘토', authorProfileUrl: null }}
                 answers={store.getAnswersForFeedback(activeFeedbackData.id).map(a => ({...a, authorName: 'User', authorRole: "MENTEE", authorProfileUrl: null}))}
                 currentUserId={currentUserId}
                 userRole={userRole}
-                onClose={() => store.setActiveFeedback(null)}
-                onUpdateFeedback={(c, i) => store.updateFeedback(activeFeedbackData.id, { content: c, imageUrl: i })}
-                onDeleteFeedback={() => { store.removeFeedback(activeFeedbackData.id); }}
-                onAddAnswer={(c) => store.addAnswer({ id: Date.now().toString(), comment: c, userId: currentUserId, feedbackId: activeFeedbackData.id, createdAt: new Date().toISOString() })}
-                onUpdateAnswer={(id, c) => store.updateAnswer(id, c)}
-                onDeleteAnswer={(id) => store.removeAnswer(id)}
+                onClose={() => {
+                  if (DEBUG_FEEDBACK) {
+                    console.debug('[feedback-overlay] close', {
+                      imageId,
+                      activeFeedbackId: store.activeFeedbackId,
+                      feedbackCount: feedbacks.length,
+                    });
+                  }
+                  store.setActiveFeedback(null);
+                }}
+                onUpdateFeedback={async (c, payload) => {
+                  const updated = await feedbackApi.updateFeedback(activeFeedbackData.id, { content: c, imageUrl: payload.imageUrl });
+                  if (!updated) return;
+                  store.updateFeedback(activeFeedbackData.id, { content: updated.content, imageUrl: updated.imageUrl });
+                }}
+                onDeleteFeedback={async () => { 
+                  await feedbackApi.deleteFeedback(activeFeedbackData.id);
+                  store.removeFeedback(activeFeedbackData.id); 
+                }}
+                onAddAnswer={async (c) => {
+                  const created = await feedbackApi.createComment(activeFeedbackData.id, c);
+                  store.addAnswer(created);
+                }}
+                onUpdateAnswer={async (id, c) => {
+                  const updated = await feedbackApi.updateComment(activeFeedbackData.id, id, c);
+                  if (!updated) return;
+                  store.updateAnswer(id, updated.comment);
+                }}
+                onDeleteAnswer={async (id) => {
+                  await feedbackApi.deleteComment(activeFeedbackData.id, id);
+                  store.removeAnswer(id);
+                }}
              />
         )}
 
@@ -159,17 +206,42 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
           <DrawerBody p={0}>
              {activeFeedbackData && (
                  <FeedbackCard
-                    feedback={{ ...activeFeedbackData, authorName: '김멘토', authorProfileUrl: null }}
+                    feedback={{ ...activeFeedbackData, authorName: '멘토', authorProfileUrl: null }}
                     answers={store.getAnswersForFeedback(activeFeedbackData.id).map(a => ({...a, authorName: 'User', authorRole: "MENTEE", authorProfileUrl: null}))}
                     currentUserId={currentUserId}
                     userRole={userRole}
-                    onClose={() => store.setActiveFeedback(null)}
-                    onUpdateFeedback={(c, i) => store.updateFeedback(activeFeedbackData.id, { content: c, imageUrl: i })}
-                    onDeleteFeedback={() => { store.removeFeedback(activeFeedbackData.id); }}
-                    onAddAnswer={(c) => store.addAnswer({ id: Date.now().toString(), comment: c, userId: currentUserId, feedbackId: activeFeedbackData.id, createdAt: new Date().toISOString() })}
-                    onUpdateAnswer={(id, c) => store.updateAnswer(id, c)}
-                    onDeleteAnswer={(id) => store.removeAnswer(id)}
-                    
+                    onClose={() => {
+                      if (DEBUG_FEEDBACK) {
+                        console.debug('[feedback-overlay] close', {
+                          imageId,
+                          activeFeedbackId: store.activeFeedbackId,
+                          feedbackCount: feedbacks.length,
+                        });
+                      }
+                      store.setActiveFeedback(null);
+                    }}
+                    onUpdateFeedback={async (c, payload) => {
+                      const updated = await feedbackApi.updateFeedback(activeFeedbackData.id, { content: c, imageUrl: payload.imageUrl });
+                      if (!updated) return;
+                      store.updateFeedback(activeFeedbackData.id, { content: updated.content, imageUrl: updated.imageUrl });
+                    }}
+                    onDeleteFeedback={async () => { 
+                      await feedbackApi.deleteFeedback(activeFeedbackData.id);
+                      store.removeFeedback(activeFeedbackData.id); 
+                    }}
+                    onAddAnswer={async (c) => {
+                      const created = await feedbackApi.createComment(activeFeedbackData.id, c);
+                      store.addAnswer(created);
+                    }}
+                    onUpdateAnswer={async (id, c) => {
+                      const updated = await feedbackApi.updateComment(activeFeedbackData.id, id, c);
+                      if (!updated) return;
+                      store.updateAnswer(id, updated.comment);
+                    }}
+                    onDeleteAnswer={async (id) => {
+                      await feedbackApi.deleteComment(activeFeedbackData.id, id);
+                      store.removeAnswer(id);
+                    }}
                     isMobileView={true} 
                  />
              )}
@@ -179,3 +251,7 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
     </>
   );
 };
+
+
+
+

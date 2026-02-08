@@ -3,14 +3,21 @@ import { CSSProperties } from 'react';
 const PREVIEW_MAX_LENGTH = 20;
 
 export const extractPreviewText = (content: string): string => {
-  const emphasisPattern = /\*\*([^*]+)\*\*/g;
-  const matches = [...content.matchAll(emphasisPattern)];
+  const tagPattern = /<강조>([^<]+)<\/강조>/g;
+  const markdownPattern = /\*\*([^*]+)\*\*/g;
+  const tagMatches = [...content.matchAll(tagPattern)];
+  const markdownMatches = [...content.matchAll(markdownPattern)];
   
-  if (matches.length > 0) {
-    return matches[0][1];
+  if (tagMatches.length > 0) {
+    return tagMatches[0][1];
+  }
+  if (markdownMatches.length > 0) {
+    return markdownMatches[0][1];
   }
   
-  const plainText = content.replace(/\*\*/g, '');
+  const plainText = content
+    .replace(tagPattern, '$1')
+    .replace(markdownPattern, '$1');
   if (plainText.length <= PREVIEW_MAX_LENGTH) {
     return plainText;
   }
@@ -18,7 +25,9 @@ export const extractPreviewText = (content: string): string => {
 };
 
 export const parseEmphasis = (content: string): string => {
-  return content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  return content
+    .replace(/<강조>([^<]+)<\/강조>/g, '<strong>$1</strong>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 };
 
 export const formatRelativeTime = (dateString: string): string => {

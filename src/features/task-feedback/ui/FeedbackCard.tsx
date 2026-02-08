@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import type { SVGProps } from 'react';
 import { Box, Flex, Text, IconButton, Image, Input, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import { CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
+import { CommentIcon, CommentAvartarIcon } from '@/shared/ui/icons';
 import { motion } from 'framer-motion';
 import { FeedbackWithAuthor, AnswerWithAuthor } from '../model/types';
 import { formatRelativeTime, parseEmphasis, getFeedbackPositionStyles } from '../model/feedbackUtils';
@@ -14,7 +16,7 @@ interface FeedbackCardProps {
   currentUserId: string;
   userRole: UserRole;
   onClose: () => void;
-  onUpdateFeedback: (content: string, imageUrl: string | null) => void;
+  onUpdateFeedback: (content: string, payload: { imageUrl: string | null; file?: File | null }) => void;
   onDeleteFeedback: () => void;
   onAddAnswer: (comment: string) => void;
   onUpdateAnswer: (id: string, comment: string) => void;
@@ -26,7 +28,7 @@ interface FeedbackCardProps {
 
 const MotionBox = motion(Box);
 
-const MoreIcon = (props: any) => (
+const MoreIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <circle cx="5" cy="12" r="2" fill="currentColor"/>
     <circle cx="12" cy="12" r="2" fill="currentColor"/>
@@ -86,8 +88,9 @@ export const FeedbackCard = ({
          <FeedbackInputForm
            initialContent={feedback.content}
            initialImageUrl={feedback.imageUrl}
-           onSave={(c, i) => {
-             onUpdateFeedback(c, i);
+           allowFile={false}
+           onSave={(c, payload) => {
+             onUpdateFeedback(c, payload);
              setIsEditing(false);
            }}
            onCancel={() => setIsEditing(false)}
@@ -102,7 +105,7 @@ export const FeedbackCard = ({
       zIndex={200}
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
       style={containerStyles}
-      
+      p={4}
       bg="white"
       overflow="hidden"
 
@@ -114,15 +117,11 @@ export const FeedbackCard = ({
       transformOrigin={transformOrigin}
     >
       {/* Header */}
-      <Flex justify="space-between" align="center" p={3} borderBottom="1px solid" borderColor="gray.50" bg="white">
+      <Flex w={'fit-content'} justify="space-between" align="center" p={3} borderBottom="1px solid" borderColor="gray.50" bg="white">
         <Flex gap={2} align="center">
-          <Box w="24px" h="24px" borderRadius="full" bg="blue.100" display="flex" alignItems="center" justifyContent="center">
-             <Text fontSize="xs" fontWeight="bold" color="blue.600">
-               {feedback.authorName[0]}
-             </Text>
-          </Box>
-          <Text fontWeight="bold" fontSize="sm" color="gray.800">{feedback.authorName}</Text>
-          <Text fontSize="xs" color="gray.400">{formatRelativeTime(feedback.createdAt)}</Text>
+          <CommentAvartarIcon size={34} color='#53A8FE'/>
+          <Text fontWeight="medium" fontSize={{base:"sm", md:"xl"}} color="#394250">{feedback.authorName}</Text>
+          <Text fontSize={{base:"xs",md:"lg"}} color="#A29E9A">{formatRelativeTime(feedback.createdAt)}</Text>
         </Flex>
         
         <Flex gap={1}>
@@ -142,9 +141,9 @@ export const FeedbackCard = ({
       {/* Body */}
       <Box p={4} maxH={isMobileView ? "60vh" : "300px"} overflowY="auto">
         <Text 
-          fontSize="sm" 
-          lineHeight="1.6"
-          color="gray.700"
+          fontSize={{base:"xs", md:"md"}} 
+          lineHeight="1.3"
+          color="#394250"
           mb={feedback.imageUrl ? 3 : 0}
           sx={{
             'strong': { color: 'blue.600', fontWeight: '800', bg: 'blue.50', px: 1, borderRadius: '2px' }
@@ -157,15 +156,51 @@ export const FeedbackCard = ({
       </Box>
 
       {/* Footer (Comments) */}
-      <Box bg="gray.50" p={3}>
-        <Box maxH="150px" overflowY="auto" mb={3} css={{ '&::-webkit-scrollbar': { width: '4px' } }}>
+      <Box p={3}>
+        <Box overflowY="auto" mb={3} css={{ '&::-webkit-scrollbar': { width: '4px' } }}>
            {answers.map(ans => (
              <AnswerItem key={ans.id} answer={ans} currentUserId={currentUserId} onEdit={onUpdateAnswer} onDelete={onDeleteAnswer} />
            ))}
         </Box>
-        <Flex gap={2} bg="white" p={1} borderRadius="full" border="1px solid" borderColor="gray.200" align="center">
-          <Input variant="unstyled" placeholder="댓글 달기..." value={newAnswer} onChange={(e) => setNewAnswer(e.target.value)} fontSize="sm" px={3} h="32px" />
-          <IconButton aria-label="Send" icon={<ArrowForwardIcon />} size="sm" colorScheme="blue" isRound isDisabled={!newAnswer.trim()} onClick={() => { onAddAnswer(newAnswer); setNewAnswer(''); }} />
+        <Flex gap={2} p={1} align="center">
+          <CommentAvartarIcon 
+              size={34} 
+              color={isMentor ? '#53A8FE' : '#AAD4FF'}
+            />
+          <Flex
+            position="absolute" 
+            w="full" 
+            minH={{ md: "112px" }} 
+            bg="#F9F9FB"
+            p={3} 
+            borderRadius="6"
+          >
+            <Input 
+              variant="unstyled" 
+              placeholder="댓글 달기..." 
+              value={newAnswer} 
+              onChange={(e) => setNewAnswer(e.target.value)} 
+              fontSize="sm" 
+              px={3} 
+              h="32px" 
+              flex={1} 
+            />
+            <IconButton 
+              position="absolute"      // ← Flex 안에서 다시 absolute
+              bottom={3}              // Flex 패딩만큼
+              right={3}               // Flex 패딩만큼
+              aria-label="Send" 
+              icon={<CommentIcon />} 
+              size="sm" 
+              colorScheme="blue" 
+              isRound 
+              isDisabled={!newAnswer.trim()}
+              onClick={() => { 
+                onAddAnswer(newAnswer); 
+                setNewAnswer(''); 
+              }}
+            />
+          </Flex>
         </Flex>
       </Box>
     </MotionBox>

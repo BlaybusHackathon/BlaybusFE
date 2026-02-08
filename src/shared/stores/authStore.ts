@@ -4,8 +4,10 @@ import { User } from '@/entities/user/types';
 
 interface AuthState {
   user: User | null;
+  token: string | null; 
   isAuthenticated: boolean;
-  login: (user: User) => void;
+  login: (user: User, token: string) => void; 
+  setUser: (user: User) => void;
   logout: () => void;
 }
 
@@ -13,9 +15,19 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
+      token: null,
       isAuthenticated: false,
-      login: (user) => set({ user, isAuthenticated: true }),
-      logout: () => set({ user: null, isAuthenticated: false }),
+      login: (user, token) => set({ 
+        user, 
+        token, 
+        isAuthenticated: true 
+      }),
+      setUser: (user) => set({ user }),
+      logout: () => set({ 
+        user: null, 
+        token: null, 
+        isAuthenticated: false 
+      }),
     }),
     {
       name: 'auth-storage', 
@@ -32,4 +44,8 @@ export const getAuthorizedUser = (): User => {
   }
   
   return user;
+};
+
+export const getAuthToken = (): string | null => {
+  return useAuthStore.getState().token;
 };

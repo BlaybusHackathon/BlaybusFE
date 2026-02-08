@@ -1,4 +1,5 @@
 import { Box, Flex, Container, Text, HStack } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { TaskList } from '@/widgets/planner/TaskList';
 import { StudyTimeChart } from '@/widgets/planner/StudyTimeChart';
 import { DailyMemoWidget } from '@/widgets/planner/ui/DailyMemoWidget';
@@ -9,9 +10,13 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 const MenteePlannerPage = () => {
-  const { selectedDate } = usePlannerStore();
+  const { selectedDate, loadDailyPlan } = usePlannerStore();
   
   const dateText = format(new Date(selectedDate), 'M월 d일 EEEE', { locale: ko });
+
+  useEffect(() => {
+    loadDailyPlan(selectedDate);
+  }, [selectedDate, loadDailyPlan]);
 
   return (
     <Box w="100%" minH="100vh">

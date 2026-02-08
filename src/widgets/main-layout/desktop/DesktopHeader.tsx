@@ -1,6 +1,8 @@
-import { Flex, IconButton, Text } from '@chakra-ui/react';
+import { Flex, IconButton, Text, HStack } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { useLocation } from 'react-router-dom';
+import { NotificationBell } from '@/widgets/notifications/NotificationBell';
 
 interface Props {
   onToggleSidebar: () => void;
@@ -10,6 +12,16 @@ interface Props {
 export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
   const { user } = useAuthStore();
   const sidebarWidth = isCollapsed ? '80px' : '280px';
+  const location = useLocation();
+
+  const menteeHeaderPaths = [
+    '/mentee/planner',
+    '/mentee/calendar',
+    '/mentee/feedback',
+    '/mentee/mypage',
+  ];
+  const showNotificationBell =
+    user?.role === 'MENTEE' && menteeHeaderPaths.includes(location.pathname);
 
   return (
     <Flex
@@ -38,18 +50,19 @@ export const DesktopHeader = ({ onToggleSidebar, isCollapsed }: Props) => {
         어서오세요, <Text as="span" color="#52A8FE">{user?.name}</Text>
         {user?.role === 'MENTOR' ? '멘토님!' : '님!'}
       </Text>
-      <IconButton
-        icon={<HamburgerIcon w={6} h={6} />}
-        mr="24px"
-        aria-label="Toggle Sidebar"
-        onClick={onToggleSidebar}
-        bg="white"
-        boxShadow="0px 2px 5px rgba(0,0,0,0.1)"
-        borderRadius="full"
-        size="lg"
-        _hover={{ bg: 'gray.50' }}
-        pointerEvents="auto"
-      />
+      <HStack spacing={2} mr="24px" pointerEvents="auto">
+        <NotificationBell isVisible={showNotificationBell} />
+        <IconButton
+          icon={<HamburgerIcon w={6} h={6} />}
+          aria-label="Toggle Sidebar"
+          onClick={onToggleSidebar}
+          bg="white"
+          boxShadow="0px 2px 5px rgba(0,0,0,0.1)"
+          borderRadius="full"
+          size="lg"
+          _hover={{ bg: 'gray.50' }}
+        />
+      </HStack>
     </Flex>
   );
 };

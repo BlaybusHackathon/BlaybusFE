@@ -1,7 +1,7 @@
-import { Box, VStack } from '@chakra-ui/react';
+﻿import { Box, VStack } from '@chakra-ui/react';
 import { ReportSection } from './ReportSection';
 import { ReportDateController } from './ReportDateController';
-import { ReportData } from '@/widgets/mentor-report/model/mockReportData';
+import { ReportData } from '@/features/report/model/types';
 
 interface Props {
     data: ReportData;
@@ -31,22 +31,22 @@ export const ReportDetailWidget = ({ data, dateInfo, onChange, readOnly = false 
                     title="멘토 총평"
                     value={data.totalReview}
                     onChange={(val) => onChange('totalReview', val)}
-                    placeholder="한 주간의 전반적인 학습 태도 및 성취도를 평가해주세요."
+                    placeholder="해당 주간 동안의 전반적인 학습 태도와 성취를 작성해 주세요."
                     readOnly={readOnly}
                 />
                 <ReportSection
-                    title="이번주 잘한 점"
+                    title="이번 주 잘한 점"
                     value={data.wellDone}
                     onChange={(val) => onChange('wellDone', val)}
-                    placeholder="칭찬할 만한 성과나 행동을 적어주세요."
+                    placeholder="칭찬하고 싶은 성과나 행동을 적어주세요."
                     minH="100px"
                     readOnly={readOnly}
                 />
                 <ReportSection
-                    title="다음주 보완할 점"
+                    title="다음 주 보완점"
                     value={data.improvements}
                     onChange={(val) => onChange('improvements', val)}
-                    placeholder="개선이 필요한 부분 및 구체적인 가이드를 적어주세요."
+                    placeholder="개선이 필요한 부분과 구체적인 가이드를 적어주세요."
                     minH="100px"
                     readOnly={readOnly}
                 />

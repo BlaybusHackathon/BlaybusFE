@@ -1,4 +1,4 @@
-import { Flex, Text, Icon } from '@chakra-ui/react';
+﻿import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
 interface Props {
@@ -36,13 +36,13 @@ export const WeeklyReportItem = ({
     >
       <Flex gap={{base:12, md:'20'}}>
         <Text
-          fontSize={{base:"sm",md:"16px"}}
+          fontSize={{base:"sm",md:"xl"}}
           fontWeight="600"
         >
           {weekNumber}주차
         </Text>
 
-        <Text fontSize={{base:"sm",md:"16px"}} fontWeight="bold">
+        <Text fontSize={{base:"sm",md:"xl"}} fontWeight="bold">
           {displayRange}
         </Text>
       </Flex>

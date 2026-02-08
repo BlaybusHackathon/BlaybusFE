@@ -7,82 +7,100 @@ import type {
   CommentMode 
 } from '@/features/task-feedback/model/types';
 
+const DEBUG_FEEDBACK = import.meta.env.DEV;
+
 interface PendingPosition {
   x: number;
   y: number;
 }
 
+const normalizePositionValue = (value: number) => {
+  if (value >= 0 && value <= 1) return value * 100;
+  return value;
+};
+
+const normalizeFeedbackPosition = (feedback: TaskFeedback) => ({
+  ...feedback,
+  xPos: normalizePositionValue(feedback.xPos),
+  yPos: normalizePositionValue(feedback.yPos),
+});
+
 interface TaskFeedbackState {
-  // 데이터
   feedbacksByImage: FeedbacksByImage;
   answersByFeedback: AnswersByFeedback;
-  
-  // UI 상태
   commentMode: CommentMode;
   activeFeedbackId: string | null;
   pendingPosition: PendingPosition | null;
   currentImageId: string | null;
-  
-  // UI 액션
+
   setCommentMode: (mode: CommentMode) => void;
   setActiveFeedback: (id: string | null) => void;
   setPendingPosition: (pos: PendingPosition | null) => void;
   setCurrentImageId: (imageId: string | null) => void;
   resetUIState: () => void;
-  
-  // 피드백 CRUD
+
   loadFeedbacks: (feedbacks: TaskFeedback[]) => void;
   addFeedback: (feedback: TaskFeedback) => void;
   updateFeedback: (id: string, updates: Partial<TaskFeedback>) => void;
   removeFeedback: (id: string) => void;
-  
-  // [추가] 피드백 위치 업데이트
+
   updateFeedbackPosition: (id: string, x: number, y: number) => void;
-  
-  // 댓글 CRUD
+
   loadAnswers: (answers: Answer[]) => void;
   addAnswer: (answer: Answer) => void;
   updateAnswer: (id: string, comment: string) => void;
   removeAnswer: (id: string) => void;
-  
-  // 유틸리티
+
   getFeedbacksForImage: (imageId: string) => TaskFeedback[];
   getAnswersForFeedback: (feedbackId: string) => Answer[];
   canAddFeedback: (imageId: string) => boolean;
 }
 
 export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
-  // 초기 상태
   feedbacksByImage: {},
   answersByFeedback: {},
   commentMode: 'view',
   activeFeedbackId: null,
   pendingPosition: null,
   currentImageId: null,
-  
-  // UI 액션
-  setCommentMode: (mode) => set({ commentMode: mode }),
-  
-  setActiveFeedback: (id) => set({ activeFeedbackId: id }),
-  
-  setPendingPosition: (pos) => set({ pendingPosition: pos }),
-  
-  setCurrentImageId: (imageId) => set({ 
-    currentImageId: imageId,
-    activeFeedbackId: null,
-    pendingPosition: null,
-    commentMode: 'view'
-  }),
-  
-  resetUIState: () => set({
-    commentMode: 'view',
-    activeFeedbackId: null,
-    pendingPosition: null
-  }),
-  
-  // 피드백 CRUD
+
+  setCommentMode: (mode) => {
+    if (DEBUG_FEEDBACK) console.debug('[feedback-store] setCommentMode', { mode });
+    set({ commentMode: mode });
+  },
+  setActiveFeedback: (id) => {
+    if (DEBUG_FEEDBACK) console.debug('[feedback-store] setActiveFeedback', { id });
+    set({ activeFeedbackId: id });
+  },
+  setPendingPosition: (pos) => {
+    if (DEBUG_FEEDBACK) console.debug('[feedback-store] setPendingPosition', { pos });
+    set({ pendingPosition: pos });
+  },
+  setCurrentImageId: (imageId) => {
+    if (DEBUG_FEEDBACK) console.debug('[feedback-store] setCurrentImageId', { imageId });
+    set({ 
+      currentImageId: imageId,
+      activeFeedbackId: null,
+      pendingPosition: null,
+      commentMode: 'view'
+    });
+  },
+  resetUIState: () => {
+    if (DEBUG_FEEDBACK) console.debug('[feedback-store] resetUIState');
+    set({
+      commentMode: 'view',
+      activeFeedbackId: null,
+      pendingPosition: null
+    });
+  },
+
   loadFeedbacks: (feedbacks) => {
-    const grouped = feedbacks.reduce<FeedbacksByImage>((acc, feedback) => {
+    const normalized = feedbacks.map(normalizeFeedbackPosition);
+    if (DEBUG_FEEDBACK) {
+      const imageIds = Array.from(new Set(normalized.map((f) => f.imageId)));
+      console.debug('[feedback-store] loadFeedbacks', { count: normalized.length, imageIds });
+    }
+    const grouped = normalized.reduce<FeedbacksByImage>((acc, feedback) => {
       const key = feedback.imageId;
       if (!acc[key]) acc[key] = [];
       acc[key].push(feedback);
@@ -90,20 +108,21 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }, {});
     set({ feedbacksByImage: grouped });
   },
-  
+
   addFeedback: (feedback) => set((state) => {
-    const imageId = feedback.imageId;
+    const normalized = normalizeFeedbackPosition(feedback);
+    const imageId = normalized.imageId;
     const existing = state.feedbacksByImage[imageId] || [];
     return {
       feedbacksByImage: {
         ...state.feedbacksByImage,
-        [imageId]: [...existing, feedback]
+        [imageId]: [...existing, normalized]
       },
       pendingPosition: null,
       commentMode: 'view'
     };
   }),
-  
+
   updateFeedback: (id, updates) => set((state) => {
     const newFeedbacksByImage = { ...state.feedbacksByImage };
     for (const imageId in newFeedbacksByImage) {
@@ -113,7 +132,7 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }
     return { feedbacksByImage: newFeedbacksByImage };
   }),
-  
+
   removeFeedback: (id) => set((state) => {
     const newFeedbacksByImage = { ...state.feedbacksByImage };
     for (const imageId in newFeedbacksByImage) {
@@ -131,15 +150,11 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
 
   updateFeedbackPosition: (id, x, y) => set((state) => {
     const newFeedbacksByImage = { ...state.feedbacksByImage };
-    
-    // 모든 이미지 그룹을 순회하며 해당 ID를 가진 피드백을 찾아 위치 업데이트
     for (const imageId in newFeedbacksByImage) {
       const index = newFeedbacksByImage[imageId].findIndex(f => f.id === id);
       if (index !== -1) {
         const feedback = newFeedbacksByImage[imageId][index];
         const updatedFeedback = { ...feedback, xPos: x, yPos: y };
-        
-        // 불변성 유지하며 배열 업데이트
         const newArray = [...newFeedbacksByImage[imageId]];
         newArray[index] = updatedFeedback;
         newFeedbacksByImage[imageId] = newArray;
@@ -148,9 +163,12 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }
     return { feedbacksByImage: newFeedbacksByImage };
   }),
-  
-  // 댓글 CRUD
+
   loadAnswers: (answers) => {
+    if (DEBUG_FEEDBACK) {
+      const feedbackIds = Array.from(new Set(answers.map((a) => a.feedbackId)));
+      console.debug('[feedback-store] loadAnswers', { count: answers.length, feedbackIds });
+    }
     const grouped = answers.reduce<AnswersByFeedback>((acc, answer) => {
       const key = answer.feedbackId;
       if (!acc[key]) acc[key] = [];
@@ -159,7 +177,7 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }, {});
     set({ answersByFeedback: grouped });
   },
-  
+
   addAnswer: (answer) => set((state) => {
     const feedbackId = answer.feedbackId;
     const existing = state.answersByFeedback[feedbackId] || [];
@@ -170,7 +188,7 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
       }
     };
   }),
-  
+
   updateAnswer: (id, comment) => set((state) => {
     const newAnswersByFeedback = { ...state.answersByFeedback };
     for (const feedbackId in newAnswersByFeedback) {
@@ -180,7 +198,7 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }
     return { answersByFeedback: newAnswersByFeedback };
   }),
-  
+
   removeAnswer: (id) => set((state) => {
     const newAnswersByFeedback = { ...state.answersByFeedback };
     for (const feedbackId in newAnswersByFeedback) {
@@ -188,11 +206,9 @@ export const useTaskFeedbackStore = create<TaskFeedbackState>((set, get) => ({
     }
     return { answersByFeedback: newAnswersByFeedback };
   }),
-  
+
   getFeedbacksForImage: (imageId) => get().feedbacksByImage[imageId] || [],
-  
   getAnswersForFeedback: (feedbackId) => get().answersByFeedback[feedbackId] || [],
-  
   canAddFeedback: (imageId) => {
     const feedbacks = get().feedbacksByImage[imageId] || [];
     return feedbacks.length < 3;

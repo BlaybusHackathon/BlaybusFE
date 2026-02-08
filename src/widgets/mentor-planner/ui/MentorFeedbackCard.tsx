@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, Text, Flex, Button, Textarea } from '@chakra-ui/react';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { ModifyIcon } from '@/shared/ui/icons';
@@ -13,9 +13,10 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState('');
 
-  useEffect(() => {
+  const startEditing = () => {
     setValue(feedback || '');
-  }, [feedback]);
+    setIsEditing(true);
+  };
 
   const handleSave = () => {
     onSave(value);
@@ -44,7 +45,7 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
             colorScheme="#373E56"
             color={"#9B9BA4"}
             leftIcon={<ModifyIcon />}
-            onClick={() => setIsEditing(true)}
+            onClick={startEditing}
             fontSize="18px"
           >
             수정
@@ -92,7 +93,7 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
           p="32px 34px"
           borderRadius="22px"
           cursor="pointer"
-          onClick={() => setIsEditing(true)}
+          onClick={startEditing}
           transition="background 0.2s"
           _hover={{ bg: feedback ? "gray.50" : "gray.100" }}
         >

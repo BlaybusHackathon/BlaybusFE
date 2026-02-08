@@ -44,4 +44,7 @@ export interface FeedbackWithTask extends TaskFeedback {
     authorProfileUrl: string | null;
     subject?: Subject;
     taskTitle: string;
+    taskDate?: string;
+    weekNumber?: number;
+    menteeName?: string;
 }

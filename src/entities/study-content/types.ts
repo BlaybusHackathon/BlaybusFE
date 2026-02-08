@@ -1,4 +1,5 @@
 import { Subject } from '@/shared/constants/enums';
+import { asRecord, asString, asOptionalString, asEnum, pick } from '@/shared/api/parse';
 
 export interface StudyContent {
   id: string;
@@ -9,11 +10,19 @@ export interface StudyContent {
   mentorId: string | null;
 }
 
-export const mapStudyContentFromApi = (raw: any): StudyContent => ({
-  id: String(raw.id),
-  title: raw.title,
-  subject: raw.subject,
-  contentUrl: raw.content_url,
-  createdAt: raw.created_at,
-  mentorId: raw.mentor_id ? String(raw.mentor_id) : null,
-});
+const SUBJECT_VALUES: readonly Subject[] = ['KOREAN', 'ENGLISH', 'MATH', 'OTHER'];
+
+export const mapStudyContentFromApi = (raw: unknown): StudyContent => {
+  const obj = asRecord(raw, 'StudyContent');
+  return {
+    id: asString(pick(obj, ['id', 'contentId', 'studyContentId', 'study_content_id']), 'StudyContent.id'),
+    title: asString(pick(obj, ['title', 'name', 'fileName', 'file_name']), 'StudyContent.title'),
+    subject: asEnum(pick(obj, ['subject', 'subjectType', 'category']), SUBJECT_VALUES, 'StudyContent.subject'),
+    contentUrl: asOptionalString(
+      pick(obj, ['contentUrl', 'content_url', 'fileUrl', 'file_url', 'url', 'path']),
+      'StudyContent.contentUrl'
+    ) ?? null,
+    createdAt: asString(pick(obj, ['createdAt', 'created_at']), 'StudyContent.createdAt'),
+    mentorId: asOptionalString(pick(obj, ['mentorId', 'mentor_id']), 'StudyContent.mentorId') ?? null,
+  };
+};

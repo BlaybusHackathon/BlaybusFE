@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { MonthlyCalendar } from '@/widgets/calendar/MonthlyCalendar';
 import { WeeklyReportList } from '@/widgets/mentor-report/ui/WeeklyReportList';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_WEEKLY_REPORTS } from '@/widgets/mentor-report/model/mockWeeklyReports'; // 데이터 import
 
 const MenteeCalendarPage = () => {
     const navigate = useNavigate();
@@ -13,18 +12,16 @@ const MenteeCalendarPage = () => {
         navigate(`/mentee/task/${taskId}`);
     };
 
-    const handleReportClick = (startDate: string) => {
-        const report = MOCK_WEEKLY_REPORTS.find(r => r.startDate === startDate);
-        
-        if (report) {
-            navigate(`/mentee/report/${report.id}`);
+    const handleReportClick = ({ reportId }: { startDate: string; endDate: string; reportId?: string }) => {
+        if (reportId) {
+            navigate(`/mentee/report/${reportId}`);
         } else {
             console.log("No report found for this date");
         }
     };
 
     return (
-        <Box p={{ base: 0, md: 6 }}>
+        <Box w={'full'} maxW={'1200px'} justifySelf={'center'} p={{ base: 0, md: 6 }}>
             <Flex 
                 display={{base:"none", md:"flex"}}
                 justify="space-between" 
@@ -32,8 +29,8 @@ const MenteeCalendarPage = () => {
                 mb={6}
             >
                 <Box>
-                    <Heading size={{ base: 'md', md: 'lg' }} mb={1}>
-                        나의 월간 계획표
+                    <Heading ml={8} size={{ base: 'md', md: 'xl' }} mb={1}>
+                        월간 계획
                     </Heading>
                 </Box>
             </Flex>

@@ -18,7 +18,7 @@ export const MentorTaskItem = ({ task, onHover }: Props) => {
   const subjectColor = SUBJECT_COLORS[task.subject] || 'gray.200';
   
   const hasWeakness = task.weaknessId !== null;
-  const isCompleted = task.status === 'COMPLETED';
+  const isCompleted = task.status === 'DONE';
 
   return (
     <Flex

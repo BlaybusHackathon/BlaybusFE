@@ -13,6 +13,7 @@ export const StudyTimeChart = () => {
   const savedSeconds = currentDailyPlanner?.totalStudyTime || 0;
   
   const [displayTotal, setDisplayTotal] = useState(savedSeconds);
+  const displayValue = activeTaskId && timerStartedAt ? displayTotal : savedSeconds;
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -22,10 +23,7 @@ export const StudyTimeChart = () => {
         const currentSession = Math.floor((Date.now() - timerStartedAt) / 1000);
         setDisplayTotal(savedSeconds + currentSession);
       };
-      update();
       intervalId = setInterval(update, 1000);
-    } else {
-      setDisplayTotal(savedSeconds);
     }
 
     return () => clearInterval(intervalId);
@@ -40,7 +38,7 @@ export const StudyTimeChart = () => {
         <Flex align={'center'} gap={1}>
           <TimerIcon/>
           <Text fontSize="lg" fontWeight="bold" color="#373E56" letterSpacing="wider" >
-            {formatDuration(displayTotal)}
+            {formatDuration(displayValue)}
           </Text>
         </Flex>
       </Flex>

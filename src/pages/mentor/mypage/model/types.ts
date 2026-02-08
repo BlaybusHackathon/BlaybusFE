@@ -1,4 +1,4 @@
-export interface DashboardStats {
+﻿export interface DashboardStats {
   uncheckedTaskCount: number;
   pendingFeedbackCount: number;
 }
@@ -12,6 +12,9 @@ export interface MenteeSummary {
     english: number;
     math: number;
   };
+  school?: string;
+  grade?: number;
+  lastActiveAt?: string | null;
 }
 
 export interface RecentSubmittedTask {
@@ -31,4 +34,5 @@ export interface RecentFeedbackComment {
   taskId: string;
   feedbackId: string;
   createdAt: string;
+  isRead?: boolean;
 }
