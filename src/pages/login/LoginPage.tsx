@@ -1,13 +1,13 @@
 import { Center, Box, VStack } from '@chakra-ui/react';
 import { LoginForm } from '@/features/auth';
+import { LogoIcon } from '@/shared/ui/icons';
 
 const LoginPage = () => {
     return (
         <Center minH="100vh" bg="#F9F9FB" p={4}>
             <VStack spacing={10} mb={32}>
-                {/* Logo Section */}
                 <Box mb={8}>
-                    <img src="/src/assets/Subtract.svg" alt="SeolStudy Logo" width="80" />
+                    <LogoIcon />
                 </Box>
 
                 <Box
