@@ -1,5 +1,5 @@
 import { Subject } from '@/shared/constants/subjects';
-import { asRecord, asString, asOptionalString, asEnum, pick } from '@/shared/api/parse';
+import { asRecord, asOptionalString, pick } from '@/shared/api/parse';
 
 export interface Weakness {
   id: string;       
@@ -15,18 +15,31 @@ export interface Weakness {
 
 const SUBJECT_VALUES: readonly Subject[] = ['KOREAN', 'ENGLISH', 'MATH', 'OTHER'];
 
+const safeString = (value: unknown, fallback = ''): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return fallback;
+};
+
+const safeSubject = (value: unknown): Subject => {
+  if (typeof value === 'string' && SUBJECT_VALUES.includes(value as Subject)) {
+    return value as Subject;
+  }
+  return 'OTHER';
+};
+
 export const mapWeaknessFromApi = (raw: unknown): Weakness => {
   const obj = asRecord(raw, 'Weakness');
   const studyContent = obj.study_content;
   const studyRecord = studyContent && typeof studyContent === 'object' ? (studyContent as Record<string, unknown>) : undefined;
 
   return {
-    id: asString(pick(obj, ['id', 'weaknessId', 'weakness_id']), 'Weakness.id'),
-    title: asString(pick(obj, ['title']), 'Weakness.title'),
-    inforId: asString(pick(obj, ['inforId', 'infor_id']), 'Weakness.inforId'),
-    contentId: asString(pick(obj, ['contentId', 'content_id']), 'Weakness.contentId'),
-    menteeId: asString(pick(obj, ['menteeId', 'mentee_id']), 'Weakness.menteeId'),
-    subject: asEnum(pick(obj, ['subject']), SUBJECT_VALUES, 'Weakness.subject'),
+    id: safeString(pick(obj, ['id', 'weaknessId', 'weakness_id'])),
+    title: safeString(pick(obj, ['title'])),
+    inforId: safeString(pick(obj, ['inforId', 'infor_id'])),
+    contentId: safeString(pick(obj, ['contentId', 'content_id'])),
+    menteeId: safeString(pick(obj, ['menteeId', 'mentee_id'])),
+    subject: safeSubject(pick(obj, ['subject'])),
     fileName:
       asOptionalString(pick(obj, ['fileName', 'file_name', 'contentTitle']), 'Weakness.fileName') ??
       (studyRecord ? asOptionalString(studyRecord.title, 'Weakness.studyContent.title') : undefined),

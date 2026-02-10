@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { 
-  Box, Flex, IconButton, Image, Text, Button, Spinner, Center 
+import {
+  Box,
+  Flex,
+  IconButton,
+  Image,
+  Text,
+  Button,
+  Spinner,
+  Center,
+  VStack,
 } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { DownloadIcon } from '@/shared/ui/icons';
@@ -38,6 +46,29 @@ export const ResourceSlider = ({ materials }: ResourceSliderProps) => {
 
   const currentItem = materials[currentIndex];
   const fileType = getFileType(currentItem?.url, currentItem?.title);
+  const renderPdfError = () => (
+    <Center h="400px" px={6} textAlign="center">
+      <VStack spacing={3}>
+        <Text fontSize="sm" color="gray.600">
+          미리보기를 불러올 수 없습니다.
+        </Text>
+        <Text fontSize="xs" color="gray.500">
+          새 탭에서 열거나 다운로드해서 확인해 주세요.
+        </Text>
+        <Button
+          as="a"
+          href={currentItem.url}
+          target="_blank"
+          rel="noreferrer"
+          size="sm"
+          variant="outline"
+          colorScheme="blue"
+        >
+          새 탭에서 열기
+        </Button>
+      </VStack>
+    </Center>
+  );
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -111,6 +142,7 @@ export const ResourceSlider = ({ materials }: ResourceSliderProps) => {
                 <Viewer
                   fileUrl={currentItem.url}
                   defaultScale={SpecialZoomLevel.PageWidth} 
+                  renderError={renderPdfError}
                   renderLoader={() => (
                     <Center h="400px">
                       <Spinner size="xl" color="blue.500" />

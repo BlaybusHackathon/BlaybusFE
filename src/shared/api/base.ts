@@ -15,7 +15,6 @@ const attachAuth = (config: InternalAxiosRequestConfig) => {
 };
 
 export const rawClient = axios.create({ baseURL });
-rawClient.interceptors.request.use(attachAuth);
 
 export const apiClient = axios.create({ baseURL });
 apiClient.interceptors.request.use(attachAuth);

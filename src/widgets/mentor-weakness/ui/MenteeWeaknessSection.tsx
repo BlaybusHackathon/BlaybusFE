@@ -16,7 +16,7 @@ const SUBJECT_TABS: { value: Subject; label: string }[] = [
 
 export const MenteeWeaknessSection = () => {
   const { menteeId } = useParams();
-  const { data: weaknesses, setData: setWeaknesses } = useMenteeWeaknesses(menteeId);
+  const { data: weaknesses, setData: setWeaknesses, refetch: refetchWeaknesses } = useMenteeWeaknesses(menteeId);
   const { create, update, remove } = useWeaknessMutations();
 
   const [selectedSubject, setSelectedSubject] = useState<Subject | 'ALL'>('ALL');
@@ -62,11 +62,13 @@ export const MenteeWeaknessSection = () => {
     const target = isAdding ? undefined : list.find((w) => w.id === id);
     const resolvedSubject = isAdding ? fallbackSubject : (target?.subject ?? fallbackSubject);
     let contentId: string | number | undefined = existingContentId;
+    let uploadedContent: { id: string; title: string; fileUrl?: string | null } | null = null;
 
     if (file) {
       try {
-        const uploaded = await studyContentApi.upload(file, { title, subject: resolvedSubject });
+        const uploaded = await studyContentApi.upload(file, { title: file.name, subject: resolvedSubject });
         contentId = uploaded?.id;
+        uploadedContent = uploaded ?? null;
       } catch (error) {
         console.error('Failed to upload study content', error);
         alert('파일 업로드에 실패했습니다.');
@@ -88,9 +90,17 @@ export const MenteeWeaknessSection = () => {
         contentId,
       });
       if (created) {
-        setWeaknesses((prev) => ([...(prev ?? []), created]));
+        const merged = {
+          ...created,
+          contentId: created.contentId || (contentId ? String(contentId) : ''),
+          menteeId: created.menteeId || menteeId,
+          fileName: created.fileName ?? uploadedContent?.title ?? file?.name,
+          fileUrl: created.fileUrl ?? uploadedContent?.fileUrl ?? null,
+        };
+        setWeaknesses((prev) => ([...(prev ?? []), merged]));
       }
       setIsAdding(false);
+      refetchWeaknesses();
       return;
     }
 
@@ -108,6 +118,7 @@ export const MenteeWeaknessSection = () => {
       setWeaknesses((prev) => (prev ?? []).map((w) => (w.id === id ? updated : w)));
     }
     setEditingId(null);
+    refetchWeaknesses();
   };
 
   const handleDelete = async (id: string) => {
@@ -116,6 +127,7 @@ export const MenteeWeaknessSection = () => {
     await remove.mutate(id);
     setWeaknesses((prev) => (prev ?? []).filter((w) => w.id !== id));
     if (editingId === id) setEditingId(null);
+    refetchWeaknesses();
   };
 
   const handleTabChange = (subject: Subject | 'ALL') => {

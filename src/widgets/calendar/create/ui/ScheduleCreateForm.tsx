@@ -5,8 +5,7 @@ import { DaySelector } from './DaySelector';
 import { LearningMaterialSection } from './LearningMaterialSection';
 import { useScheduleCreateStore } from '../model/store';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { addDays, startOfWeek, addWeeks, format } from 'date-fns';
+import { getWeekDateRange } from '../model/dateOptions';
 import { taskApi } from '@/features/task/api/taskApi';
 import { studyContentApi } from '@/features/study-content/api/studyContentApi';
 
@@ -40,11 +39,12 @@ export const ScheduleCreateForm = () => {
             return;
         }
 
-        const weekNumber = Math.max(1, parseInt(selectedWeek, 10) || 1);
-        const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-        const targetWeekStart = addWeeks(weekStart, weekNumber - 1);
-        const startDate = format(targetWeekStart, 'yyyy-MM-dd');
-        const endDate = format(addDays(targetWeekStart, 6), 'yyyy-MM-dd');
+        const today = new Date();
+        const { weekNumber, startDate, endDate } = getWeekDateRange(
+            today.getFullYear(),
+            today.getMonth() + 1,
+            selectedWeek
+        );
 
         const toBackendDay = (day: string) => {
             const map: Record<string, string> = {

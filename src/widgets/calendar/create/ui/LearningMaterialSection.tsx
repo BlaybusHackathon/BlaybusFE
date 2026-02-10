@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Icon, Input, Text, VStack, HStack, IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { useScheduleCreateStore } from '../model/store';
-import { DAYS } from '../model/mockData';
+import { DAY_OPTIONS } from '../model/dateOptions';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 
 export const LearningMaterialSection = () => {
@@ -14,8 +14,8 @@ export const LearningMaterialSection = () => {
         toggleWorksheetDay
     } = useScheduleCreateStore();
 
-    // Sort global selected days to match the order in DAYS (e.g., Mon -> Sun)
-    const sortedGlobalDays = DAYS.filter((day) => globalSelectedDays.includes(day.value));
+    // Sort global selected days to match the order in DAY_OPTIONS (Sun -> Sat)
+    const sortedGlobalDays = DAY_OPTIONS.filter((day) => globalSelectedDays.includes(day.value));
 
     // Handler for file input change
     const handleFileChange = (worksheetId: string, e: React.ChangeEvent<HTMLInputElement>) => {

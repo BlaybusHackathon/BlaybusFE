@@ -1,10 +1,13 @@
 import { Box, Button, HStack, Text, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useScheduleCreateStore } from '../model/store';
-import { DAYS, WEEKS } from '../model/mockData';
+import { DAY_OPTIONS, getWeekOptions } from '../model/dateOptions';
 
 export const DaySelector = () => {
     const { selectedWeek, setSelectedWeek, selectedDays, toggleDay } = useScheduleCreateStore();
+    const weekOptions = getWeekOptions();
+    const selectedWeekLabel =
+        weekOptions.find((week) => week.value === selectedWeek)?.label ?? `${selectedWeek}주차`;
 
     return (
         <Box>
@@ -28,7 +31,7 @@ export const DaySelector = () => {
                             _hover={{ borderColor: 'blue.400' }}
                             _active={{ bg: 'white', borderColor: 'blue.400' }}
                         >
-                            {selectedWeek}
+                            {selectedWeekLabel}
                         </MenuButton>
                         <MenuList
                             bg="white"
@@ -38,14 +41,14 @@ export const DaySelector = () => {
                             zIndex={10}
                             minW="100px"
                         >
-                            {WEEKS.map((week) => (
+                            {weekOptions.map((week) => (
                                 <MenuItem
-                                    key={week}
-                                    onClick={() => setSelectedWeek(week)}
+                                    key={week.value}
+                                    onClick={() => setSelectedWeek(week.value)}
                                     _hover={{ bg: 'blue.50' }}
                                     _focus={{ bg: 'blue.50' }}
                                 >
-                                    {week}
+                                    {week.label}
                                 </MenuItem>
                             ))}
                         </MenuList>
@@ -53,7 +56,7 @@ export const DaySelector = () => {
                 </Box>
 
                 {/* Day Toggles */}
-                {DAYS.map((day) => (
+                {DAY_OPTIONS.map((day) => (
                     <Button
                         key={day.value}
                         onClick={() => toggleDay(day.value)}

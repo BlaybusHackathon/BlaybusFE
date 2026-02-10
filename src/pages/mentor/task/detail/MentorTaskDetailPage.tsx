@@ -14,15 +14,17 @@
     AlertDialogContent,
     AlertDialogOverlay,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { format, parse } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '@/shared/stores/authStore';
+import { useTaskFeedbackStore } from '@/shared/stores/taskFeedbackStore';
 import { ImageSlider, TaskDetailHeader } from '@/widgets/task-detail';
 import { ResourceSlider, StudyMaterial } from '@/widgets/task-detail/ResourceSlider';
 import { Subject } from '@/widgets/task-detail/TaskDetailHeader';
 import { useTaskDetail } from '@/features/task/model/useTaskDetail';
 import { taskApi } from '@/features/task/api/taskApi';
+import { feedbackApi } from '@/features/task-feedback/api/feedbackApi';
 
 const formatTaskDate = (value?: string) => {
     if (!value) return '';
@@ -38,6 +40,8 @@ const MentorTaskDetailPage = () => {
     const { taskId } = useParams<{ taskId: string }>(); 
     const navigate = useNavigate();
     const { user } = useAuthStore();
+    const { loadFeedbacks, loadAnswers, resetUIState } = useTaskFeedbackStore();
+    const DEBUG_FEEDBACK = import.meta.env.DEV;
     const toast = useToast(); 
 
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -47,12 +51,14 @@ const MentorTaskDetailPage = () => {
     const { data, setData } = useTaskDetail(taskId);
     const effectiveTaskId = taskId ?? data?.id;
 
-    const submissionImages = data?.submission?.images ?? [];
-    const submissionImageIds = data?.submission?.imageIds ?? [];
-    const formattedImages = submissionImages.map((url, idx) => ({
-        id: submissionImageIds[idx] ?? `img-${idx}`,
-        imageUrl: url
-    }));
+    const formattedImages = useMemo(() => {
+        const submissionImages = data?.submission?.images ?? [];
+        const submissionImageIds = data?.submission?.imageIds ?? [];
+        return submissionImages.map((url, idx) => ({
+            id: submissionImageIds[idx] ?? `img-${idx}`,
+            imageUrl: url
+        }));
+    }, [data?.submission?.images, data?.submission?.imageIds]);
     const hasSubmission = Boolean(data?.submission);
     const submissionStatus = hasSubmission ? '제출됨' : '미제출';
 
@@ -75,6 +81,88 @@ const MentorTaskDetailPage = () => {
     }
 
     const taskDateLabel = formatTaskDate(data?.taskDate);
+
+    useEffect(() => {
+        resetUIState();
+
+        if (DEBUG_FEEDBACK) {
+            console.debug('[feedback-debug] mentor effect start', {
+                taskId,
+                isFeedbackReceived: data?.submission?.isFeedbackReceived,
+                submissionImages: formattedImages.map((img) => img.id),
+            });
+        }
+
+        if (!data?.submission?.isFeedbackReceived || formattedImages.length === 0) {
+            if (DEBUG_FEEDBACK) {
+                console.debug('[feedback-debug] mentor no feedback or images', {
+                    taskId,
+                    isFeedbackReceived: data?.submission?.isFeedbackReceived,
+                    submissionImages: formattedImages.map((img) => img.id),
+                });
+            }
+            loadFeedbacks([]);
+            loadAnswers([]);
+            return;
+        }
+
+        let active = true;
+        const run = async () => {
+            const feedbackResults = await Promise.allSettled(
+                formattedImages.map((img) => feedbackApi.getFeedbacksByImageId(img.id))
+            );
+            const feedbacks = feedbackResults.flatMap((result) =>
+                result.status === 'fulfilled' ? result.value : []
+            );
+
+            if (DEBUG_FEEDBACK) {
+                console.debug('[feedback-debug] mentor fetched feedbacks', {
+                    count: feedbacks.length,
+                    ids: feedbacks.map((f) => f.id),
+                });
+            }
+
+            const answerResults = await Promise.allSettled(
+                feedbacks.map((fb) => feedbackApi.getComments(fb.id))
+            );
+            const answers = answerResults.flatMap((result) =>
+                result.status === 'fulfilled' ? result.value : []
+            );
+
+            if (DEBUG_FEEDBACK) {
+                console.debug('[feedback-debug] mentor fetched answers', {
+                    count: answers.length,
+                });
+            }
+
+            if (active) {
+                if (DEBUG_FEEDBACK) {
+                    console.debug('[feedback-debug] mentor load to store', {
+                        feedbackCount: feedbacks.length,
+                        answerCount: answers.length,
+                    });
+                }
+                loadFeedbacks(feedbacks);
+                loadAnswers(answers);
+            }
+        };
+
+        run();
+        return () => {
+            if (DEBUG_FEEDBACK) {
+                console.debug('[feedback-debug] mentor effect cleanup');
+            }
+            active = false;
+        };
+    }, [
+        taskId,
+        data?.submission?.isFeedbackReceived,
+        formattedImages,
+        resetUIState,
+        loadFeedbacks,
+        loadAnswers,
+        DEBUG_FEEDBACK,
+    ]);
 
     const handleExit = () => {
         onClose();

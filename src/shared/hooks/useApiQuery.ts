@@ -40,7 +40,9 @@ export const useApiQuery = <T>(
   }, []);
 
   useEffect(() => {
-    run();
+    run().catch(() => {
+      // Error state is already handled; avoid unhandled promise rejections.
+    });
   }, [run, depsKey]);
 
   return { data, error, isLoading, refetch: run, setData };

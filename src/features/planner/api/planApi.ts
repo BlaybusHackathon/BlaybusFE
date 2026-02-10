@@ -107,9 +107,30 @@ const normalizeFeedback = (raw: unknown): PlanFeedback => {
   };
 };
 
+const isNotFoundError = (error: unknown): boolean => {
+  return (
+    isRecord(error) &&
+    typeof error.code === 'string' &&
+    (error.code === '404' || error.code === 'NOT_FOUND' || error.code === 'PLAN_NOT_FOUND')
+  );
+};
+
 export const planApi = {
   getDailyPlan: async (params: DailyPlanQuery): Promise<DailyPlanResult> => {
-    const data = await apiClient.get('/plans', { params });
+    let data: unknown;
+    try {
+      data = await apiClient.get('/plans', { params });
+    } catch (error) {
+      if (isNotFoundError(error)) {
+        return {
+          planner: null,
+          tasks: [],
+          taskLogs: [],
+          totalStudyTime: 0,
+        };
+      }
+      throw error;
+    }
     const obj = asRecord(data, 'PlanResponse');
 
     const plannerRaw = obj.planner ?? obj.plan ?? obj.dailyPlanner ?? obj;

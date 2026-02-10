@@ -28,7 +28,7 @@ export interface ScheduleCreateState {
     isWeaknessSelected: boolean;
     selectedWeaknessId: string | null;
 
-    selectedWeek: string; // e.g., '1주차'
+    selectedWeek: number; // e.g., 1 (1주차)
     selectedDays: string[]; // ['MONDAY', 'WEDNESDAY'] - Global selected days
 
     title: string;

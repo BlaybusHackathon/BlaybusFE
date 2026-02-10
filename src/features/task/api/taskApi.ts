@@ -18,6 +18,88 @@ const toFileData = (raw: unknown): FileData | null => {
   return { title, url };
 };
 
+const safeOptionalString = (value: unknown): string | undefined => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return undefined;
+};
+
+const toWeakness = (taskObj: Record<string, unknown>): TaskDetailFullData['weakness'] => {
+  const weaknessRaw = pick(taskObj, ['weakness', 'weaknessInfo', 'weakness_info', 'weaknessDetail', 'weakness_detail']);
+  const weaknessObj = isRecord(weaknessRaw) ? weaknessRaw : null;
+
+  const title =
+    safeOptionalString(
+      weaknessObj ? pick(weaknessObj, ['title', 'weaknessTitle', 'weakness_title']) : undefined
+    ) ??
+    safeOptionalString(
+      pick(taskObj, ['weaknessTitle', 'weakness_title', 'weaknessName', 'weakness_name', 'supplementTitle', 'supplement_title'])
+    );
+
+  const candidates: unknown[] = [];
+  if (weaknessObj) {
+    const nestedContent = pick(weaknessObj, [
+      'studyContent',
+      'study_content',
+      'content',
+      'file',
+      'fileInfo',
+      'file_info',
+      'studyFile',
+      'study_file',
+    ]);
+    if (nestedContent) candidates.push(nestedContent);
+    candidates.push(weaknessObj);
+  }
+
+  const rootWeaknessFile = pick(taskObj, [
+    'weaknessFile',
+    'weakness_file',
+    'weaknessContent',
+    'weakness_content',
+    'weaknessStudyContent',
+    'weakness_study_content',
+  ]);
+  if (rootWeaknessFile) candidates.push(rootWeaknessFile);
+
+  const rootFileInfo = {
+    title: safeOptionalString(
+      pick(taskObj, [
+        'weaknessContentTitle',
+        'weakness_content_title',
+        'weaknessFileName',
+        'weakness_file_name',
+        'weaknessFileTitle',
+        'weakness_file_title',
+      ])
+    ),
+    url: safeOptionalString(
+      pick(taskObj, [
+        'weaknessContentUrl',
+        'weakness_content_url',
+        'weaknessFileUrl',
+        'weakness_file_url',
+      ])
+    ),
+  };
+  if (rootFileInfo.title || rootFileInfo.url) candidates.push(rootFileInfo);
+
+  let file: FileData | null = null;
+  for (const candidate of candidates) {
+    const parsed = toFileData(candidate);
+    if (parsed) {
+      file = parsed;
+      break;
+    }
+  }
+
+  if (!title && !file) return null;
+  return {
+    title: title ?? file?.title ?? '보완점',
+    file,
+  };
+};
+
 const toSubmission = (raw: unknown): TaskDetailFullData['submission'] | null => {
   if (raw === null || raw === undefined) return null;
   const item = Array.isArray(raw)
@@ -74,6 +156,7 @@ export const taskApi = {
     };
 
     const submission = toSubmission(submissionRaw);
+    const weakness = toWeakness(taskObj);
 
     return {
       id: asString(pick(taskObj, ['id']), 'TaskDetail.id'),
@@ -86,7 +169,7 @@ export const taskApi = {
       isMentorChecked: Boolean(pick(taskObj, ['isMentorChecked', 'is_mentor_checked'])),
       description: asOptionalString(pick(taskObj, ['description', 'desc']), 'TaskDetail.description'),
       taskFile: taskFileRaw.url ? toFileData(taskFileRaw) : null,
-      weakness: null,
+      weakness,
       submission,
     };
   },

@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { ScheduleCreateState, Subject } from './types';
+import { getDefaultWeek } from './dateOptions';
 
 interface ScheduleCreateActions {
     setSubject: (subject: Subject | null) => void;
     toggleWeakness: () => void;
     setSelectedWeaknessId: (id: string | null) => void;
 
-    setSelectedWeek: (week: string) => void;
+    setSelectedWeek: (week: number) => void;
     toggleDay: (day: string) => void;
 
     setTitle: (title: string) => void;
@@ -19,15 +20,17 @@ interface ScheduleCreateActions {
     reset: () => void;
 }
 
-const initialState: ScheduleCreateState = {
+const createInitialState = (): ScheduleCreateState => ({
     subject: 'KOREAN', // Default to Korean
     isWeaknessSelected: false,
     selectedWeaknessId: null,
-    selectedWeek: '1주차',
+    selectedWeek: getDefaultWeek(),
     selectedDays: [],
     title: '',
     worksheets: [],
-};
+});
+
+const initialState = createInitialState();
 
 export const useScheduleCreateStore = create<ScheduleCreateState & ScheduleCreateActions>((set) => ({
     ...initialState,
@@ -111,5 +114,5 @@ export const useScheduleCreateStore = create<ScheduleCreateState & ScheduleCreat
         }),
     })),
 
-    reset: () => set(initialState),
+    reset: () => set(createInitialState()),
 }));
