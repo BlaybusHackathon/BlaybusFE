@@ -34,7 +34,7 @@ export const AnswerItem = ({ answer, currentUserId, onEdit, onDelete }: AnswerIt
     <Box mb={3}>
       <Flex justify="space-between" align="flex-start">
         <Flex gap={2} align="center" mb={1}>
-          <CommentAvartarIcon size={34} color='#AAD4FF'/>
+          <CommentAvartarIcon size={30} color='#AAD4FF'/>
           <Text fontWeight="medium" fontSize={{base:"sm", md:"xl"}} color="#394250">
             {answer.authorName}
             {isMentor && <Text as="span" fontSize="10px" ml={1}>(멘토)</Text>}
@@ -65,8 +65,9 @@ export const AnswerItem = ({ answer, currentUserId, onEdit, onDelete }: AnswerIt
           </Menu>
         )}
       </Flex>
-                 
-      <Text fontSize={{base:"xs", md:"md"}} color="#394250" whiteSpace="pre-wrap" lineHeight="1.3">{answer.comment}</Text>
+      <Flex w={'full'} pl={10} mb={8}>
+        <Text fontSize={{base:"xs", md:"md"}} color="#394250" whiteSpace="pre-wrap" lineHeight="1.3">{answer.comment}</Text>
+      </Flex>    
     </Box>
   );
 };

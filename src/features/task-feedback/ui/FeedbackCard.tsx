@@ -98,6 +98,8 @@ export const FeedbackCard = ({
 
   return (
     <MotionBox
+      pl={4}
+      pt={4}
       layoutId={`feedback-${feedback.id}`}
       zIndex={200}
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
@@ -112,17 +114,15 @@ export const FeedbackCard = ({
       <Flex justify="space-between" align="center" p={3} borderBottom="1px solid" borderColor="gray.50" bg="white">
         <Flex gap={2} align="center">
           <Box
-            w="24px"
-            h="24px"
+            w="34px"
+            h="34px"
             borderRadius="full"
             bg="blue.100"
             display="flex"
             alignItems="center"
             justifyContent="center"
           >
-            <Text fontSize="xs" fontWeight="bold" color="blue.600">
-              {feedback.authorName?.[0] ?? ''}
-            </Text>
+            <CommentAvartarIcon size={38} color="#53A8FE" />
           </Box>
           <Text fontWeight="bold" fontSize="sm" color="gray.800">
             {feedback.authorName}
@@ -162,9 +162,10 @@ export const FeedbackCard = ({
       </Flex>
 
       {/* Body */}
-      <Box p={4} maxH="300px" overflowY="auto">
+      <Box  maxH="300px" overflowY="auto">
         <Text
-          fontSize="sm"
+          pl={12}
+          fontSize="md"
           lineHeight="1.6"
           color="gray.700"
           mb={feedback.imageUrl ? 3 : 0}
@@ -202,7 +203,7 @@ export const FeedbackCard = ({
         </Box>
         <Flex gap={3} align="flex-start">
           <Box mt={1}>
-            <CommentAvartarIcon size={38} color="#AAD4FF" />
+            <CommentAvartarIcon size={34} color="#53A8FE" />
           </Box>
           <Box position="relative" flex={1}>
             <Textarea
