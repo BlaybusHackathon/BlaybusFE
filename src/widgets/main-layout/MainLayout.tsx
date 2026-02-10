@@ -70,23 +70,26 @@ export const MainLayout = () => {
           isCollapsed={isCollapsed}
           onToggleSidebar={() => setIsCollapsed(!isCollapsed)}
         />
-        <Box
-          ml={sidebarWidth}
-          mt="0"
-          pt="90px"
-          minH="100vh"
-          transition="margin-left 0.3s ease"
-        >
-          <Outlet />
-        </Box>
       </Box>
 
       <Box display={{ base: 'block', md: 'none' }}>
         <MobileHeader />
-        <Box pt="4.5rem" pb="64px" px={0} minH="100vh" bg={{base:"#F9F9FB", md:"white"}}>
-          <Outlet />
-        </Box>
+      </Box>
 
+      <Box
+        ml={{ base: 0, md: sidebarWidth }}
+        mt="0"
+        pt={{ base: '4.5rem', md: '90px' }}
+        pb={{ base: '64px', md: 0 }}
+        px={0}
+        minH="100vh"
+        transition="margin-left 0.3s ease"
+        bg={{ base: '#F9F9FB', md: 'white' }}
+      >
+        <Outlet />
+      </Box>
+
+      <Box display={{ base: 'block', md: 'none' }}>
         <MobileBottomNav navItems={navItems} />
       </Box>
     </Box>
