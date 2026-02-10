@@ -43,6 +43,7 @@ const getTypeLabel = (type: Notification['type']): string => {
 };
 
 const getMessage = (item: Notification): string => {
+  if (item.message) return item.message;
   const title = item.targetTitle ?? '과제';
   switch (item.type) {
     case 'FEEDBACK':
@@ -57,7 +58,7 @@ const getMessage = (item: Notification): string => {
     case 'REMINDER':
       return '멘토님이 새로운 할 일을 추가했어요.';
     default:
-      return item.message || '멘토님이 알림을 보냈어요.';
+      return '멘토님이 알림을 보냈어요.';
   }
 };
 

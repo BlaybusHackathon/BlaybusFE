@@ -12,7 +12,7 @@ const MentorMenteeManagePage = () => {
     const { data: profile, isLoading, error } = useMenteeDashboard(menteeId);
 
     return (
-        <Box maxW="1200px" mx="auto" p={8}>
+        <Box maxW="1200px" mx="auto" px={{ base: 4, md: 8 }} py={{ base: 6, md: 8 }}>
             <Text fontSize="2xl" fontWeight="bold" mb={6}>담당 멘티</Text>
 
             {isLoading && (
@@ -36,7 +36,7 @@ const MentorMenteeManagePage = () => {
                 orientation="horizontal"
                 borderBottomWidth="3px"
                 borderColor="#F4F4F4"
-                my="50px"
+                my={{ base: 8, md: 12 }}
                 opacity={1}
                 borderStyle="solid"
             />
@@ -49,19 +49,19 @@ const MentorMenteeManagePage = () => {
                 orientation="horizontal"
                 borderBottomWidth="3px"
                 borderColor="#F4F4F4"
-                my="50px"
+                my={{ base: 8, md: 12 }}
                 opacity={1}
                 borderStyle="solid"
             />
 
-            <Box mb={10}>
+            <Box mb={{ base: 8, md: 10 }}>
                 <MenteeWeaknessSection />
             </Box>
 
             <Grid
                 templateColumns={{ base: '1fr', lg: '1fr 1fr' }}
-                gap={8}
-                mt={8}
+                gap={{ base: 6, md: 8 }}
+                mt={{ base: 6, md: 8 }}
             >
                 <GridItem>
                     <WeeklyReportList />

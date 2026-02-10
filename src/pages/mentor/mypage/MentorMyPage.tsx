@@ -26,23 +26,23 @@ export default function MentorMyPage() {
   }
 
   return (
-    <Box maxW="1051px" mx="auto">
-      <Text fontSize="36px" fontWeight="700" mb="40px">마이페이지</Text>
+    <Box maxW="1051px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 0 }}>
+      <Text fontSize="36px" fontWeight="700" mb={{ base: 6, md: '40px' }}>마이페이지</Text>
 
-      <Box mb="30px">
-        <Box display="inline-flex" alignItems="center" gap="50px">
+      <Box mb={{ base: 6, md: '30px' }}>
+        <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'stretch', md: 'center' }} gap={{ base: 4, md: '50px' }}>
           <StatCard label="과제 미확인" count={data.stats.uncheckedTaskCount} />
           <StatCard label="피드백 대기" count={data.stats.pendingFeedbackCount} />
-        </Box>
+        </Flex>
       </Box>
 
       <Box>
         <MenteeList mentees={data.mentees} />
       </Box>
 
-      <Divider h="3px" mt="50px" mb="50px" bg="#F4F4F4" />
+      <Divider h="3px" mt={{ base: 8, md: '50px' }} mb={{ base: 8, md: '50px' }} bg="#F4F4F4" />
 
-      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} pb={10}>
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 4, md: 6 }} pb={{ base: 8, md: 10 }}>
         <GridItem>
           <RecentTaskList tasks={data.recentTasks} />
         </GridItem>

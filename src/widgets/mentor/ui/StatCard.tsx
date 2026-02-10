@@ -9,7 +9,7 @@ export const StatCard = ({ label, count }: Props) => {
   return (
     <Flex
       display="flex"
-      alignItems="flex-start"
+      alignItems="center"
       gap="6px"
     >
       <Text
@@ -36,7 +36,7 @@ export const StatCard = ({ label, count }: Props) => {
           fontWeight="600"
           fontSize="16px"
           fontStyle="normal"
-          lineHeight="normal"
+          lineHeight="1"
         >
           {count}
         </Text>
