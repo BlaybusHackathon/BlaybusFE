@@ -95,7 +95,7 @@ export const MenteeWeaknessSection = () => {
           contentId: created.contentId || (contentId ? String(contentId) : ''),
           menteeId: created.menteeId || menteeId,
           fileName: created.fileName ?? uploadedContent?.title ?? file?.name,
-          fileUrl: created.fileUrl ?? uploadedContent?.fileUrl ?? null,
+          fileUrl: created.fileUrl ?? uploadedContent?.fileUrl ?? undefined,
         };
         setWeaknesses((prev) => ([...(prev ?? []), merged]));
       }
