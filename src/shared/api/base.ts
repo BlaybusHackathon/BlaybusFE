@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+﻿import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import type { ApiError, ApiResponse } from './types';
 import { getAuthToken, logoutAndClear } from '@/shared/stores/authStore';
 import { isRecord } from './parse';
@@ -39,7 +39,7 @@ const unwrapResponse = (res: AxiosResponse) => {
   return body;
 };
 apiClient.interceptors.response.use(
-  (res) => unwrapResponse(res) as any,
+  (res: AxiosResponse) => unwrapResponse(res) as any,
   (err: AxiosError<unknown>) => {
     const status = err.response?.status;
     if (status === 401 || status === 403) {
@@ -78,3 +78,4 @@ apiClient.interceptors.response.use(
     } as ApiError);
   }
 );
+
