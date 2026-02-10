@@ -20,12 +20,42 @@ export const FeedbackInputForm = ({
   const [imageUrl, setImageUrl] = useState<string | null>(initialImageUrl);
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isBoldMode, setIsBoldMode] = useState(false);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
   const toggleEmphasis = () => {
     setIsBoldMode(!isBoldMode);
-    setContent(prev => prev + ' **강조** ');
+    const el = textareaRef.current;
+    if (!el) {
+      setContent((prev) => prev + ' **??** ');
+      return;
+    }
+
+    const start = el.selectionStart ?? 0;
+    const end = el.selectionEnd ?? 0;
+    const before = content.slice(0, start);
+    const after = content.slice(end);
+
+    if (start == end) {
+      const next = `${before}****${after}`;
+      setContent(next);
+      requestAnimationFrame(() => {
+        if (!textareaRef.current) return;
+        textareaRef.current.focus();
+        textareaRef.current.setSelectionRange(start + 2, start + 2);
+      });
+      return;
+    }
+
+    const selected = content.slice(start, end);
+    const next = `${before}**${selected}**${after}`;
+    setContent(next);
+    requestAnimationFrame(() => {
+      if (!textareaRef.current) return;
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(start + 2, end + 2);
+    });
   };
 
   useEffect(() => {
@@ -73,6 +103,7 @@ export const FeedbackInputForm = ({
     >
       <Box p={3}>
         <Textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}

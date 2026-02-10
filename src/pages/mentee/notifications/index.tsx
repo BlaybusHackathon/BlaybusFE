@@ -11,6 +11,8 @@ import {
   NotificationTaskIcon,
 } from '@/shared/ui/icons';
 import { useNotificationStore } from '@/shared/stores/notificationStore';
+import { getNotificationRoute } from '@/features/notification/model/notificationRoute';
+import { useAuthStore } from '@/shared/stores/authStore';
 
 const getKstDate = (value: string): Date => {
   if (!value) return new Date(NaN);
@@ -72,6 +74,7 @@ export default function MenteeNotificationsPage() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<NotificationFilter>('all');
   const { unreadCount, setUnreadCount } = useNotificationStore();
+  const { user } = useAuthStore();
 
   const { data, isLoading, setData } = useApiQuery(
     () => notificationApi.list({ filter, page: 0, size: 20 }),
@@ -104,42 +107,8 @@ export default function MenteeNotificationsPage() {
         // ignore
       }
     }
-
-    const targetType = item.targetType;
-    const targetId = item.targetId;
-    if (!targetType) return;
-
-    if (targetType === 'WEEKLY_REPORT' && targetId) {
-      navigate(`/mentee/report/${targetId}`);
-      return;
-    }
-    if (targetType === 'ZOOM_FEEDBACK' && targetId) {
-      navigate(`/mentee/feedback/zoom/${targetId}`);
-      return;
-    }
-    if (targetType === 'PLAN_FEEDBACK') {
-      navigate('/mentee/planner');
-      return;
-    }
-    if (targetType === 'TASK' && targetId) {
-      navigate(`/mentee/task/${targetId}`);
-      return;
-    }
-    if (targetType === 'COMMENT' && targetId) {
-      navigate(`/mentee/task/${targetId}`);
-      return;
-    }
-    if (targetType === 'FEEDBACK' && targetId) {
-      navigate(`/mentee/task/${targetId}`);
-      return;
-    }
-    if (targetType === 'REMINDER') {
-      navigate('/mentee/planner');
-      return;
-    }
-    if (targetType === 'SUBMISSION' && targetId) {
-      navigate(`/mentee/task/${targetId}`);
-    }
+    const route = getNotificationRoute(item, user?.role ?? 'MENTEE');
+    if (route) navigate(route);
   };
 
   return (

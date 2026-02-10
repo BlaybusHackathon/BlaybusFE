@@ -217,7 +217,7 @@ export const FeedbackCard = ({
               fontSize="sm"
               lineHeight="1.5"
               minH="80px"
-              pb="36px"
+              pb={{ base: 3, md: '36px' }}
               _focus={{ borderColor: 'blue.300', boxShadow: '0 0 0 1px #90CDF4' }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -236,8 +236,20 @@ export const FeedbackCard = ({
               position="absolute"
               right="10px"
               bottom="10px"
+              display={{ base: 'none', md: 'inline-flex' }}
               onClick={submitAnswer}
             />
+            <Flex justify="flex-end" mt={2} display={{ base: 'flex', md: 'none' }}>
+              <IconButton
+                aria-label="Send"
+                icon={<ArrowForwardIcon />}
+                size="sm"
+                colorScheme="blue"
+                isRound
+                isDisabled={!canSubmitAnswer}
+                onClick={submitAnswer}
+              />
+            </Flex>
           </Box>
         </Flex>
       </Box>

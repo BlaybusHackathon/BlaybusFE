@@ -69,16 +69,21 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
 
       store.addFeedback(created);
       store.setPendingPosition(null);
-      toast({ status: 'success', title: '??쒕갚???濡??????' });
+      toast({ status: 'success', title: '피드백이 등록되었습니다.' });
     } catch {
-      toast({ status: 'error', title: '??쒕갚??????????' });
+      toast({ status: 'error', title: '피드백 등록 중 오류가 발생했습니다.'});
     }
   };
 
   const handlePositionChange = async (id: string, newX: number, newY: number) => {
     store.updateFeedbackPosition(id, newX, newY);
+    const target = feedbacks.find((fb) => fb.id === id);
     try {
-      await feedbackApi.updateFeedback(id, { xPos: newX, yPos: newY });
+      await feedbackApi.updateFeedback(id, {
+        content: target?.content ?? '',
+        xPos: newX,
+        yPos: newY,
+      });
     } catch {
       // revert not handled yet
     }
@@ -178,6 +183,8 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
                 const updated = await feedbackApi.updateFeedback(activeFeedbackData.id, {
                   content: c,
                   imageUrl: payload.imageUrl,
+                  xPos: activeFeedbackData.xPos,
+                  yPos: activeFeedbackData.yPos,
                 });
                 if (!updated) return;
                 store.updateFeedback(activeFeedbackData.id, { content: updated.content, imageUrl: updated.imageUrl });

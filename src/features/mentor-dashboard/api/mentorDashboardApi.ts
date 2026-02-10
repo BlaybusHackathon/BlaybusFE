@@ -1,5 +1,7 @@
 import { menteeDashboardApi } from '@/features/mentee-dashboard/api/menteeDashboardApi';
 import { mentoringApi } from '@/features/mentoring/api/mentoringApi';
+import { notificationApi } from '@/features/notification/api/notificationApi';
+import type { Notification } from '@/entities/notification/types';
 import type {
   DashboardStats,
   MenteeSummary,
@@ -18,6 +20,13 @@ export interface MentorDashboardData {
 const DEFAULT_STATS: DashboardStats = {
   uncheckedTaskCount: 0,
   pendingFeedbackCount: 0,
+};
+
+const RECENT_LIMIT = 5;
+const SUBJECT_LABEL_MAP: Record<string, RecentSubmittedTask['subject']> = {
+  국어: 'KOREAN',
+  수학: 'MATH',
+  영어: 'ENGLISH',
 };
 
 const parseGrade = (value?: string): number | undefined => {
@@ -48,6 +57,60 @@ const toFallbackSummary = (mentee: { id: string; name: string }): MenteeSummary 
   lastActiveAt: null,
 });
 
+const extractAuthorName = (message: string): string | undefined => {
+  const trimmed = message.trim();
+  if (!trimmed) return undefined;
+  const match = trimmed.match(/^(.+?)\s*(멘티|멘토)?님?이/);
+  return match ? match[1].trim() : undefined;
+};
+
+const parseSubmissionMessage = (message: string) => {
+  const parts = message.split(':');
+  if (parts.length < 2) {
+    return { subject: 'OTHER' as RecentSubmittedTask['subject'], title: message };
+  }
+  const rest = parts.slice(1).join(':').trim();
+  if (!rest) return { subject: 'OTHER' as RecentSubmittedTask['subject'], title: message };
+  const [subjectLabel, ...titleParts] = rest.split(' ');
+  const subject = SUBJECT_LABEL_MAP[subjectLabel] ?? 'OTHER';
+  const title = SUBJECT_LABEL_MAP[subjectLabel] ? titleParts.join(' ').trim() : rest;
+  return { subject, title: title || rest };
+};
+
+const toRecentSubmittedTask = (item: Notification): RecentSubmittedTask | null => {
+  const taskId = item.taskId || item.targetId;
+  const menteeId = item.menteeId;
+  if (!taskId || !menteeId) return null;
+  const message = item.message ?? '';
+  const { subject, title } = parseSubmissionMessage(message);
+  return {
+    id: taskId,
+    title: title || message || '과제',
+    subject,
+    menteeId,
+    menteeName: extractAuthorName(message) ?? '멘티',
+    submittedAt: item.createdAt,
+  };
+};
+
+const toRecentComment = (item: Notification): RecentFeedbackComment | null => {
+  const taskId = item.taskId;
+  const feedbackId = item.feedbackId || item.targetId;
+  const menteeId = item.menteeId;
+  if (!taskId || !feedbackId || !menteeId) return null;
+  const message = item.message ?? '';
+  return {
+    id: item.id,
+    content: message || '댓글 알림',
+    menteeId,
+    menteeName: extractAuthorName(message) ?? '멘티',
+    taskId,
+    feedbackId,
+    createdAt: item.createdAt,
+    isRead: item.isRead,
+  };
+};
+
 export const mentorDashboardApi = {
   get: async (): Promise<MentorDashboardData> => {
     // Backend spec does not expose /mentor/dashboard. Build a minimal dashboard from existing endpoints.
@@ -61,9 +124,36 @@ export const mentorDashboardApi = {
       };
     }
 
-    const results = await Promise.allSettled(
-      mentees.map((mentee) => menteeDashboardApi.getByMenteeId(mentee.id))
-    );
+    const [results, notifications] = await Promise.all([
+      Promise.allSettled(
+        mentees.map((mentee) => menteeDashboardApi.getByMenteeId(mentee.id))
+      ),
+      notificationApi.list({ filter: 'all', page: 0, size: 50 }).catch(() => ({
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        size: 0,
+        number: 0,
+      })),
+    ]);
+
+    const sortedNotifications = [...notifications.content].sort((a, b) => {
+      const aTime = new Date(a.createdAt).getTime();
+      const bTime = new Date(b.createdAt).getTime();
+      return bTime - aTime;
+    });
+
+    const recentTasks = sortedNotifications
+      .filter((item) => item.type === 'SUBMISSION')
+      .map(toRecentSubmittedTask)
+      .filter((item): item is RecentSubmittedTask => Boolean(item))
+      .slice(0, RECENT_LIMIT);
+
+    const recentComments = sortedNotifications
+      .filter((item) => item.type === 'COMMENT')
+      .map(toRecentComment)
+      .filter((item): item is RecentFeedbackComment => Boolean(item))
+      .slice(0, RECENT_LIMIT);
 
     return {
       stats: DEFAULT_STATS,
@@ -74,8 +164,8 @@ export const mentorDashboardApi = {
         }
         return toFallbackSummary(mentee);
       }),
-      recentTasks: [],
-      recentComments: [],
+      recentTasks,
+      recentComments,
     };
   },
 };
