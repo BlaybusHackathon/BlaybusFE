@@ -131,7 +131,7 @@ export const ScheduleCreateForm = () => {
     return (
         <Flex direction="column" w="full" h="full" p={8}>
             <Heading size="lg" mb={4}>일정 만들기</Heading>
-            <Text color="gray.500" mb={8}>학생의 학습 성향에 맞는 과제를 설정해주세요.</Text>
+            <Text color="gray.500" mb={8}>멘티의 학습 성향에 맞는 과제를 설정해주세요.</Text>
 
             <Box flex={1} bg="white" borderRadius="lg" p={0}>
                 <VStack spacing={8} align="stretch">

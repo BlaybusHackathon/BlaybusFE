@@ -21,7 +21,7 @@ export const HistorySection = () => {
 
   return (
     <Box>
-      <Heading size={{base:"sm", md:"md"}} mb={4} color="gray.700">이전 피으백 모아보기</Heading>
+      <Heading size={{base:"sm", md:"md"}} mb={4} color="gray.700">이전 피드백 모아보기</Heading>
       
       <FilterBar filters={filters} setters={setters} />
 

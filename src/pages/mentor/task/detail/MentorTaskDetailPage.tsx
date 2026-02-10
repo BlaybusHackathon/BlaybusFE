@@ -90,11 +90,12 @@ const MentorTaskDetailPage = () => {
     const hasSubmission = Boolean(data?.submission);
     const submissionStatus = hasSubmission ? '제출됨' : '미제출';
     const hasMandatoryFlag = data?.isMandatory !== undefined && data?.isMandatory !== null;
+    const userRole = user?.role;
     const canEditOrDelete =
         Boolean(user) &&
         Boolean(data) &&
         (hasMandatoryFlag
-            ? (user.role === 'MENTOR' ? Boolean(data?.isMandatory) : !data?.isMandatory)
+            ? (userRole === 'MENTOR' ? Boolean(data?.isMandatory) : !data?.isMandatory)
             : true);
 
     useEffect(() => {

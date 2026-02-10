@@ -15,6 +15,7 @@ const COLOR_MAP: Record<string, string> = {
 export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
 
   const colorCode = COLOR_MAP[colorScheme] || '#718096';
+  const displayValue = Math.floor(value);
 
   return (
     <Box position="relative"
@@ -63,7 +64,7 @@ export const AchievementDonut = ({ label, value, colorScheme }: Props) => {
           fontWeight="600"
           color={colorCode}
         >
-          {value}
+          {displayValue}
           <chakra.span fontSize={{ base: "10px", md: "18px" }} ml={0.5}>
             %
           </chakra.span>

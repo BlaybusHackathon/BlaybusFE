@@ -1,4 +1,5 @@
 ﻿import { Box, Flex, Text, Avatar, VStack, Progress } from '@chakra-ui/react';
+import { BasicAvartarIcon } from '@/shared/ui/icons';
 import { MenteeSummary } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,18 +29,31 @@ export const MenteeCard = ({ mentee }: Props) => {
       onClick={() => navigate(`/mentor/mentee/${mentee.id}`)}
     >
       <Flex display="flex" alignItems="center" gap="14px">
-        <Avatar
-          w="97px"
-          h="97px"
-          name={mentee.name}
-          src={mentee.profileImgUrl || undefined}
-        />
+        {mentee.profileImgUrl ? (
+          <Avatar
+            sx={{
+              w: { base: '70px', md: '97px' },
+              h: { base: '70px', md: '97px' }
+            }}
+            name={mentee.name}
+            src={mentee.profileImgUrl}
+          />
+        ) : (
+          <Avatar
+            sx={{
+              w: { base: '70px', md: '97px' },
+              h: { base: '70px', md: '97px' }
+            }}
+            icon={<BasicAvartarIcon size="100%" />}
+            bg="transparent"
+          />
+        )}
 
         <VStack
           display="flex"
           w="183px"
           align="flex-start"
-          spacing="33px"
+          spacing={{base:"12px", md:"33px"}}
           justify="center"
         >
           <Text
@@ -56,7 +70,7 @@ export const MenteeCard = ({ mentee }: Props) => {
             display="flex"
             flexDirection="column"
             alignItems="flex-start"
-            gap="8px"
+            gap={{base:"4px", md:"8px"}}
             alignSelf="stretch"
           >
             <AchievementRow label="국" value={mentee.achievement.korean} colorScheme="#53A8FE" />
@@ -103,3 +117,4 @@ const AchievementRow = ({ label, value, colorScheme }: { label: string; value: n
     </Box>
   </Flex>
 );
+

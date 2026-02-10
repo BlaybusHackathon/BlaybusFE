@@ -14,7 +14,10 @@ export const MobileBottomNav = ({ navItems }: MobileBottomNavProps) => {
     <Box
       as="nav"
       position="fixed"
-      bottom={0} left={0} right={0}
+      bottom={0}
+      left={0}
+      w="100%"
+      maxW="100%"
       bg="white"
       borderTop="1px solid"
       borderTopRadius={22}
@@ -23,7 +26,7 @@ export const MobileBottomNav = ({ navItems }: MobileBottomNavProps) => {
       zIndex={1100}
       pb="safe-area-inset-bottom"
     >
-      <Flex justify="space-around" align="center" h="full">
+      <Flex justify="space-between" align="center" h="full" w="full">
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           const color = isActive ? "gray.800" : "gray.400";
@@ -34,8 +37,9 @@ export const MobileBottomNav = ({ navItems }: MobileBottomNavProps) => {
               spacing={1} 
               cursor="pointer" 
               onClick={() => navigate(item.path)}
-              w="full"
               justify="center"
+              flex="1"
+              minW={0}
             >
               <Icon as={item.icon} boxSize={5} color={color} />
               <Text fontSize="10px" color={color} fontWeight={isActive ? "bold" : "medium"}>

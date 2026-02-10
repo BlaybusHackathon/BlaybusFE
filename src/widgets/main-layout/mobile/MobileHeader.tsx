@@ -1,10 +1,13 @@
-import { Flex, IconButton, Text } from '@chakra-ui/react';
+import { Flex, IconButton, Text, Box } from '@chakra-ui/react';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/shared/stores/authStore';
+import { NotificationBell } from '@/widgets/notifications/NotificationBell';
 
 export const MobileHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthStore();
 
   const mainTabPaths = [
     '/mentee/planner',
@@ -17,9 +20,17 @@ export const MobileHeader = () => {
   ];
 
   const isMainTab = mainTabPaths.some((path) => location.pathname === path);
+  const menteeHeaderPaths = [
+    '/mentee/planner',
+    '/mentee/calendar',
+    '/mentee/feedback',
+    '/mentee/mypage',
+  ];
+  const showNotificationBell =
+    user?.role === 'MENTEE' && menteeHeaderPaths.includes(location.pathname);
 
   let title = "";
-  if (location.pathname.includes('planner')) title = "";
+  if (location.pathname.includes('planner')) title = "캘린더";
   if (location.pathname.includes('calendar')) title = "달력";
   if (location.pathname.includes('feedback')) title = "피드백";
   if (location.pathname.includes('mypage')) title = "마이페이지";
@@ -32,7 +43,8 @@ export const MobileHeader = () => {
       position="fixed"
       top={0}
       left={0}
-      right={0}
+      w="100%"
+      maxW="100%"
       h="4.5625rem"
       bg={'white'}
       align="center"
@@ -57,6 +69,11 @@ export const MobileHeader = () => {
       <Text fontSize="1.25rem" fontWeight="bold" color="gray.800">
         {title}
       </Text>
+      {showNotificationBell && (
+        <Box position="absolute" right={2}>
+          <NotificationBell isVisible />
+        </Box>
+      )}
     </Flex>
   );
 };

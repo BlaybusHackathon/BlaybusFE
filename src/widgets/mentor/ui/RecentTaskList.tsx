@@ -1,5 +1,6 @@
 ﻿import { Box, Text, VStack, Badge, Flex, Avatar, Icon } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
+import { CommentAvartarIcon } from '@/shared/ui/icons';
 import { RecentSubmittedTask } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +30,7 @@ export const RecentTaskList = ({ tasks }: Props) => {
       <Text
         color="#373E56"
         fontFamily="Pretendard"
-        fontSize="24px"
+        fontSize={{base:"16px", md:"24px"}}
         fontStyle="normal"
         fontWeight="700"
         lineHeight="normal"
@@ -54,7 +55,14 @@ export const RecentTaskList = ({ tasks }: Props) => {
             onClick={() => navigate(`/mentor/mentee/${task.menteeId}/task/${task.id}`)}
           >
             <VStack spacing={1} mr={5} minW="50px">
-              <Avatar size="sm" name={task.menteeName} src={undefined} bg="#D9D9D9" />
+              <Avatar 
+                  sx={{
+                    w: { base: '32px', md: '32px' },
+                    h: { base: '32px', md: '32px' }
+                  }}
+                  icon={<CommentAvartarIcon size="100%" color='#D9D9D9' />}
+                  bg="transparent"
+                />
               <Text fontSize="xs" color="gray.500">{task.menteeName}</Text>
             </VStack>
 

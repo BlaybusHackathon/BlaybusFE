@@ -132,8 +132,9 @@ export const MonthlyCalendar = ({
 
         <Box 
           mb={{base:'none', md:4}}
-          mx={2}
-          >
+          mx={{ base: 0, md: 2 }}
+          px={{ base: 2, md: 0 }}
+        >
           <SimpleGrid columns={7} mb={1}>
               {['일', '월', '화', '수', '목', '금', '토'].map((day) => (
                   <Box

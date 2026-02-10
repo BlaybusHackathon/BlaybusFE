@@ -54,13 +54,14 @@ export const CalendarLegend = ({
   return (
     <Flex 
       w="full"
-      justify="space-between"
-      align="center"
-      gap={4}
+      justify={{ base: 'flex-start', md: 'space-between' }}
+      align={{ base: 'flex-start', md: 'center' }}
+      gap={{ base: 2, md: 4 }}
       mt={{ base: 4, md: 0 }}
-      direction="row"
+      direction={{ base: 'column', md: 'row' }}
+      flexWrap="wrap"
     >
-      <Wrap justify="flex-start" spacing={{ base: 3, md: 2 }}>
+      <Wrap justify="flex-start" spacing={{ base: 3, md: 2 }} w="full">
         <WrapItem>
           <ResponsiveSubjectTag label="국어" shortLabel="국" color="#53A8FE" />
         </WrapItem>
@@ -79,6 +80,7 @@ export const CalendarLegend = ({
         onClick={() => onToggleCompleted(!showCompletedOnly)}
         bg="transparent"
         _hover={{ opacity: 0.8 }}
+        alignSelf={{ base: 'flex-end', md: 'center' }}
       >
         <CheckCircleIcon
           color={showCompletedOnly ? "#53A8FE" : "gray.300"}

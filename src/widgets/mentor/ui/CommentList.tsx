@@ -2,6 +2,7 @@
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { RecentFeedbackComment } from '../../../pages/mentor/mypage/model/types';
 import { useNavigate } from 'react-router-dom';
+import { CommentAvartarIcon } from '@/shared/ui/icons';
 
 interface Props {
   comments: RecentFeedbackComment[];
@@ -40,7 +41,14 @@ export const CommentList = ({ comments }: Props) => {
             onClick={() => navigate(`/mentor/mentee/${comment.menteeId}/task/${comment.taskId}?feedbackId=${comment.feedbackId}`)}
           >
             <VStack spacing={1} mr={5} minW="50px">
-              <Avatar size="sm" name={comment.menteeName} src={undefined} bg="#D9D9D9" />
+            <Avatar 
+                sx={{
+                  w: { base: '32px', md: '32px' },
+                  h: { base: '32px', md: '32px' }
+                }}
+                icon={<CommentAvartarIcon size="100%" color='#D9D9D9' />}
+                bg="transparent"
+              />
               <Text fontSize="xs" color="gray.500">{comment.menteeName}</Text>
             </VStack>
 
