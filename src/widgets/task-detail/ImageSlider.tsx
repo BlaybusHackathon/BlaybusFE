@@ -29,6 +29,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete,
   
   const isSubmissionMode = !!onDelete;
   const isCreateMode = !isSubmissionMode && store.commentMode === 'create';
+  const showCreateHint = isCreateMode && !store.pendingPosition;
 
   useEffect(() => {
     if (!focusImageId) {
@@ -170,7 +171,7 @@ export const ImageSlider = ({ images, taskId, currentUserId, userRole, onDelete,
       {/* --- 컨트롤러 영역 --- */}
 
 
-      {isCreateMode && (
+      {showCreateHint && (
          <Box position="absolute" top={4} left="50%" transform="translateX(-50%)" zIndex={30} pointerEvents="none">
              <Box bg="blue.500" color="white" px={4} py={2} borderRadius="full" fontSize="sm" fontWeight="bold" boxShadow="lg">
                 이미지를 클릭하여 피드백을 남겨주세요

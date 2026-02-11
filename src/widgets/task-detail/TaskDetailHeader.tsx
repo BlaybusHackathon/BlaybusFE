@@ -1,7 +1,8 @@
 ﻿// src/widgets/task-detail/TaskDetailHeader.tsx
-import { Badge, Box, HStack, Stack, Text, Flex } from '@chakra-ui/react';
+import { Badge, Box, HStack, Stack, Text, Flex, useBreakpointValue } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import {SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { SUBJECT_LABELS, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { PinIcon } from '@/shared/ui/icons';
 
 export type Subject = 'KOREAN' | 'ENGLISH' | 'MATH' | 'OTHER';
 
@@ -10,6 +11,7 @@ interface TaskDetailHeaderProps {
     date: string;
     isMentorChecked: boolean;
     title: string;
+    isMandatory?: boolean | null;
     supplement?: string;
     action?: ReactNode;
     statusLabel?: string;
@@ -21,12 +23,14 @@ export const TaskDetailHeader = ({
     date,
     isMentorChecked,
     title,
+    isMandatory,
     supplement,
     action,
     statusLabel,
     statusText,
 }: TaskDetailHeaderProps) => {
     const resolvedStatusLabel = statusLabel ?? '멘토 확인';
+    const pinSize = useBreakpointValue({ base: '18px', md: '24px' }) ?? '18px';
     const statusContent = statusText
         ? <Text color="#333333" fontWeight="bold">{statusText}</Text>
         : isMentorChecked
@@ -41,7 +45,7 @@ export const TaskDetailHeader = ({
             : <Text color="gray.400">미확인</Text>;
     return (
         <Box mb={{base:0, md:12}}>
-            <Flex direction={{base:"column", md:"row"}} gap={{base: 4 ,md:0}} justify={{base:"flex-start",md:"space-between"}} align="start" mb={6}>
+            <Box mb={6}>
                 <HStack spacing={8} display={{base:"flex", md:"none"}}>
                     <Text color="#8e8e8e" fontWeight="medium" minW="30px" display={{base:"none", md:"flex"}}>과목</Text>
                     <Badge
@@ -58,19 +62,33 @@ export const TaskDetailHeader = ({
                         {SUBJECT_LABELS[subject] || SUBJECT_LABELS.OTHER}
                     </Badge>
                 </HStack>
-                <Flex align={'end'} gap={2}>
-                    <Text fontSize={{base:"md", md:"4xl"}} fontWeight="bold" color="#1A1A1A" lineHeight="1.2">
-                        {title}
-                    </Text>
-                    <Text display={{base:"flex", md:"none"}} color="#989898" fontWeight="medium" fontSize={'xs'}>{date}</Text>
+                <Flex justify="space-between" align="center" gap={4} mt={{base: 4, md: 0}}>
+                    <Flex align={'end'} gap={2} flex={1} minW={0}>
+                        <HStack spacing={2} align="center" flex={1} minW={0}>
+                            {Boolean(isMandatory) && (
+                                <Box color="#373E56" flexShrink={0} display="flex" alignItems="center">
+                                    <PinIcon width={pinSize} height={pinSize} />
+                                </Box>
+                            )}
+                            <Text
+                                fontSize={{base:"md", md:"4xl"}}
+                                fontWeight="bold"
+                                color="#1A1A1A"
+                                lineHeight="1.2"
+                            >
+                                {title}
+                            </Text>
+                        </HStack>
+                        <Text display={{base:"flex", md:"none"}} color="#989898" fontWeight="medium" fontSize={'xs'}>{date}</Text>
+                    </Flex>
+                    
+                    {action && (
+                        <Box flexShrink={0} display="flex" alignItems="center">
+                            {action}
+                        </Box>
+                    )}
                 </Flex>
-                
-                {action && (
-                    <Box ml={4}>
-                        {action}
-                    </Box>
-                )}
-            </Flex>
+            </Box>
 
             {supplement && (
                 <HStack spacing={6} mb={8} fontSize="16px" display={{base:"none", md:"flex"}}>

@@ -1,5 +1,7 @@
 ﻿import { Box, Flex, Textarea } from '@chakra-ui/react';
 
+import TextareaAutosize from 'react-textarea-autosize';
+
 export type SubjectType = 'korean' | 'english' | 'math';
 
 interface Props {
@@ -36,6 +38,7 @@ export const SubjectFeedbackItem = ({ subject, value, onChange, readOnly = false
                 </Box>
             </Flex>
             <Textarea
+                as={TextareaAutosize}
                 value={value}
                 onChange={(e) => !readOnly && onChange(e.target.value)}
                 isReadOnly={readOnly}
@@ -54,10 +57,6 @@ export const SubjectFeedbackItem = ({ subject, value, onChange, readOnly = false
                     border: '1px solid',
                     borderColor: config.color,
                     boxShadow: 'none'
-                }}
-                sx={{
-                    fieldSizing: 'content',
-                    height: 'initial',
                 }}
                 resize="none"
                 lineHeight="1.6"

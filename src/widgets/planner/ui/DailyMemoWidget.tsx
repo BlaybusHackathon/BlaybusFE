@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Box, Text, Textarea, Flex } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { usePlannerStore } from '@/shared/stores/plannerStore';
 import { getAdjustedDate } from '@/shared/lib/date';
 
@@ -25,12 +26,13 @@ export const DailyMemoWidget = () => {
           fontSize="lg" 
           fontWeight="bold" 
         >
-          코멘트를 작성해주세요!
+          코멘트
         </Text>
       </Flex>
 
       {isToday ? (
         <Textarea 
+          as={TextareaAutosize}
           key={currentDailyPlanner?.id ?? selectedDate}
           defaultValue={memoValue}
           onBlur={handleBlur}
@@ -41,15 +43,19 @@ export const DailyMemoWidget = () => {
           bg={{base:"white", md:"#F9F9FB"}}
           size="sm"
           resize="none"
-          rows={2}
+          minRows={2}
           fontSize="sm"
           border={'none'}
-          _active={{ dropShadow: 'dark-lg' }}
+          focusBorderColor="transparent"
+          _hover={{ border: 'none' }}
+          _focus={{ boxShadow: 'none', border: 'none' }}
+          _active={{ boxShadow: 'none', border: 'none' }}
         />
       ) : (
         <Box 
-          p={2} 
+          p={6} 
           bg={{base:"white", md:"#F9F9FB"}}
+          borderRadius={10}
           minH="40px"
         >
           <Text fontSize="sm" color={memoValue ? "gray.700" : "gray.400"}>

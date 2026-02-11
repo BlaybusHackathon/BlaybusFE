@@ -12,6 +12,7 @@ import {
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { CloseIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { FeedbackWithAuthor, AnswerWithAuthor } from '../model/types';
@@ -210,6 +211,7 @@ export const FeedbackCard = ({
           </Box>
           <Box position="relative" flex={1}>
             <Textarea
+              as={TextareaAutosize}
               value={newAnswer}
               onChange={(e) => setNewAnswer(e.target.value)}
               placeholder="댓글 입력"
@@ -266,7 +268,6 @@ export const FeedbackCard = ({
     </MotionBox>
   );
 };
-
 
 
 

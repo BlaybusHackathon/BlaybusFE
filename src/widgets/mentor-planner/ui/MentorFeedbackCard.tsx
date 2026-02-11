@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Box, Text, Flex, Button, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { ModifyIcon } from '@/shared/ui/icons';
 
@@ -56,16 +57,29 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
       {isEditing ? (
         <Box h={'fit-content'}>
           <Textarea
+            as={TextareaAutosize}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="오늘 하루에 대한 피드백을 남겨주세요."
-            borderRadius="22px"
-            minH={'8.3125rem'}
-            bg={{base:"white",md:"#F9F9FB"}}
-            p={4}
+            minH="150px"
+            bg="#F9F9FB"
+            border="none"
+            borderColor="transparent"
+            borderRadius="22"
+            p={6}
+            fontSize="16px"
+            color="#7E7E7E"
+            _placeholder={{ color: '#9B9BA4' }}
+            _focus={{
+              bg: 'white',
+              border: '1px solid',
+              borderColor: '#53A8FE',
+              boxShadow: 'none'
+            }}
             resize="none"
             mb={4}
-            fontSize="18px"
+            lineHeight="1.6"
+            cursor="text"
           />
           <Flex justify="flex-end" gap={2}>
             <Button
@@ -88,26 +102,30 @@ export const MentorFeedbackCard = ({ feedback, onSave }: Props) => {
           </Flex>
         </Box>
       ) : (
-        <Box
-          bg={{base:"white",md:"#F9F9FB"}}
-          p="32px 34px"
-          borderRadius="22px"
-          cursor="pointer"
-          onClick={startEditing}
-          transition="background 0.2s"
-          _hover={{ bg: feedback ? "gray.50" : "gray.100" }}
-        >
-          {feedback ? (
-            <Text fontSize="18px" color="#373E56" whiteSpace="pre-wrap" lineHeight="1.7">
-              {feedback}
-            </Text>
-          ) : (
-            <Flex justify="center" align="center" h="full" minH="60px">
-              <Text fontSize="18px" color="#373E56" py={2}>
-                피드백을 등록해주세요.
-              </Text>
-            </Flex>
-          )}
+        <Box onClick={startEditing} cursor="pointer">
+          <Textarea
+            as={TextareaAutosize}
+            value={feedback ?? ''}
+            placeholder="피드백을 등록해주세요."
+            isReadOnly
+            minH="150px"
+            bg="#F9F9FB"
+            borderColor="#F9F9FB"
+            borderRadius="22"
+            p={6}
+            fontSize="16px"
+            color="#7E7E7E"
+            _placeholder={{ color: '#9B9BA4' }}
+            _focus={{
+              bg: 'white',
+              border: '1px solid',
+              borderColor: '#53A8FE',
+              boxShadow: 'none'
+            }}
+            resize="none"
+            lineHeight="1.6"
+            cursor="pointer"
+          />
         </Box>
       )}
     </Box>

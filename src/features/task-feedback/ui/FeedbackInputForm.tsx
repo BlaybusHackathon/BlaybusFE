@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box, Textarea, Flex, IconButton, Image } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
 import { ImageIcon, BorderIcon } from '@/shared/ui/icons';
 
@@ -15,6 +16,7 @@ export const FeedbackInputForm = ({
   initialContent = '', 
   initialImageUrl = null, 
   onSave, 
+  onCancel,
   allowFile = true,
 }: FeedbackInputFormProps) => {
   const [content, setContent] = useState(initialContent);
@@ -65,6 +67,17 @@ export const FeedbackInputForm = ({
     };
   }, [objectUrl]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCancel();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel]);
+
   const handleImageUpload = () => {
     if (!allowFile) return;
     fileInputRef.current?.click();
@@ -101,9 +114,22 @@ export const FeedbackInputForm = ({
       borderColor="gray.100" 
       minW="300px"
       overflow="hidden"
+      position="relative"
     >
+      <IconButton
+        aria-label="Close"
+        icon={<CloseIcon boxSize={2.5} color="gray.400" />}
+        size="xs"
+        variant="ghost"
+        position="absolute"
+        top={2}
+        right={2}
+        onClick={onCancel}
+        _hover={{ bg: 'gray.50', color: 'gray.600' }}
+      />
       <Box p={3}>
         <Textarea
+          as={TextareaAutosize}
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -112,7 +138,7 @@ export const FeedbackInputForm = ({
           size="sm"
           variant="unstyled" 
           resize="none"
-          rows={3}
+          minRows={3}
           autoFocus
           p={0}
           fontSize="sm"

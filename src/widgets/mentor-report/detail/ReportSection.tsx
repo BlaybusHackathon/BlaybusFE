@@ -1,4 +1,5 @@
 import { Box, Text, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface Props {
     title: string;
@@ -16,6 +17,7 @@ export const ReportSection = ({ title, value, onChange, placeholder, minH = "150
                 {title}
             </Text>
             <Textarea
+                as={TextareaAutosize}
                 value={value}
                 onChange={(e) => !readOnly && onChange(e.target.value)} // readOnly일 때 변경 차단
                 placeholder={readOnly ? "" : placeholder} // readOnly일 때 placeholder 숨김

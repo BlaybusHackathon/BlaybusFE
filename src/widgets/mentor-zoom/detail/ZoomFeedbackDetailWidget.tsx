@@ -1,4 +1,5 @@
 ﻿import { VStack, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { ZoomFeedbackSection } from './ZoomFeedbackSection';
 import { SubjectFeedbackItem, SubjectType } from './SubjectFeedbackItem';
 import { ZoomFeedbackData } from '@/features/zoom-feedback/model/types';
@@ -21,6 +22,7 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
         <VStack spacing={8} align="stretch">
             <ZoomFeedbackSection title="메모">
                 <Textarea
+                    as={TextareaAutosize}
                     value={data.memo}
                     onChange={(e) => !readOnly && onChange('memo', e.target.value)}
                     isReadOnly={readOnly}
@@ -39,10 +41,6 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
                         border: '1px solid',
                         borderColor: '#53A8FE',
                         boxShadow: 'none'
-                    }}
-                    sx={{
-                        fieldSizing: 'content',
-                        height: 'initial',
                     }}
                     resize="none"
                     lineHeight="1.6"
@@ -72,6 +70,7 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
 
             <ZoomFeedbackSection title="운영 피드백">
                 <Textarea
+                    as={TextareaAutosize}
                     value={data.operation}
                     onChange={(e) => !readOnly && onChange('operation', e.target.value)}
                     isReadOnly={readOnly}
@@ -90,10 +89,6 @@ export const ZoomFeedbackDetailWidget = ({ data, onChange, readOnly = false }: P
                         border: '1px solid',
                         borderColor: '#53A8FE',
                         boxShadow: 'none'
-                    }}
-                    sx={{
-                        fieldSizing: 'content',
-                        height: 'initial',
                     }}
                     resize="none"
                     lineHeight="1.6"

@@ -328,6 +328,7 @@ const MenteeTaskDetailPage = () => {
             date={data.taskDate}
             isMentorChecked={data.isMentorChecked}
             title={data.title}
+            isMandatory={data.isMandatory}
             supplement={data.weakness?.title}
             action={
               <Menu>

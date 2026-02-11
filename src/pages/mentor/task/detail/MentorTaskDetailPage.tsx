@@ -383,6 +383,7 @@ const MentorTaskDetailPage = () => {
                         date={taskDateLabel}
                         isMentorChecked={Boolean(data?.isMentorChecked)}
                         title={data?.title ?? ''}
+                        isMandatory={data?.isMandatory}
                         supplement={data?.description ?? ''} 
                         statusLabel="제출 상태"
                         statusText={submissionStatus}

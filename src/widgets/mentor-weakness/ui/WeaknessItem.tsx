@@ -3,6 +3,7 @@ import {
   Box, Flex, Text, IconButton, Menu, MenuButton, MenuList, MenuItem,
   Icon, Textarea,  Input
 } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import {
    CheckIcon, CloseIcon, AddIcon
 } from '@chakra-ui/icons';
@@ -79,6 +80,7 @@ export const WeaknessItem = ({
           {isEditing ? (
             <Flex direction="row" gap={3} justify={'space-between'}>
               <Textarea
+                as={TextareaAutosize}
                 value={title}
                 p={0}
                 maxW={'454px'}
@@ -89,7 +91,7 @@ export const WeaknessItem = ({
                 borderRadius={'none'}
                 size="md"
                 resize="none"
-                rows={1}
+                minRows={1}
                 autoFocus
                 _focus={{ 
                   border: 'none', 

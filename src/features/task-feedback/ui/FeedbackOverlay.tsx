@@ -34,6 +34,19 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
   const isCreating = !!store.pendingPosition;
   const isMobile = useBreakpointValue({ base: true, md: false }) ?? false;
 
+  useEffect(() => {
+    if (!store.pendingPosition) return;
+    const handlePointerDown = (e: PointerEvent) => {
+      const container = containerRef.current;
+      if (!container) return;
+      if (container.contains(e.target as Node)) return;
+      store.setPendingPosition(null);
+      store.setCommentMode('view');
+    };
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [store.pendingPosition]);
+
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (store.commentMode === 'create') {
       const rect = e.currentTarget.getBoundingClientRect();

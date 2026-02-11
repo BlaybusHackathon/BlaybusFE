@@ -1,4 +1,5 @@
 import { VStack, Text, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface FeedbackMemoProps {
     value: string;
@@ -12,6 +13,7 @@ export const FeedbackMemo = ({ value, onChange }: FeedbackMemoProps) => {
                 메모장
             </Text>
             <Textarea
+                as={TextareaAutosize}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="미팅 중 발생한 특이사항이나 자유로운 기록을 남겨주세요."

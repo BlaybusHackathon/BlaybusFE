@@ -1,4 +1,5 @@
 import { VStack, Text, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface OperationalFeedbackProps {
     value: string;
@@ -12,6 +13,7 @@ export const OperationalFeedback = ({ value, onChange }: OperationalFeedbackProp
                 운영 피드백
             </Text>
             <Textarea
+                as={TextareaAutosize}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="스케줄 관리, 태도, 약속 이행 등 학습 외적인 피드백을 입력해주세요."

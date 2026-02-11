@@ -3,6 +3,7 @@ import {
     Box, Button, Container, VStack, Textarea, 
     Input, Flex, Text, useToast
 } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 import { AddIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -98,6 +99,7 @@ const MenteeTaskSubmissionPage = () => {
                     subject={taskData.subject}
                     date={taskData.taskDate}
                     isMentorChecked={taskData.isMentorChecked}
+                    isMandatory={taskData.isMandatory}
                     supplement={taskData.weakness?.title}
                 />
 
@@ -142,6 +144,7 @@ const MenteeTaskSubmissionPage = () => {
                 <Box>
                     <Text fontSize="lg" fontWeight="bold" mb={{base:2, md:4}}>메모</Text>
                     <Textarea 
+                        as={TextareaAutosize}
                         value={memo}
                         onChange={(e) => setMemo(e.target.value)}
                         placeholder="과제를 하면서 어려웠던 점이나 멘토님께 하고 싶은 말을 적어주세요."

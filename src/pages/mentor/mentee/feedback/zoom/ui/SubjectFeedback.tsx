@@ -1,4 +1,5 @@
 import { VStack, Text, Box, Badge, Textarea } from '@chakra-ui/react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface SingleSubjectFeedbackProps {
     subject: string;
@@ -14,6 +15,7 @@ const SingleSubjectFeedback = ({ subject, value, bg, onChange }: SingleSubjectFe
                 {subject}
             </Badge>
             <Textarea
+                as={TextareaAutosize}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={`${subject} 과목에 대한 피드백을 입력해주세요.`}
