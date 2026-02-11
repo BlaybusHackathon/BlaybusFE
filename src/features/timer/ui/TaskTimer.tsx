@@ -2,6 +2,7 @@
 import { useTaskTimer } from '../model/useTaskTimer';
 import { formatDuration } from '@/shared/lib/date';
 import { Subject, SUBJECT_COLORS } from '@/shared/constants/subjects';
+import { PlayIcon } from '@/shared/ui/icons';
 
 interface TaskTimerProps {
   taskId: string;
@@ -50,7 +51,9 @@ export const TaskTimer = ({
         
         icon={
           <Text fontSize={{ base: 'xs', md: 'sm' }} fontWeight="bold" lineHeight="1">
-            {isRunning ? 'II' : '▶'}
+            {isRunning ? 'II' : (
+              <PlayIcon />
+            )}
           </Text>
         }
       />

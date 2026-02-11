@@ -36,7 +36,7 @@ export const StatCard = ({ label, count }: Props) => {
           fontWeight="600"
           fontSize="16px"
           fontStyle="normal"
-          lineHeight="1"
+          lineHeight="1.2"
         >
           {count}
         </Text>

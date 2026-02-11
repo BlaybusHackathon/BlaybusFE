@@ -189,3 +189,12 @@ export const BorderIcon = ({ size = 24, ...props }: BorderIconProps) => (
 </svg>
 );
 
+interface PlayIconnProps extends SVGProps<SVGSVGElement> {
+  size?: number | string;  
+}
+
+export const PlayIcon = ({ size = 24, ...props }: PlayIconnProps) => (
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="11" viewBox="0 0 10 11" fill="none" {...props}>
+  <path d="M8.60913 4.24C9.2758 4.6249 9.2758 5.58715 8.60913 5.97205L1.50003 10.0765C0.833366 10.4614 3.10545e-05 9.98026 3.10882e-05 9.21046L3.1447e-05 1.00158C3.14806e-05 0.231783 0.833365 -0.249344 1.50003 0.135556L8.60913 4.24Z" fill="currentColor"/>
+</svg>
+);
