@@ -44,6 +44,7 @@ import type { Weakness } from '@/entities/weakness/types';
 import { weaknessApi } from '@/features/weakness/api/weaknessApi';
 import { SUBJECT_LABELS, Subject } from '@/shared/constants/subjects';
 import { taskApi } from '@/features/task/api/taskApi';
+import { submissionApi } from '@/features/task-submission/api/submissionApi';
 
 const MenteeTaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -57,6 +58,7 @@ const MenteeTaskDetailPage = () => {
   const [searchParams] = useSearchParams();
   const focusFeedbackId = searchParams.get('feedbackId');
   const [focusImageId, setFocusImageId] = useState<string | null>(null);
+  const [hasFeedback, setHasFeedback] = useState<boolean | null>(null);
   const [weaknessDetail, setWeaknessDetail] = useState<Weakness | null>(null);
   const editDialog = useDisclosure();
   const deleteDialog = useDisclosure();
@@ -82,6 +84,9 @@ const MenteeTaskDetailPage = () => {
     (hasMandatoryFlag
       ? (user?.role === 'MENTOR' ? Boolean(data?.isMandatory) : !data?.isMandatory)
       : true);
+  const isMentorUser = user?.role === 'MENTOR';
+  const isMenteeUser = user?.role === 'MENTEE';
+  const shouldShowMenu = isMentorUser || isMenteeUser;
 
   useEffect(() => {
     let active = true;
@@ -154,6 +159,7 @@ const MenteeTaskDetailPage = () => {
 
   useEffect(() => {
     resetUIState();
+    setHasFeedback(null);
 
     if (DEBUG_FEEDBACK) {
       console.debug('[feedback-debug] effect start', {
@@ -163,7 +169,7 @@ const MenteeTaskDetailPage = () => {
       });
     }
 
-    if (!data?.submission?.isFeedbackReceived || submissionImages.length === 0) {
+    if (!data?.submission || submissionImages.length === 0) {
       if (DEBUG_FEEDBACK) {
         console.debug('[feedback-debug] no feedback or images', {
           taskId,
@@ -171,6 +177,7 @@ const MenteeTaskDetailPage = () => {
           submissionImages: submissionImages.map((img) => img.id),
         });
       }
+      if (data?.submission) setHasFeedback(false);
       loadFeedbacks([]);
       loadAnswers([]);
       return;
@@ -214,6 +221,7 @@ const MenteeTaskDetailPage = () => {
         }
         loadFeedbacks(feedbacks);
         loadAnswers(answers);
+        setHasFeedback(feedbacks.length > 0);
         if (focusFeedbackId) {
           const target = feedbacks.find((fb) => fb.id === focusFeedbackId);
           if (target) {
@@ -288,6 +296,29 @@ const MenteeTaskDetailPage = () => {
     }
   };
 
+  const canDeleteSubmission = Boolean(data?.submission) && hasFeedback === false;
+
+  const handleDeleteSubmission = async () => {
+    if (!data?.submission?.id) return;
+    try {
+      await submissionApi.deleteSubmission(data.submission.id);
+      setData((prev) => (prev ? { ...prev, submission: null } : prev));
+      toast({
+        title: '제출한 과제가 삭제되었습니다.',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch {
+      toast({
+        title: '제출 삭제에 실패했습니다.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
+
   const handleDelete = async () => {
     if (!data?.id) return;
     setIsDeleteSaving(true);
@@ -331,49 +362,73 @@ const MenteeTaskDetailPage = () => {
             isMandatory={data.isMandatory}
             supplement={data.weakness?.title}
             action={
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  aria-label="Task options"
-                  icon={<FiMoreVertical />}
-                  variant="ghost"
-                  size="sm"
-                />
-                <MenuList>
-                  <MenuItem
-                    onClick={() => {
-                      if (!canEditOrDelete) {
-                        toast({
-                          title: '권한이 없습니다.',
-                          status: 'warning',
-                          duration: 2000,
-                          isClosable: true,
-                        });
-                        return;
-                      }
-                      openEdit();
-                    }}
-                  >
-                    수정
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      if (!canEditOrDelete) {
-                        toast({
-                          title: '권한이 없습니다.',
-                          status: 'warning',
-                          duration: 2000,
-                          isClosable: true,
-                        });
-                        return;
-                      }
-                      deleteDialog.onOpen();
-                    }}
-                  >
-                    삭제
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+              shouldShowMenu ? (
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    aria-label="Task options"
+                    icon={<FiMoreVertical />}
+                    variant="ghost"
+                    size="sm"
+                  />
+                  <MenuList>
+                    {isMentorUser && (
+                      <>
+                        <MenuItem
+                          onClick={() => {
+                            if (!canEditOrDelete) {
+                              toast({
+                                title: '권한이 없습니다.',
+                                status: 'warning',
+                                duration: 2000,
+                                isClosable: true,
+                              });
+                              return;
+                            }
+                            openEdit();
+                          }}
+                        >
+                          수정
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => {
+                            if (!canEditOrDelete) {
+                              toast({
+                                title: '권한이 없습니다.',
+                                status: 'warning',
+                                duration: 2000,
+                                isClosable: true,
+                              });
+                              return;
+                            }
+                            deleteDialog.onOpen();
+                          }}
+                        >
+                          삭제
+                        </MenuItem>
+                      </>
+                    )}
+                    {isMenteeUser && (
+                      <MenuItem
+                        onClick={() => {
+                          if (!canDeleteSubmission) {
+                            toast({
+                              title: '피드백이 없는 제출물만 삭제할 수 있습니다.',
+                              status: 'warning',
+                              duration: 2000,
+                              isClosable: true,
+                            });
+                            return;
+                          }
+                          void handleDeleteSubmission();
+                        }}
+                      >
+                        제출 삭제
+                      </MenuItem>
+                    )}
+                  </MenuList>
+                </Menu>
+              ) : null
             }
           />
         </Box>
@@ -527,6 +582,13 @@ const MenteeTaskDetailPage = () => {
 };
 
 export default MenteeTaskDetailPage;
+
+
+
+
+
+
+
 
 
 
