@@ -20,7 +20,7 @@ const MenteePlannerPage = () => {
 
   return (
     <Box w="100%" minH="100vh">
-      <Container maxW="1200px" p={0}>
+      <Container maxW="1200px" p={0} pb={90}>
         
         <Flex direction={"column"} mt={-2} mb={6} overflow="hidden">
           

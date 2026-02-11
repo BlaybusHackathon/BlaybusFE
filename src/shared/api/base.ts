@@ -1,4 +1,4 @@
-﻿import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import type { ApiError, ApiResponse } from './types';
 import { getAuthToken, logoutAndClear } from '@/shared/stores/authStore';
 import { isRecord } from './parse';
@@ -9,7 +9,11 @@ const attachAuth = (config: InternalAxiosRequestConfig) => {
   const token = getAuthToken();
   if (token) {
     config.headers = config.headers ?? {};
-    config.headers.Authorization = `Bearer ${token}`;
+    const existingAuth =
+      config.headers.Authorization || (config.headers as Record<string, unknown>).authorization;
+    if (!existingAuth) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 };
@@ -41,8 +45,33 @@ apiClient.interceptors.response.use(
   (res: AxiosResponse) => unwrapResponse(res) as AxiosResponse,
   (err: AxiosError<unknown>) => {
     const status = err.response?.status;
+    const config = err.config as (InternalAxiosRequestConfig & { skipAuthLogout?: boolean }) | undefined;
+    const skipLogout = Boolean(config?.skipAuthLogout);
+
     if (status === 401) {
-      logoutAndClear();
+      try {
+        localStorage.setItem(
+          'auth-last-401',
+          JSON.stringify({
+            t: new Date().toISOString(),
+            url: err.config?.url ?? '',
+            method: err.config?.method ?? '',
+            hadAuth: Boolean(
+              err.config?.headers?.Authorization ||
+              err.config?.headers?.authorization
+            ),
+            skipLogout,
+            response: {
+              status: err.response?.status ?? null,
+              headers: err.response?.headers ?? null,
+              data: err.response?.data ?? null,
+            },
+          })
+        );
+      } catch {}
+      if (!skipLogout) {
+        logoutAndClear();
+      }
     }
     const data = err.response?.data;
 
@@ -77,4 +106,8 @@ apiClient.interceptors.response.use(
     } as ApiError);
   }
 );
+
+
+
+
 
