@@ -4,6 +4,7 @@ import {
   asString,
   asOptionalString,
   asOptionalNumber,
+  asOptionalBoolean,
   asBoolean,
   asEnum,
   pick,
@@ -20,6 +21,7 @@ export interface Task {
   contentId: string | null;
   weaknessId: string | null;
   menteeId: string;
+  submitted?: boolean;
   actualStudyTime?: number | null;
   actualStudyTimeFormatted?: string | null;
 }
@@ -56,6 +58,10 @@ export const mapTaskFromApi = (raw: unknown): Task => {
     contentId: asOptionalString(pick(obj, ['contentId', 'content_id']), 'Task.contentId') ?? null,
     weaknessId: asOptionalString(pick(obj, ['weaknessId', 'weakness_id']), 'Task.weaknessId') ?? null,
     menteeId: asString(pick(obj, ['menteeId', 'mentee_id']), 'Task.menteeId'),
+    submitted: asOptionalBoolean(
+      pick(obj, ['submitted', 'isSubmitted', 'hasSubmission', 'has_submission']),
+      'Task.submitted'
+    ),
     actualStudyTime:
       asOptionalNumber(
         pick(obj, ['actualStudyTime', 'actual_study_time', 'actualStudySeconds', 'actual_study_seconds']),

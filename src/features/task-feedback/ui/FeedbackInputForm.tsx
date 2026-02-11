@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Box, Textarea, Flex, IconButton, Image, Text } from '@chakra-ui/react';
-import { AttachmentIcon, CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { Box, Textarea, Flex, IconButton, Image } from '@chakra-ui/react';
+import { CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { ImageIcon, BorderIcon } from '@/shared/ui/icons';
 
 interface FeedbackInputFormProps {
   initialContent?: string;
@@ -168,7 +169,7 @@ export const FeedbackInputForm = ({
         <Flex gap={1}>
           <IconButton
             aria-label="Upload Image"
-            icon={<AttachmentIcon boxSize={4} />}
+            icon={<ImageIcon size={24} color='#394250' />}
             size="sm"
             variant="ghost"
             color="gray.500"
@@ -178,7 +179,7 @@ export const FeedbackInputForm = ({
           />
           <IconButton
             aria-label="Bold"
-            icon={<Text fontWeight="900" fontSize="sm" fontFamily="serif">B</Text>}
+            icon={<BorderIcon size={24} color='#394250'/>}
             size="sm"
             variant={isBoldMode ? 'solid' : 'ghost'}
             colorScheme={isBoldMode ? 'blue' : 'gray'}

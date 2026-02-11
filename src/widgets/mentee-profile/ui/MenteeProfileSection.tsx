@@ -141,9 +141,9 @@ export const MenteeProfileSection = ({ profile, userRole }: Props) => {
               </HStack>
 
               <SimpleGrid columns={2} spacingX={{base:0, md:4}} spacingY={{base:3, md:4}} maxW="400px">
-                <StatBadge label="과제 제출" value={profile.stats.todaySubmitted} />
-                <StatBadge label="오늘 과제" value={profile.stats.todayTasksCount} />
-                <StatBadge label="남은 과제" value={profile.stats.todayRemaining} />
+                <StatBadge label="총 과제 제출" value={profile.stats.todaySubmitted} />
+                <StatBadge label="플래너 피드백" value={profile.stats.todayTasksCount ? 'X' : 'O'} />
+                <StatBadge label="총 남은 과제" value={profile.stats.todayRemaining} />
                 <StatBadge label="피드백 질문" value={profile.stats.todayFeedbackComments} />
               </SimpleGrid>
             </Flex>

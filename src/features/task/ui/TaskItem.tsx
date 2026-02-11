@@ -6,7 +6,6 @@ import { PinOutlinedIcon } from '@/shared/ui/icons';
 
 interface TaskItemProps {
   task: Task;
-  onToggle: () => void;
   onDelete: () => void;
   onClick: () => void; 
   isTimerEnabled: boolean;
@@ -15,7 +14,6 @@ interface TaskItemProps {
 
 export const TaskItem = ({ 
   task, 
-  onToggle, 
   onDelete, 
   onClick,
   isTimerEnabled,
@@ -23,7 +21,7 @@ export const TaskItem = ({
 }: TaskItemProps) => {
   void onDelete;
   void isEditable;
-  const isCompleted = task.status === 'DONE';
+  const isCompleted = Boolean(task.submitted) || task.status === 'DONE';
   
   const subjectColor = SUBJECT_COLORS[task.subject] || 'gray';
   
@@ -99,9 +97,8 @@ export const TaskItem = ({
           >
             <Checkbox
               isChecked={isCompleted}
-              onChange={() => {
-                onToggle();
-              }}
+              isReadOnly
+              tabIndex={-1}
               size="md"
               sx={{
                 '[data-checked]': {

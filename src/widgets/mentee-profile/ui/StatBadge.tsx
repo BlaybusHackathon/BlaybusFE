@@ -1,8 +1,9 @@
 import { Flex, Text } from '@chakra-ui/react';
+import type { ReactNode } from 'react';
 
 interface Props {
   label: string;
-  value: number;
+  value: ReactNode;
 }
 
 export const StatBadge = ({ label, value }: Props) => {

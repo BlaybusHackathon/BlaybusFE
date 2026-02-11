@@ -131,6 +131,17 @@ interface CommentAvartarIconProps extends SVGProps<SVGSVGElement> {
   size?: number | string;  
 }
 
+interface CommentWriteIconProps extends SVGProps<SVGSVGElement> {
+  size?: number | string;
+}
+
+export const CommentWriteIcon = ({ size = 32, ...props }: CommentWriteIconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 32 32" fill="none" {...props}>
+    <path d="M31.9824 15.9912C31.9824 24.8229 24.8229 31.9824 15.9912 31.9824C7.15951 31.9824 0 24.8229 0 15.9912C0 7.15951 7.15951 0 15.9912 0C24.8229 0 31.9824 7.15951 31.9824 15.9912Z" fill="#53A8FE"/>
+    <path d="M22.0117 8.92184C22.7737 8.65559 23.5057 9.38759 23.2395 10.1496L18.7957 22.8471C18.507 23.6706 17.3595 23.7171 17.0055 22.9198L14.8612 18.0958L17.8792 15.0771C17.9786 14.9705 18.0327 14.8294 18.0301 14.6837C18.0275 14.538 17.9685 14.3989 17.8654 14.2959C17.7624 14.1928 17.6233 14.1338 17.4776 14.1312C17.3319 14.1286 17.1909 14.1827 17.0842 14.2821L14.0655 17.3001L9.24148 15.1558C8.44423 14.8011 8.49148 13.6543 9.31423 13.3656L22.0117 8.92184Z" fill="white"/>
+  </svg>
+);
+
 export const CommentAvartarIcon = ({ size = 18, ...props }: CommentAvartarIconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 18 18" fill="none" {...props}>
     <path d="M17.8075 8.90375C17.8075 13.8212 13.8212 17.8075 8.90375 17.8075C3.98634 17.8075 0 13.8212 0 8.90375C0 3.98634 3.98634 0 8.90375 0C13.8212 0 17.8075 3.98634 17.8075 8.90375Z" fill="currentColor"/>
@@ -155,6 +166,26 @@ interface LogoIconProps extends SVGProps<SVGSVGElement> {
 export const LogoIcon = ({ size = 18, ...props }: LogoIconProps) => (
 <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 146 136" fill="none" {...props}>
   <path d="M95.0215 75.6387H94.9346L126.346 107.05L113.415 119.98L82.0039 88.5693V135.382H63.7178V88.5684L32.3066 119.98L19.376 107.05L50.7871 75.6387H50.7002L72.8604 53.4775L95.0215 75.6387ZM82.0039 44.4209L113.415 13.0107L126.346 25.9414L94.9346 57.3525H145.723V75.6387H100.261L74.1709 49.5488L72.8613 48.2383L71.5518 49.5488L45.4619 75.6387H0V57.3525H50.7871L19.376 25.9414L32.3066 13.0107L63.7178 44.4219V0H82.0039V44.4209Z" fill="#52A8FE"/>
+</svg>
+);
+
+interface ImageIconProps extends SVGProps<SVGSVGElement> {
+  size?: number | string;  
+}
+
+export const ImageIcon = ({ size = 24, ...props }: ImageIconProps) => (
+<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+  <path d="M5 21C4.45 21 3.97917 20.8042 3.5875 20.4125C3.19583 20.0208 3 19.55 3 19V5C3 4.45 3.19583 3.97917 3.5875 3.5875C3.97917 3.19583 4.45 3 5 3H19C19.55 3 20.0208 3.19583 20.4125 3.5875C20.8042 3.97917 21 4.45 21 5V19C21 19.55 20.8042 20.0208 20.4125 20.4125C20.0208 20.8042 19.55 21 19 21H5ZM5 19H19V5H5V19ZM6 17H18L14.25 12L11.25 16L9 13L6 17Z" fill="#394250"/>
+</svg>
+);
+
+interface BorderIconProps extends SVGProps<SVGSVGElement> {
+  size?: number | string;  
+}
+
+export const BorderIcon = ({ size = 24, ...props }: BorderIconProps) => (
+<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
+  <path d="M5 19H6.425L16.2 9.225L14.775 7.8L5 17.575V19ZM3 21V16.75L16.2 3.575C16.4 3.39167 16.6208 3.25 16.8625 3.15C17.1042 3.05 17.3583 3 17.625 3C17.8917 3 18.15 3.05 18.4 3.15C18.65 3.25 18.8667 3.4 19.05 3.6L20.425 5C20.625 5.18333 20.7708 5.4 20.8625 5.65C20.9542 5.9 21 6.15 21 6.4C21 6.66667 20.9542 6.92083 20.8625 7.1625C20.7708 7.40417 20.625 7.625 20.425 7.825L7.25 21H3ZM15.475 8.525L14.775 7.8L16.2 9.225L15.475 8.525Z" fill="#394250"/>
 </svg>
 );
 

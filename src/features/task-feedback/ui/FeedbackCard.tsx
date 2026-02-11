@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import type { SVGProps } from 'react';
 import {
   Box,
@@ -12,14 +12,14 @@ import {
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
-import { CloseIcon, ArrowForwardIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { FeedbackWithAuthor, AnswerWithAuthor } from '../model/types';
 import { formatRelativeTime, parseEmphasis } from '../model/feedbackUtils';
 import { AnswerItem } from './AnswerItem';
 import { FeedbackInputForm } from './FeedbackInputForm';
 import { UserRole } from '@/shared/constants/enums';
-import { CommentAvartarIcon } from '@/shared/ui/icons';
+import { CommentAvartarIcon, CommentWriteIcon } from '@/shared/ui/icons';
 
 interface FeedbackCardProps {
   feedback: FeedbackWithAuthor;
@@ -73,8 +73,8 @@ export const FeedbackCard = ({
   const containerProps = {
     w: '320px',
     maxW: '90vw',
-    borderRadius: '12px',
-    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.15)',
+    borderRadius: '16px',
+    boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.12)',
     bg: 'white',
     overflow: 'hidden',
   } as const;
@@ -98,8 +98,6 @@ export const FeedbackCard = ({
 
   return (
     <MotionBox
-      pl={4}
-      pt={4}
       layoutId={`feedback-${feedback.id}`}
       zIndex={200}
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
@@ -111,96 +109,101 @@ export const FeedbackCard = ({
       {...containerProps}
     >
       {/* Header */}
-      <Flex justify="space-between" align="center" p={3} borderBottom="1px solid" borderColor="gray.50" bg="white">
-        <Flex gap={2} align="center">
-          <Box
-            w="34px"
-            h="34px"
-            borderRadius="full"
-            bg="blue.100"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <CommentAvartarIcon size={38} color="#53A8FE" />
-          </Box>
-          <Text fontWeight="bold" fontSize="sm" color="gray.800">
-            {feedback.authorName}
-          </Text>
-          <Text fontSize="xs" color="gray.400">
-            {formatRelativeTime(feedback.createdAt)}
-          </Text>
-        </Flex>
-
-        <Flex gap={1}>
-          {isMentor && isAuthor && (
-            <Menu isLazy>
-              <MenuButton
-                as={IconButton}
-                icon={<MoreIcon />}
-                size="xs"
-                variant="ghost"
-                aria-label="Options"
-                color="gray.400"
-                _hover={{ bg: 'gray.50', color: 'gray.600' }}
-              />
-              <MenuList minW="100px" fontSize="sm">
-                <MenuItem onClick={() => setIsEditing(true)}>수정</MenuItem>
-                <MenuItem onClick={onDeleteFeedback}>삭제</MenuItem>
-              </MenuList>
-            </Menu>
-          )}
-          <IconButton
-            icon={<CloseIcon boxSize={2.5} color="gray.400" />}
-            size="xs"
-            variant="ghost"
-            aria-label="Close"
-            onClick={onClose}
-            _hover={{ bg: 'gray.50', color: 'gray.600' }}
-          />
-        </Flex>
-      </Flex>
-
-      {/* Body */}
-      <Box  maxH="300px" overflowY="auto">
-        <Text
-          pl={12}
-          fontSize="md"
-          lineHeight="1.6"
-          color="gray.700"
-          mb={feedback.imageUrl ? 3 : 0}
-          sx={{
-            strong: { color: 'blue.600', fontWeight: '800', bg: 'blue.50', px: 1, borderRadius: '2px' },
-          }}
-          dangerouslySetInnerHTML={{ __html: parseEmphasis(feedback.content) }}
+      <Flex
+        justify="space-between"
+        align="center"
+        px={4}
+        py={3}
+        borderBottom="1px solid"
+        borderColor="gray.100"
+        bg="white"
+      >
+        <Text fontWeight="bold" fontSize="sm" color="gray.700">
+          댓글
+        </Text>
+        <IconButton
+          icon={<CloseIcon boxSize={2.5} color="gray.400" />}
+          size="xs"
+          variant="ghost"
+          aria-label="Close"
+          onClick={onClose}
+          _hover={{ bg: 'gray.50', color: 'gray.600' }}
         />
-        {feedback.imageUrl && (
-          <Image
-            src={feedback.imageUrl}
-            alt="Feedback Attachment"
-            borderRadius="lg"
-            maxH="200px"
-            objectFit="cover"
-            w="full"
-            border="1px solid"
-            borderColor="gray.100"
-          />
-        )}
+      </Flex>
+      {/* Body */}
+      <Box px={4} pt={3} pb={2}>
+        <Flex gap={3} align="flex-start">
+          <Box mt="2px">
+            <CommentAvartarIcon size={34} color="#53A8FE" />
+          </Box>
+          <Box flex={1}>
+            <Flex justify="space-between" align="center">
+              <Flex gap={2} align="center">
+                <Text fontWeight="bold" fontSize="sm" color="#394250">
+                  {feedback.authorName}
+                </Text>
+                <Text fontSize="xs" color="#A29E9A">
+                  {formatRelativeTime(feedback.createdAt)}
+                </Text>
+              </Flex>
+              {isMentor && isAuthor && (
+                <Menu isLazy>
+                  <MenuButton
+                    as={IconButton}
+                    icon={<MoreIcon />}
+                    size="xs"
+                    variant="ghost"
+                    aria-label="Options"
+                    color="gray.400"
+                    _hover={{ color: 'gray.600', bg: 'transparent' }}
+                  />
+                  <MenuList minW="100px" fontSize="sm">
+                    <MenuItem onClick={() => setIsEditing(true)}>수정</MenuItem>
+                    <MenuItem onClick={onDeleteFeedback}>삭제</MenuItem>
+                  </MenuList>
+                </Menu>
+              )}
+            </Flex>
+            <Text
+              mt={2}
+              fontSize="sm"
+              lineHeight="1.6"
+              color="#394250"
+              sx={{
+                strong: { color: 'blue.600', fontWeight: '800', bg: 'blue.50', px: 1, borderRadius: '2px' },
+              }}
+              dangerouslySetInnerHTML={{ __html: parseEmphasis(feedback.content) }}
+            />
+            {feedback.imageUrl && (
+              <Image
+                mt={3}
+                src={feedback.imageUrl}
+                alt="Feedback Attachment"
+                borderRadius="lg"
+                maxH="200px"
+                objectFit="cover"
+                w="full"
+                border="1px solid"
+                borderColor="gray.100"
+              />
+            )}
+          </Box>
+        </Flex>
       </Box>
 
       {/* Footer (Comments) */}
-      <Box bg="gray.50" p={3}>
-        <Box maxH="150px" overflowY="auto" mb={3} css={{ '&::-webkit-scrollbar': { width: '4px' } }}>
-          {answers.map((ans) => (
-            <AnswerItem
-              key={ans.id}
-              answer={ans}
-              currentUserId={currentUserId}
-              onEdit={onUpdateAnswer}
-              onDelete={onDeleteAnswer}
-            />
-          ))}
-        </Box>
+      <Box px={4} pb={2} maxH="180px" overflowY="auto" css={{ '&::-webkit-scrollbar': { width: '4px' } }}>
+        {answers.map((ans) => (
+          <AnswerItem
+            key={ans.id}
+            answer={ans}
+            currentUserId={currentUserId}
+            onEdit={onUpdateAnswer}
+            onDelete={onDeleteAnswer}
+          />
+        ))}
+      </Box>
+      <Box px={4} pb={4} pt={2}>
         <Flex gap={3} align="flex-start">
           <Box mt={1}>
             <CommentAvartarIcon size={34} color="#53A8FE" />
@@ -212,8 +215,6 @@ export const FeedbackCard = ({
               placeholder="댓글 입력"
               resize="none"
               bg="#F7F8FA"
-              border="1px solid"
-              borderColor="gray.200"
               borderRadius="16px"
               fontSize="sm"
               lineHeight="1.5"
@@ -229,26 +230,34 @@ export const FeedbackCard = ({
             />
             <IconButton
               aria-label="Send"
-              icon={<ArrowForwardIcon />}
-              size="sm"
-              colorScheme="blue"
-              isRound
+              icon={<CommentWriteIcon size={32} />}
+              variant="ghost"
+              h="32px"
+              w="32px"
+              minW="32px"
+              p={0}
               isDisabled={!canSubmitAnswer}
               position="absolute"
               right="10px"
               bottom="10px"
               display={{ base: 'none', md: 'inline-flex' }}
               onClick={submitAnswer}
+              _hover={{ bg: 'transparent' }}
+              _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
             />
             <Flex justify="flex-end" mt={2} display={{ base: 'flex', md: 'none' }}>
               <IconButton
                 aria-label="Send"
-                icon={<ArrowForwardIcon />}
-                size="sm"
-                colorScheme="blue"
-                isRound
+                icon={<CommentWriteIcon size={32} />}
+                variant="ghost"
+                h="32px"
+                w="32px"
+                minW="32px"
+                p={0}
                 isDisabled={!canSubmitAnswer}
                 onClick={submitAnswer}
+                _hover={{ bg: 'transparent' }}
+                _disabled={{ opacity: 0.4, cursor: 'not-allowed' }}
               />
             </Flex>
           </Box>
@@ -257,5 +266,7 @@ export const FeedbackCard = ({
     </MotionBox>
   );
 };
+
+
 
 

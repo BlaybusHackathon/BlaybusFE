@@ -173,6 +173,17 @@ const normalizeTaskLogs = (raw: unknown): TaskLog[] => {
 };
 
 export const taskApi = {
+  hasSubmission: async (taskId: string): Promise<boolean> => {
+    try {
+      const submissionRaw = await apiClient.get(`/tasks/${taskId}/submissions`);
+      const submission = toSubmission(submissionRaw);
+      if (!submission) return false;
+      return submission.images.length > 0 || Boolean(submission.memo?.trim());
+    } catch {
+      return false;
+    }
+  },
+
   getTaskDetail: async (taskId: string): Promise<TaskDetailFullData> => {
     const taskRaw = await apiClient.get(`/tasks/${taskId}`);
     let submissionRaw: unknown = null;

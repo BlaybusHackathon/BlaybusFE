@@ -3,14 +3,13 @@ import { usePlannerStore } from '@/shared/stores/plannerStore';
 import { TaskItem } from '@/features/task/ui/TaskItem';
 import { TaskAddForm } from '@/features/task/ui/TaskAddForm';
 import { useNavigate } from 'react-router-dom';
-import { Task } from '@/entities/task/types';
 import { canAddTask, canUseTimer } from '@/shared/lib/date';
 import { useAuthStore } from '@/shared/stores/authStore';
 import { taskApi } from '@/features/task/api/taskApi';
 import type { Subject } from '@/shared/constants/enums';
 
 export const TaskList = () => {
-  const { tasks, selectedDate, updateTaskStatus, deleteTask, addTask } = usePlannerStore();
+  const { tasks, selectedDate, deleteTask, addTask } = usePlannerStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
@@ -19,16 +18,6 @@ export const TaskList = () => {
 
   const handleTaskClick = (taskId: string) => {
     navigate(`/mentee/task/${taskId}`);
-  };
-
-  const handleToggle = async (task: Task) => {
-    const newStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
-    try {
-      const updated = await taskApi.updateTask(task.id, { status: newStatus });
-      updateTaskStatus(updated.id, updated.status);
-    } catch (e) {
-      console.error('Failed to update task status:', e);
-    }
   };
 
   const handleAddTask = async (data: { title: string; subject: Subject }) => {
@@ -69,7 +58,6 @@ export const TaskList = () => {
           <TaskItem
             key={task.id}
             task={task}
-            onToggle={() => void handleToggle(task)}
             onDelete={() => void handleDeleteTask(task.id)}
             onClick={() => handleTaskClick(task.id)}
             isTimerEnabled={isTimerEnabled} 

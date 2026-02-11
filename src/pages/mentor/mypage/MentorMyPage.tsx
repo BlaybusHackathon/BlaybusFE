@@ -27,10 +27,10 @@ export default function MentorMyPage() {
 
   return (
     <Box maxW="1051px" mx="auto" px={{ base: 4, md: 6 }} py={{ base: 6, md: 0 }}>
-      <Text fontSize="36px" fontWeight="700" mb={{ base: 6, md: '40px' }}>마이페이지</Text>
+      <Text fontSize="36px" fontWeight="700" mb={{ base: 6, md: 6 }}>마이페이지</Text>
 
       <Box mb={{ base: 6, md: '30px' }}>
-        <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'stretch', md: 'center' }} gap={{ base: 4, md: '50px' }}>
+        <Flex direction={{ base: 'column', md: 'row' }} align={{ base: 'stretch', md: 'center' }} gap={{ base: 4, md: 6 }}>
           <StatCard label="과제 미확인" count={data.stats.uncheckedTaskCount} />
           <StatCard label="피드백 대기" count={data.stats.pendingFeedbackCount} />
         </Flex>

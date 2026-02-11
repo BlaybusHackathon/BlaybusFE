@@ -143,19 +143,36 @@ export const usePlannerStore = create<PlannerState>((set, get) => ({
     try {
       const [year, month, day] = date.split('-').map(Number);
       const data = await planApi.getDailyPlan({ year, month, day, menteeId });
-      let taskLogs = data.taskLogs;
-      if (taskLogs.length === 0 && data.tasks.length > 0) {
+      let enrichedTasks = data.tasks;
+      const needsSubmissionCheck = enrichedTasks.filter((task) => task.submitted === undefined);
+      if (needsSubmissionCheck.length > 0) {
         const results = await Promise.allSettled(
-          data.tasks.map((task) => taskApi.getTaskLogs(task.id))
+          needsSubmissionCheck.map((task) => taskApi.hasSubmission(task.id))
+        );
+        const submissionMap = new Map<string, boolean>();
+        results.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            submissionMap.set(needsSubmissionCheck[index].id, result.value);
+          }
+        });
+        enrichedTasks = enrichedTasks.map((task) => {
+          const submitted = submissionMap.get(task.id);
+          return submitted !== undefined ? { ...task, submitted } : task;
+        });
+      }
+      let taskLogs = data.taskLogs;
+      if (taskLogs.length === 0 && enrichedTasks.length > 0) {
+        const results = await Promise.allSettled(
+          enrichedTasks.map((task) => taskApi.getTaskLogs(task.id))
         );
         taskLogs = results.flatMap((result) =>
           result.status === 'fulfilled' ? result.value : []
         );
       }
       set({
-        taskCache: data.tasks,
+        taskCache: enrichedTasks,
         taskLogCache: taskLogs,
-        tasks: data.tasks,
+        tasks: enrichedTasks,
         taskLogs,
         currentDailyPlanner: data.planner,
         isLoading: false,
