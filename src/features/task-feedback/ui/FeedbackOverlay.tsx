@@ -24,28 +24,28 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [hoveredPinId, setHoveredPinId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setHoveredPinId(null);
-  }, [imageId]);
-  
+  const pendingPosition = store.pendingPosition;
+  const setPendingPosition = store.setPendingPosition;
+  const setCommentMode = store.setCommentMode;
   
   const feedbacks = store.getFeedbacksForImage(imageId);
-  const isCreating = !!store.pendingPosition;
+  const isCreating = !!pendingPosition;
+  const activeHoveredPinId =
+    hoveredPinId && feedbacks.some((fb) => fb.id === hoveredPinId) ? hoveredPinId : null;
   const isMobile = useBreakpointValue({ base: true, md: false }) ?? false;
 
   useEffect(() => {
-    if (!store.pendingPosition) return;
+    if (!pendingPosition) return;
     const handlePointerDown = (e: PointerEvent) => {
       const container = containerRef.current;
       if (!container) return;
       if (container.contains(e.target as Node)) return;
-      store.setPendingPosition(null);
-      store.setCommentMode('view');
+      setPendingPosition(null);
+      setCommentMode('view');
     };
     document.addEventListener('pointerdown', handlePointerDown);
     return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [store.pendingPosition]);
+  }, [pendingPosition, setPendingPosition, setCommentMode]);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (store.commentMode === 'create') {
@@ -70,13 +70,13 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
     content: string,
     payload: { imageUrl: string | null; file?: File | null }
   ) => {
-    if (!store.pendingPosition) return;
+    if (!pendingPosition) return;
 
     try {
       const created = await feedbackApi.createFeedback(imageId, {
         content,
-        xPos: store.pendingPosition.x,
-        yPos: store.pendingPosition.y,
+        xPos: pendingPosition.x,
+        yPos: pendingPosition.y,
         file: payload.file ?? null,
       });
 
@@ -127,7 +127,7 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
         <AnimatePresence>
           {feedbacks.map(fb => {
             const isActive = store.activeFeedbackId === fb.id;
-            const isDimmed = (!!hoveredPinId && hoveredPinId !== fb.id) || isCreating;
+            const isDimmed = (!!activeHoveredPinId && activeHoveredPinId !== fb.id) || isCreating;
 
             return (
               <FeedbackPin
@@ -224,7 +224,7 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
         )}
 
         <AnimatePresence>
-          {store.pendingPosition && (
+          {pendingPosition && (
             <Box
               position="absolute"
               zIndex={200}
@@ -236,11 +236,11 @@ export const FeedbackOverlay = ({ taskId, imageId, currentUserId, userRole }: Fe
                   ? {
                       left: '12px',
                       right: '12px',
-                      top: store.pendingPosition.y > 50 ? undefined : '12px',
-                      bottom: store.pendingPosition.y > 50 ? '12px' : undefined,
+                      top: pendingPosition.y > 50 ? undefined : '12px',
+                      bottom: pendingPosition.y > 50 ? '12px' : undefined,
                     }
                   : {
-                      ...getFeedbackPositionStyles(store.pendingPosition.x, store.pendingPosition.y)
+                      ...getFeedbackPositionStyles(pendingPosition.x, pendingPosition.y)
                         .positionStyles,
                     }
               }

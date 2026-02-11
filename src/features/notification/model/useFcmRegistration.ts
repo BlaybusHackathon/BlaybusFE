@@ -1,41 +1,64 @@
-﻿import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAuthStore, getAuthToken, isTokenValid } from '@/shared/stores/authStore';
 import { userApi } from '@/features/user/api/userApi';
 import { requestFcmToken } from '@/firebase';
 
-export const useFcmRegistration = () => {
+type RegisterOptions = {
+  askPermission?: boolean;
+};
+
+type UseFcmRegistrationOptions = {
+  auto?: boolean;
+};
+
+export const useFcmRegistration = (options?: UseFcmRegistrationOptions) => {
   const { user, setUser } = useAuthStore();
   const lastTokenRef = useRef<string | null>(null);
-  const requestedRef = useRef(false);
+  const inFlightRef = useRef<Promise<string | null> | null>(null);
 
   useEffect(() => {
-    if (!user) return;
-    const authToken = getAuthToken();
-    if (!isTokenValid(authToken)) return;
-    if (requestedRef.current) return;
-    requestedRef.current = true;
+    lastTokenRef.current = null;
+  }, [user?.id]);
 
-    let cancelled = false;
+  const registerFcmToken = useCallback(
+    async (registerOptions?: RegisterOptions): Promise<string | null> => {
+      if (!user) return null;
+      const authToken = getAuthToken();
+      if (!isTokenValid(authToken)) return null;
+      if (inFlightRef.current) return inFlightRef.current;
 
-    const run = async () => {
-      const token = await requestFcmToken();
-      if (cancelled || !token) return;
-      if (lastTokenRef.current === token) return;
+      const run = async () => {
+        const token = await requestFcmToken(registerOptions);
+        if (!token) return null;
+        if (lastTokenRef.current === token) return token;
 
-      lastTokenRef.current = token;
-      try {
-        await userApi.registerFcmToken(token);
-        if (user.fcmToken !== token) {
-          setUser({ ...user, fcmToken: token });
+        lastTokenRef.current = token;
+        try {
+          await userApi.registerFcmToken(token);
+          if (user.fcmToken !== token) {
+            setUser({ ...user, fcmToken: token });
+          }
+        } catch {
+          // ignore registration errors
         }
-      } catch {
-        // ignore registration errors
-      }
-    };
 
-    run();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, setUser]);
+        return token;
+      };
+
+      const inFlight = run().finally(() => {
+        inFlightRef.current = null;
+      });
+      inFlightRef.current = inFlight;
+      return inFlight;
+    },
+    [user, setUser]
+  );
+
+  useEffect(() => {
+    if (options?.auto === false) return;
+    if (!user) return;
+    void registerFcmToken({ askPermission: false });
+  }, [options?.auto, registerFcmToken, user]);
+
+  return { registerFcmToken };
 };

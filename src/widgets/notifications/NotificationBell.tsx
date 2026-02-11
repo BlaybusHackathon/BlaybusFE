@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NotificationBellIcon } from '@/shared/ui/icons';
 import { notificationApi } from '@/features/notification/api/notificationApi';
+import { useFcmRegistration } from '@/features/notification/model/useFcmRegistration';
 import { useNotificationStore } from '@/shared/stores/notificationStore';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 export const NotificationBell = ({ isVisible }: Props) => {
   const navigate = useNavigate();
   const { unreadCount, setUnreadCount } = useNotificationStore();
+  const { registerFcmToken } = useFcmRegistration({ auto: false });
 
   const fetchCount = useCallback(async () => {
     try {
@@ -37,13 +39,22 @@ export const NotificationBell = ({ isVisible }: Props) => {
 
   if (!isVisible) return null;
 
+  const handleClick = () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      if (Notification.permission !== 'granted') {
+        void registerFcmToken({ askPermission: true });
+      }
+    }
+    navigate('/mentee/notifications');
+  };
+
   return (
     <Box position="relative" pointerEvents="auto">
       <IconButton
         aria-label="Notifications"
         icon={<NotificationBellIcon />}
         variant="ghost"
-        onClick={() => navigate('/mentee/notifications')}
+        onClick={handleClick}
         size="lg"
         color="#373E56"
         _hover={{ bg: 'gray.50' }}

@@ -6,6 +6,9 @@ import { getNavItems } from './navConfig';
 import { useFcmRegistration } from '@/features/notification/model/useFcmRegistration';
 import { userApi } from '@/features/user/api/userApi';
 import { Loading } from '@/shared/ui/Loading';
+import { onForegroundMessage } from '@/firebase';
+import { notificationApi } from '@/features/notification/api/notificationApi';
+import { useNotificationStore } from '@/shared/stores/notificationStore';
 
 // PC Widgets
 import { DesktopHeader } from './desktop/DesktopHeader';
@@ -17,6 +20,7 @@ import { MobileBottomNav } from './mobile/MobileBottomNav';
 
 export const MainLayout = () => {
   const { user, token, isAuthenticated, setUser } = useAuthStore();
+  const { setUnreadCount } = useNotificationStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const tokenValid = isTokenValid(token);
@@ -48,6 +52,31 @@ export const MainLayout = () => {
       cancelled = true;
     };
   }, [tokenValid, user, setUser]);
+
+  useEffect(() => {
+    if (!tokenValid || !user) return;
+    let cancelled = false;
+    let unsubscribe: (() => void) | null = null;
+
+    const setup = async () => {
+      const unsub = await onForegroundMessage(() => {
+        if (!isTokenValid(token)) return;
+        notificationApi
+          .getUnreadCount()
+          .then((count) => {
+            if (!cancelled) setUnreadCount(count);
+          })
+          .catch(() => {});
+      });
+      if (!cancelled) unsubscribe = unsub;
+    };
+
+    setup();
+    return () => {
+      cancelled = true;
+      if (unsubscribe) unsubscribe();
+    };
+  }, [setUnreadCount, token, tokenValid, user]);
 
   if (!isAuthenticated || !tokenValid) {
     return <Navigate to="/login" replace />;

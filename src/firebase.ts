@@ -41,12 +41,19 @@ const registerMessagingServiceWorker = async (): Promise<ServiceWorkerRegistrati
   return swRegisterPromise;
 };
 
-export async function requestFcmToken(): Promise<string | null> {
+type RequestFcmTokenOptions = {
+  askPermission?: boolean;
+};
+
+export async function requestFcmToken(options?: RequestFcmTokenOptions): Promise<string | null> {
   if (!isBrowser || !('Notification' in window)) return null;
   if (Notification.permission === 'denied') return null;
 
-  const permission = await Notification.requestPermission();
-  if (permission !== 'granted') return null;
+  if (Notification.permission !== 'granted') {
+    if (!options?.askPermission) return null;
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return null;
+  }
 
   const messaging = await getMessagingIfSupported();
   if (!messaging || !vapidKey) return null;
@@ -63,8 +70,10 @@ export async function requestFcmToken(): Promise<string | null> {
   }
 }
 
-export async function onForegroundMessage(callback: (payload: MessagePayload) => void): Promise<void> {
+export async function onForegroundMessage(
+  callback: (payload: MessagePayload) => void
+): Promise<(() => void) | null> {
   const messaging = await getMessagingIfSupported();
-  if (!messaging) return;
-  onMessage(messaging, callback);
+  if (!messaging) return null;
+  return onMessage(messaging, callback);
 }

@@ -19,8 +19,7 @@ export const SidebarMenuItem = ({ label, path, icon, isCollapsed }: Props) => {
     <Flex
       align="center"
       py={3}
-      pl={isCollapsed ? 3 : '44px'}
-      pr={3}
+      pl={isCollapsed ? 5 : '44px'}
       cursor="pointer"
       color={isActive ? '#52A8FE' : '#989898'}
       bg="transparent"

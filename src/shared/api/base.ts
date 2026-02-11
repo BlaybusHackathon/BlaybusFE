@@ -38,7 +38,7 @@ const unwrapResponse = (res: AxiosResponse) => {
   return body;
 };
 apiClient.interceptors.response.use(
-  (res: AxiosResponse) => unwrapResponse(res) as any,
+  (res: AxiosResponse) => unwrapResponse(res) as AxiosResponse,
   (err: AxiosError<unknown>) => {
     const status = err.response?.status;
     if (status === 401) {
