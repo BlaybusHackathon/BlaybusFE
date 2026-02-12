@@ -86,7 +86,11 @@ const MenteeTaskDetailPage = () => {
       : true);
   const isMentorUser = user?.role === 'MENTOR';
   const isMenteeUser = user?.role === 'MENTEE';
-  const shouldShowMenu = isMentorUser || isMenteeUser;
+  const hasSubmission = Boolean(data?.submission);
+  const isOwner = Boolean(isMenteeUser && user?.id && data?.menteeId && user.id === data.menteeId);
+  const canEditTaskForMentee = isOwner && canEditOrDelete && !hasSubmission;
+  const canDeleteSubmission = isOwner && hasSubmission && hasFeedback === false;
+  const shouldShowMenu = isMentorUser || canEditTaskForMentee || canDeleteSubmission;
 
   useEffect(() => {
     let active = true;
@@ -296,8 +300,6 @@ const MenteeTaskDetailPage = () => {
     }
   };
 
-  const canDeleteSubmission = Boolean(data?.submission) && hasFeedback === false;
-
   const handleDeleteSubmission = async () => {
     if (!data?.submission?.id) return;
     try {
@@ -408,21 +410,14 @@ const MenteeTaskDetailPage = () => {
                         </MenuItem>
                       </>
                     )}
-                    {isMenteeUser && (
-                      <MenuItem
-                        onClick={() => {
-                          if (!canDeleteSubmission) {
-                            toast({
-                              title: '피드백이 없는 제출물만 삭제할 수 있습니다.',
-                              status: 'warning',
-                              duration: 2000,
-                              isClosable: true,
-                            });
-                            return;
-                          }
-                          void handleDeleteSubmission();
-                        }}
-                      >
+                    {canEditTaskForMentee && (
+                      <>
+                        <MenuItem onClick={openEdit}>수정</MenuItem>
+                        <MenuItem onClick={deleteDialog.onOpen}>삭제</MenuItem>
+                      </>
+                    )}
+                    {canDeleteSubmission && (
+                      <MenuItem onClick={() => void handleDeleteSubmission()}>
                         제출 삭제
                       </MenuItem>
                     )}
