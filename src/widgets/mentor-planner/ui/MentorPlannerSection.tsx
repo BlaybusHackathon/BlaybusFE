@@ -67,7 +67,18 @@ export const MentorPlannerSection = ({ menteeName }: Props) => {
         if (!planner?.id) return;
 
         try {
-            if (planner.mentorFeedback) {
+            const trimmed = newFeedback.trim();
+            const hasFeedback = planner.mentorFeedback !== null;
+
+            if (trimmed.length === 0) {
+                if (hasFeedback) {
+                    await planApi.deleteFeedback(planner.id);
+                }
+                setPlanner((prev) => (prev ? { ...prev, mentorFeedback: null } : prev));
+                return;
+            }
+
+            if (hasFeedback) {
                 await planApi.updateFeedback(planner.id, newFeedback);
             } else {
                 await planApi.createFeedback(planner.id, newFeedback);
